@@ -1,0 +1,10 @@
+name: CBParkour
+version: 1.5.9
+description: CB's parkour plugin
+author: Isklar
+softdepend: [Vault]
+main: me.isklar.cbparkour.Parkour
+commands:
+  parkour:
+    aliases: [pk, cbparkour]
+    description: Main command.
