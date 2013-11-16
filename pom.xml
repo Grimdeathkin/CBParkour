@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>CBParkour</groupId>
   <artifactId>CBParkour</artifactId>
-  <version>1.5.9</version>
+  <version>1.6</version>
   <name>CBParkour</name>
   <description>Parkour plugin for CB</description>
           <repositories>

@@ -239,6 +239,12 @@ public class Parkour extends JavaPlugin implements Listener {
  * User Commands | parkour.use
  * Join, Leave, Maplist, Best
  */
+				if (args[0].equalsIgnoreCase("test")) {
+					if(p.getName().equalsIgnoreCase("Isklar")){
+						int mapnum = getMapNumber(args[1]);
+						p.sendMessage(Integer.toString(mapnum));
+					}
+				}
 				if (args[0].equalsIgnoreCase("join")) {
 					if (p.hasPermission("parkour.use")) {
 						if (args.length == 2) {
@@ -818,10 +824,9 @@ public class Parkour extends JavaPlugin implements Listener {
 			if (s.getLine(0).equals("[Parkour]")) {
 				
 				if (s.getLine(1).equalsIgnoreCase("join")) {
-					String mapNumber = "map" + getMapNumber(s.getLine(3));
-
-					if (isNumber(mapNumber)) {
-						if (maps.contains(toInt(mapNumber))) {
+					int mapNumber = getMapNumber(ChatColor.stripColor(s.getLine(2)));
+					if (mapNumber != 0) {
+						if (maps.contains(mapNumber)) {
 							Player p = e.getPlayer();
 
 							if (Parkour.containsKey(p.getName())) {
@@ -1600,9 +1605,11 @@ public class Parkour extends JavaPlugin implements Listener {
 	
 	public int getMapNumber(String mapName){
 		int mapsnumber = getConfig().getInt("Parkour.mapsnumber");
-		int x = 0;
-		for(x = 0; x<=mapsnumber; x++){
-			if (getConfig().getString("Parkour.map" + x + ".mapName") == mapName){
+
+		for(int x = 1; x<=mapsnumber; x++){
+			String configMapName = getConfig().getString("Parkour.map" + x + ".mapName");
+			
+			if (mapName.equalsIgnoreCase(configMapName)){
 				return x;
 			}
 		}

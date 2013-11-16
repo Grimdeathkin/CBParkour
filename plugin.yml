@@ -1,5 +1,5 @@
 name: CBParkour
-version: 1.5.9
+version: 1.6
 description: CB's parkour plugin
 author: Isklar
 softdepend: [Vault]
