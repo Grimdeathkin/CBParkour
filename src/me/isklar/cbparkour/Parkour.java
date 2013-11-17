@@ -30,6 +30,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -47,6 +48,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scheduler.BukkitRunnable;
 
 @SuppressWarnings("unused")
 public class Parkour extends JavaPlugin implements Listener {
@@ -257,8 +259,9 @@ public class Parkour extends JavaPlugin implements Listener {
  * Join, Leave, Checkpoint, Maplist, Best
  */
 				if (args[0].equalsIgnoreCase("test")) {
-					if(p.getName().equalsIgnoreCase("Isklar")){	
-						
+					if(p.getName().equalsIgnoreCase("Isklar")){
+						final Player player = p;
+						playJingle(p);
 					}
 				}
 				if (args[0].equalsIgnoreCase("join")) {
@@ -1100,6 +1103,18 @@ public class Parkour extends JavaPlugin implements Listener {
 									p.playEffect(bLoc, Effect.POTION_BREAK, 2);
 								}
 
+								// Unlock next course
+								if(!permission.has(p, "parkour.completed.map"+ Map)){
+									String nextMapName = getMapName(getMapNext(Map));
+									p.sendMessage(PREFIX + GOLD + "Map unlocked! - "+ GREEN + nextMapName);
+									permission.playerAdd(p, "parkour.completed.map"+ Map);
+									final Player player = p;
+									getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+										public void run() {
+											playJingle(player);
+										}
+									}, 5L);
+								}
 								long totalTime = System.currentTimeMillis()
 										- Long.valueOf(getPlTime(Parkour.get(p.getName())));
 								Parkour.remove(p.getName());
@@ -1108,8 +1123,8 @@ public class Parkour extends JavaPlugin implements Listener {
 								if (!Records.containsKey(Map + ":" + p.getName())) {
 								
 									getServer().getPluginManager().callEvent(new ParkourFinishEvent(p, Map, totalTime, true));
-									p.sendMessage(PREFIX + AQUA + "You finished for the first time in "
-											+ convertTime(totalTime));
+									p.sendMessage(PREFIX + AQUA + "You finished for the first time in " +
+											GRAY + convertTime(totalTime));
 									Records.put(Map + ":" + p.getName(), totalTime);
 									saveScore();
 									
@@ -1141,7 +1156,7 @@ public class Parkour extends JavaPlugin implements Listener {
 									// Player beat old score
 									if (Records.get(Map + ":" + p.getName()) >= totalTime) {
 										p.sendMessage(PREFIX + GREEN + "You beat your old time of " + GRAY + convertTime(Records.get(Map + ":" + p.getName())));
-										p.sendMessage(PREFIX + AQUA + "You finished in " + GRAY + convertTime(totalTime));
+										p.sendMessage(PREFIX + AQUA + "You finished this parkour in " + GRAY + convertTime(totalTime));
 										
 										Records.put(Map + ":" + p.getName(), totalTime);
 										saveScore();
@@ -1164,8 +1179,8 @@ public class Parkour extends JavaPlugin implements Listener {
 
 									} else {
 										String username;
-										p.sendMessage(PREFIX + RED + "You didn't beat your old time of "+ GRAY + convertTime(Records.get(Map + ":" + p.getName())));
-										p.sendMessage(PREFIX + AQUA + "You finished this parkour in " + convertTime(totalTime));
+										p.sendMessage(PREFIX + RED + "You didn't beat your old time "+ GRAY + convertTime(Records.get(Map + ":" + p.getName())));
+										p.sendMessage(PREFIX + AQUA + "You finished this parkour in " +GRAY+ convertTime(totalTime));
 
 										if(topName.equalsIgnoreCase(p.getName())){
 											username = "You";
@@ -1439,10 +1454,28 @@ public class Parkour extends JavaPlugin implements Listener {
 			lobby = loc;
 		}
 	}
+	
+	private void playJingle(final Player player){
+		new BukkitRunnable(){
+		    int count = 0;
+		    float note = 0.5f;
+		    public void run(){
+		        if(count < 3){
+		        	note = note + ((count+5)*0.033f);
+		        	player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,note);
+		        }
+		        else{
+		            cancel();
+		        }
+		        count++;
+		    }
+		}.runTaskTimer(this, 0L, 1L);
+	}
 
 	private int maxMapNumber() {
 		return getConfig().getInt("Parkour.mapsnumber");
 	}
+	
 
 	private void saveScore() {
 		try {
