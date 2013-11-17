@@ -228,11 +228,12 @@ public class Parkour extends JavaPlugin implements Listener {
 				p.sendMessage(GOLD + "---------=[ " + D_AQUA + "Citi-Build Parkour Commands" + GOLD + " ]=---------");
 
 				if (permission.has(p, "parkour.mapeditor") || permission.has(p, "parkour.admin")) {
-					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " create <mapName> <previous mapnum>" + WHITE + " - Create a new map");
+					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " create <mapName> <previous mapnum> <next mapnum>" + WHITE + " - Create a new map");
 					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " done" + WHITE + " - Confirm and create the map");
 					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " delete <mapNumber>" + WHITE + " - Delete a map");
 					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changeMapName <mapNumber> <newMapName>" + WHITE + " - Change the map name");
-					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changePrevious <mapNumber> <newPreviousMapNum>" + WHITE + " - Change the previous map");
+					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changePrevious <mapNumber> <previous mapnum>" + WHITE + " - Change the previous map");
+					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changePrevious <mapNumber> <next mapnum>" + WHITE + " - Change the next map");
 					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " setSpawn <mapNumber>" + WHITE + " - Set the map spawn");
 					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " toggleWater <mapNumber>" + WHITE + " - Toggles Water repsawn on this Map");
 					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " toggleLava <mapNumber>" + WHITE + " - Toggles Lava Respawn on this Map");
@@ -386,7 +387,7 @@ public class Parkour extends JavaPlugin implements Listener {
 				}		
 /*
  * Map Commands | parkour.mapeditor
- * Create, Done, Delete, changeMapName, changeMapPrevious, setSpawn, toggleWater, toggleLava
+ * Create, Done, Delete, changeMapName, changeMapPrevious, changeMapNext, setSpawn, toggleWater, toggleLava
  */
 				else if (args[0].equalsIgnoreCase("Create")
 						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
@@ -538,6 +539,25 @@ public class Parkour extends JavaPlugin implements Listener {
 						}
 					} else {
 						p.sendMessage(APREFIX + RED + "Correct usage /pk changePrevious <map number> <previous map>");
+					}
+				}
+/* ChangeMapNext */
+				else if (args[0].equalsIgnoreCase("changeNext")
+						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
+					if (args.length == 3) {
+						if (isNumber(args[1]) && isNumber(args[2])) {
+							if (maps.contains(toInt(args[1]))) {
+								getConfig().set("Parkour.map" + args[1] + ".mapNext", Integer.parseInt(args[2]));
+								saveConfig();
+								p.sendMessage(APREFIX + AQUA + "Next map set to '" + AQUA + args[2] + "' for map " + GREEN + args[1]);
+							} else {
+								p.sendMessage(APREFIX + RED + args[1] + " is not a valid map number");
+							}
+						} else {
+							p.sendMessage(APREFIX + RED + args[1] + " or " + args[2] + " is not a valid number");
+						}
+					} else {
+						p.sendMessage(APREFIX + RED + "Correct usage /pk changePrevious <map number> <next mapnumber>");
 					}
 				}
 /* SetSpawn */				
