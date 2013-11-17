@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import me.isklar.cbparkour.ParkourCheckpointEvent;
 import me.isklar.cbparkour.ParkourFinishEvent;
@@ -61,7 +62,8 @@ public class Parkour extends JavaPlugin implements Listener {
 	int CheckpointNumber = 0;
 	int NewMapNumber = 0;
 	String newMapName = null;
-	String newMapDifficulty = null;
+	int newMapPrevious = 0;
+	int newMapNext = 0;
 
 	// Options
 	boolean removePotionsEffectsOnParkour = false;
@@ -89,7 +91,7 @@ public class Parkour extends JavaPlugin implements Listener {
 																				// LastRewardTime
 
 	// Used for saving/loading scores
-	String path = "plugins" + File.separator + "CBParkour" + File.separator + "PlayersScores.yml";
+	String path = "plugins" + File.separator + "CBParkour" + File.separator + "PlayersScores.scores";
 	File scores = new File(path);
 
 	// Chat colours
@@ -122,14 +124,20 @@ public class Parkour extends JavaPlugin implements Listener {
 /*
  * 	Setup
  */
+	private static final Logger log = Logger.getLogger("Minecraft");
 	
 	public void onEnable() {
+		
 		LoadCfg();
 		PREFIX = (GRAY+ "[" + D_AQUA + PrefixString + GRAY + "] ");
 		APREFIX = (GRAY+ "[" + RED + PrefixString + GRAY + "] ");
 		
-		this.vault = setupEconomy();
-		this.vault = setupPermissions();
+		if (!setupPermissions() ) {
+            log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+		setupEconomy();
 
 		getServer().getPluginManager().registerEvents(this, this);
 
@@ -154,7 +162,8 @@ public class Parkour extends JavaPlugin implements Listener {
 		// Reset everything
 		newMap = false;
 		newMapCheckpoints.clear();
-		newMapDifficulty = "";
+		newMapPrevious = 0;
+		newMapNext = 0;
 		newMapName = "";
 		newMapPlayerEditor = "";
 		NewMapNumber = 0;
@@ -174,6 +183,17 @@ public class Parkour extends JavaPlugin implements Listener {
 		intCheckpointsLoc();
 	}
 
+	private boolean setupPermissions(){
+		 if (getServer().getPluginManager().getPlugin("Vault") == null) {
+	            return false;
+	        }
+        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        if (permissionProvider != null) {
+            permission = permissionProvider.getProvider();
+        }
+        return (permission != null);
+    }
+	
 	private boolean setupEconomy() {
 		try {
 			Class.forName("net.milkbowl.vault.economy.Economy");
@@ -192,13 +212,6 @@ public class Parkour extends JavaPlugin implements Listener {
 		return (economy != null);
 	}
 	
-	private boolean setupPermissions(){
-	        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
-	        if (permissionProvider != null) {
-	            permission = permissionProvider.getProvider();
-	        }
-	        return (permission != null);
-	    }
 
 /*
  * 	Commands
@@ -214,17 +227,17 @@ public class Parkour extends JavaPlugin implements Listener {
 			if (args.length == 0) {
 				p.sendMessage(GOLD + "---------=[ " + D_AQUA + "Citi-Build Parkour Commands" + GOLD + " ]=---------");
 
-				if (p.hasPermission("parkour.mapeditor") || p.hasPermission("parkour.admin")) {
-					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " create <mapName> <mapDifficulty>" + WHITE + " - Create a new map");
+				if (permission.has(p, "parkour.mapeditor") || permission.has(p, "parkour.admin")) {
+					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " create <mapName> <previous mapnum>" + WHITE + " - Create a new map");
 					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " done" + WHITE + " - Confirm and create the map");
 					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " delete <mapNumber>" + WHITE + " - Delete a map");
 					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changeMapName <mapNumber> <newMapName>" + WHITE + " - Change the map name");
-					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changeDifficulty <mapNumber> <newMapDifficulty>" + WHITE + " - Change the Difficulty");
+					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changePrevious <mapNumber> <newPreviousMapNum>" + WHITE + " - Change the previous map");
 					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " setSpawn <mapNumber>" + WHITE + " - Set the map spawn");
 					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " toggleWater <mapNumber>" + WHITE + " - Toggles Water repsawn on this Map");
 					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " toggleLava <mapNumber>" + WHITE + " - Toggles Lava Respawn on this Map");
 				}
-				if (p.hasPermission("parkour.admin")) {
+				if (permission.has(p, "parkour.admin")) {
 					p.sendMessage(APREFIX + D_GREEN + "/" + CommandLabel + " toggle <mapNumber>" + WHITE + " - toggle ON/OFF a parkour");
 					p.sendMessage(APREFIX + D_GREEN + "/" + CommandLabel + " setLobby" + WHITE + " - Set the lobby spawn");
 					p.sendMessage(APREFIX + D_GREEN + "/" + CommandLabel + " resetScores <mapNumber>" + WHITE + "- Reset All scores for a map");
@@ -248,7 +261,7 @@ public class Parkour extends JavaPlugin implements Listener {
 					}
 				}
 				if (args[0].equalsIgnoreCase("join")) {
-					if (p.hasPermission("parkour.use")) {
+					if (permission.has(p, "parkour.use")) {
 						if (args.length == 2) {
 							if (isNumber(args[1])) {
 								if (maps.contains(toInt(args[1]))) {
@@ -270,7 +283,7 @@ public class Parkour extends JavaPlugin implements Listener {
 	
 										p.teleport(loc);
 									} else {
-										p.sendMessage(PREFIX + RED + "Map spawn for map " +GREEN + args[1] +RED + " is not set");
+										p.sendMessage(PREFIX + RED + "The spawn for map " +GREEN + args[1] +RED + " is not set");
 									}
 	
 								} else {
@@ -289,7 +302,7 @@ public class Parkour extends JavaPlugin implements Listener {
 				} 
 /* Leave */				
 				else if (args[0].equalsIgnoreCase("leave")) {
-					if (p.hasPermission("parkour.use")) {
+					if (permission.has(p,"parkour.use")) {
 						if (Parkour.containsKey(p.getName())) {
 							p.sendMessage(PREFIX + AQUA + "You have left the parkour");
 							Parkour.remove(p.getName());
@@ -304,7 +317,7 @@ public class Parkour extends JavaPlugin implements Listener {
 				}
 /* Checkpoint */
 				else if ((args[0].equalsIgnoreCase("cp")) || (args[0].equalsIgnoreCase("checkpoint"))) {
-					if (p.hasPermission("parkour.use")) {
+					if (permission.has(p, "parkour.use")) {
 						if (Parkour.containsKey(p.getName())) {
 							teleportLastCheckpoint(p);
 						} else {
@@ -314,36 +327,40 @@ public class Parkour extends JavaPlugin implements Listener {
 				}
 /* Maplist */				
 				else if (args[0].equalsIgnoreCase("MapList")) {
-					if (p.hasPermission("parkour.use")) {
+					if (permission.has(p, "parkour.use")) {
 						p.sendMessage(GOLD + "---------=[ " + D_AQUA + "Parkour Map List" + GOLD + " ]=---------");
-	
+						p.sendMessage(GOLD + "-------=[ " + D_AQUA + "Enabled:" + GREEN + "■" +D_AQUA+ GRAY + " | " +D_AQUA+ "Disabled:" + RED + "■" + GOLD + " ]=-------");
+						boolean isToggled = false;
 						for (int i : maps) {
 							String mapNumber = "" + i;
+							
 							if (maps.contains(toInt(mapNumber))) {
 								FileConfiguration cfg = getConfig();
 		
 								String mode = RED + "■";
+								isToggled = false;
 								if (toggleParkour.get(i)) {
 									mode = GREEN + "■";
+									isToggled = true;
 								}
 								String waterActive = AQUA + " Water: "+ GREEN + "■";
 								String lavaActive = AQUA + " Lava: "+ GREEN + "■";
 								boolean isWaterActive = !cfg.getBoolean("Parkour.map" + mapNumber + ".waterrespawn");
 								boolean isLavaActive = !cfg.getBoolean("Parkour.map" + mapNumber + ".lavarespawn");
 								if (isWaterActive){
-									waterActive = AQUA + " Water: "+ RED + "■";
+									waterActive = AQUA + " Water-Respawn:"+ RED + "■";
 								}
 								if (isLavaActive){
-									lavaActive = AQUA + " Lava: "+ RED + "■";
+									lavaActive = AQUA + " Lava-Respawn:"+ RED + "■";
 								}
 								
-								if (p.hasPermission("parkour.admin") || p.hasPermission("parkour.mapeditor")){
+								if (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor")){
 									p.sendMessage(mode + GRAY + " | " + AQUA + getMapName(i) + GRAY + " (map" + i
-											+ ") (" + getCfgTotalCheckpoints(i) + " CPs)" + waterActive + lavaActive);
+											+ ") (" + getCfgTotalCheckpoints(i) + " CPs)" + waterActive + GRAY + " |" + lavaActive);
 								}
-								else if ( p.hasPermission("parkour.use") && mode.contains("ON") ){
-								p.sendMessage(GRAY + "- " + GREEN + getMapName(i) + GRAY + " (" + getCfgTotalCheckpoints(i) 
-										+ " Checkpoints)" + waterActive + lavaActive);
+								else if ( permission.has(p, "parkour.use") && isToggled){
+								p.sendMessage(GRAY + "- " + AQUA + getMapName(i) + GRAY + " (" + getCfgTotalCheckpoints(i) 
+										+ " Checkpoints)" +  waterActive + GRAY + " |" + lavaActive);
 								}
 							}
 						}
@@ -351,7 +368,7 @@ public class Parkour extends JavaPlugin implements Listener {
 				}
 /* Best */				
 				else if (args[0].equalsIgnoreCase("best")) {
-					if (p.hasPermission("parkour.use")) {
+					if (permission.has(p, "parkour.use")) {
 						if (args.length == 2) {
 							if (isNumber(args[1])) {
 								if (maps.contains(toInt(args[1]))) {
@@ -369,35 +386,40 @@ public class Parkour extends JavaPlugin implements Listener {
 				}		
 /*
  * Map Commands | parkour.mapeditor
- * Create, Done, Delete, changeMapName, changeMapDifficulty, setSpawn, toggleWater, toggleLava
+ * Create, Done, Delete, changeMapName, changeMapPrevious, setSpawn, toggleWater, toggleLava
  */
 				else if (args[0].equalsIgnoreCase("Create")
-						&& (p.hasPermission("parkour.admin") || p.hasPermission("parkour.mapeditor"))) {
-					if (args.length == 3) {
-						if (args[1] != null && args[2] != null) {
-							if (!newMap) {
-								ItemStack stick = new ItemStack(Material.STICK, 1);
-								p.sendMessage(PREFIX + "MapEditor: " + GREEN + "ON " + GRAY + "(Use the stick and right click on all checkpoint in order)");
-								p.getInventory().addItem(stick);
-								newMapPlayerEditor = p.getName();
-								newMap = true;
-								CheckpointNumber = 1;
-								newMapName = args[1];
-								newMapDifficulty = args[2];
-								NewMapNumber = (maxMapNumber() + 1);
+						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
+					if (args.length == 4) {
+						if (args[1] != null && args[2] != null && args[3] != null) {
+							if (isNumber(args[2]) && isNumber(args[3])) {
+								if (!newMap) {
+									ItemStack stick = new ItemStack(Material.STICK, 1);
+									p.sendMessage(PREFIX + "MapEditor: " + GREEN + "ON " + GRAY + "(Use the stick and right click on all checkpoint in order)");
+									p.getInventory().addItem(stick);
+									newMapPlayerEditor = p.getName();
+									newMap = true;
+									CheckpointNumber = 1;
+									newMapName = args[1];
+									newMapPrevious = Integer.parseInt(args[2]);
+									newMapNext = Integer.parseInt(args[3]);
+									NewMapNumber = (maxMapNumber() + 1);
+								} else {
+									p.sendMessage(APREFIX + RED + "A player is already using the MapEditor (" + newMapPlayerEditor + ")");
+								}
 							} else {
-								p.sendMessage(APREFIX + RED + "A player is already using the MapEditor (" + newMapPlayerEditor + ")");
+								p.sendMessage(APREFIX + RED + args[2] + " or " + args[3] + " is not a valid number");
 							}
 						} else {
-							p.sendMessage(APREFIX + RED + "Correct usage : /pk create <map name> <map difficulty>");
+							p.sendMessage(APREFIX + RED + "Correct usage : /pk create <map name> <previous map> <next mapNum>");
 						}
 					} else {
-						p.sendMessage(APREFIX + RED + "Correct usage : /pk create <map name> <map difficulty>");
+						p.sendMessage(APREFIX + RED + "Correct usage : /pk create <map name> <previous mapNum> <next mapNum>");
 					}
 				}
 /* Done */			
 				else if (args[0].equalsIgnoreCase("done")
-						&& (p.hasPermission("parkour.admin") || p.hasPermission("parkour.mapeditor"))) {
+						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
 					if (!newMap) {
 						p.sendMessage(APREFIX + RED + "MapEditor is not ON");
 					} else {
@@ -409,7 +431,8 @@ public class Parkour extends JavaPlugin implements Listener {
 								cfg.set("Parkour.mapsnumber", (getConfig().getInt("Parkour.mapsnumber")) + 1);
 								cfg.set("Parkour.map" + NewMapNumber + ".world", p.getWorld().getName());
 								cfg.set("Parkour.map" + NewMapNumber + ".mapName", newMapName);
-								cfg.set("Parkour.map" + NewMapNumber + ".mapDifficulty", newMapDifficulty);
+								cfg.set("Parkour.map" + NewMapNumber + ".mapPrevious", newMapPrevious);
+								cfg.set("Parkour.map" + NewMapNumber + ".mapNext", newMapNext);
 								cfg.set("Parkour.map" + NewMapNumber + ".numberCp", (CheckpointNumber - 1));
 								cfg.set("Parkour.map" + NewMapNumber + ".toggle", true);
 								cfg.set("Parkour.map" + NewMapNumber + ".waterrespawn", false);
@@ -420,9 +443,9 @@ public class Parkour extends JavaPlugin implements Listener {
 								loadToggleMap();
 
 								newMapName = null;
-								newMapDifficulty = null;
+								newMapPrevious = 0;
+								newMapNext = 0;
 								CheckpointNumber = 0;
-								NewMapNumber = 0;
 								newMap = false;
 								intCheckpointsLoc();
 								newMapCheckpoints.clear();
@@ -432,7 +455,8 @@ public class Parkour extends JavaPlugin implements Listener {
 								p.sendMessage(APREFIX + RED + "A parkour need at least 3 checkpoints" + GRAY + " | MapEditor: " + RED + "OFF");
 								newMapPlayerEditor = null;
 								newMapName = null;
-								newMapDifficulty = null;
+								newMapPrevious = 0;
+								newMapNext = 0;
 								newMapCheckpoints.clear();
 								CheckpointNumber = 0;
 								NewMapNumber = 0;
@@ -446,7 +470,7 @@ public class Parkour extends JavaPlugin implements Listener {
 				}
 /* Delete */				
 				else if (args[0].equalsIgnoreCase("delete")
-						&& (p.hasPermission("parkour.admin") || p.hasPermission("parkour.mapeditor"))) {
+						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
 					if (args.length == 2) {
 						if (isNumber(args[1])) {
 							if (maps.contains(toInt(args[1]))) {
@@ -480,7 +504,7 @@ public class Parkour extends JavaPlugin implements Listener {
 				}
 /* ChangeMapName */				
 				else if (args[0].equalsIgnoreCase("changeMapName")
-						&& (p.hasPermission("parkour.admin") || p.hasPermission("parkour.mapeditor"))) {
+						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
 					if (args.length == 3) {
 						if (isNumber(args[1])) {
 							if (maps.contains(toInt(args[1]))) {
@@ -497,28 +521,28 @@ public class Parkour extends JavaPlugin implements Listener {
 						p.sendMessage(APREFIX + RED + "Correct usage : /pk changeMapName <map number> <new map name>");
 					}
 				}
-/* ChangeMapDifficulty */
-				else if (args[0].equalsIgnoreCase("changeDifficulty")
-						&& (p.hasPermission("parkour.admin") || p.hasPermission("parkour.mapeditor"))) {
+/* ChangeMapPrevious */
+				else if (args[0].equalsIgnoreCase("changePrevious")
+						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
 					if (args.length == 3) {
-						if (isNumber(args[1])) {
+						if (isNumber(args[1]) && isNumber(args[2])) {
 							if (maps.contains(toInt(args[1]))) {
-								getConfig().set("Parkour.map" + args[1] + ".mapDifficulty", args[2]);
+								getConfig().set("Parkour.map" + args[1] + ".mapPrevious", Integer.parseInt(args[2]));
 								saveConfig();
-								p.sendMessage(APREFIX + AQUA + "Difficulty set to '" + AQUA + args[2] + "' for map " + GREEN + args[1]);
+								p.sendMessage(APREFIX + AQUA + "Previous map set to '" + AQUA + args[2] + "' for map " + GREEN + args[1]);
 							} else {
 								p.sendMessage(APREFIX + RED + args[1] + " is not a valid map number");
 							}
 						} else {
-							p.sendMessage(APREFIX + RED + args[1] + " is not a valid number");
+							p.sendMessage(APREFIX + RED + args[1] + " or " + args[2] + " is not a valid number");
 						}
 					} else {
-						p.sendMessage(APREFIX + RED + "Correct usage /pk changeDifficulty <mapNumber> <newName>");
+						p.sendMessage(APREFIX + RED + "Correct usage /pk changePrevious <map number> <previous map>");
 					}
 				}
 /* SetSpawn */				
 				else if (args[0].equalsIgnoreCase("setspawn")
-						&& (p.hasPermission("parkour.admin") || p.hasPermission("parkour.mapeditor"))) {
+						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
 					if (args.length == 2) {
 						if (isNumber(args[1])) {
 							if (maps.contains(toInt(args[1]))) {
@@ -544,7 +568,7 @@ public class Parkour extends JavaPlugin implements Listener {
 				} 
 /* ToggleWater */				
 				else if (args[0].equalsIgnoreCase("toggleWater")
-						&& (p.hasPermission("parkour.admin") || p.hasPermission("parkour.mapeditor"))) {
+						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
 					if (args.length == 2) {
 						if (isNumber(args[1])) {
 							if (maps.contains(toInt(args[1]))) {
@@ -568,7 +592,7 @@ public class Parkour extends JavaPlugin implements Listener {
 				} 
 /* ToggleLava */			
 				else if (args[0].equalsIgnoreCase("toggleLava")
-						&& (p.hasPermission("parkour.admin") || p.hasPermission("parkour.mapeditor"))) {
+						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
 					if (args.length == 2) {
 						if (isNumber(args[1])) {
 							if (maps.contains(toInt(args[1]))) {
@@ -595,7 +619,7 @@ public class Parkour extends JavaPlugin implements Listener {
  * Admin Commands | parkour.admin
  * Toggle, SetLobby, ResetScores, PReset
  */				
-				else if (args[0].equalsIgnoreCase("toggle") && p.hasPermission("parkour.admin")) {
+				else if (args[0].equalsIgnoreCase("toggle") && permission.has(p, "parkour.admin")) {
 					if (args.length == 2) {
 						if (isNumber(args[1])) {
 							if (maps.contains(toInt(args[1]))) {
@@ -620,7 +644,7 @@ public class Parkour extends JavaPlugin implements Listener {
 					}
 				}
 /* SetLobby */			
-				else if (args[0].equalsIgnoreCase("setLobby") && p.hasPermission("parkour.admin")) {
+				else if (args[0].equalsIgnoreCase("setLobby") && permission.has(p, "parkour.admin")) {
 					FileConfiguration cfg = getConfig();
 					cfg.set("Lobby.world", p.getWorld().getName());
 					cfg.set("Lobby.posX", p.getLocation().getX());
@@ -633,7 +657,7 @@ public class Parkour extends JavaPlugin implements Listener {
 					loadLobby();
 				}
 /* PlayerReset */
-				else if (args[0].equalsIgnoreCase("pReset") && p.hasPermission("parkour.admin")) {
+				else if (args[0].equalsIgnoreCase("pReset") && permission.has(p, "parkour.admin")) {
 					if (args.length == 3) {
 						boolean DeleteOnAllMaps = false;
 						if (args[2].equalsIgnoreCase("all")) {
@@ -690,7 +714,7 @@ public class Parkour extends JavaPlugin implements Listener {
 					}
 				}
 /* ResetScores */
-				else if (args[0].equalsIgnoreCase("resetScores") && p.hasPermission("parkour.admin")) {
+				else if (args[0].equalsIgnoreCase("resetScores") && permission.has(p, "parkour.admin")) {
 					if (args.length == 2) {
 						if (isNumber(args[1])) {
 							if (maps.contains(toInt(args[1]))) {
@@ -741,7 +765,8 @@ public class Parkour extends JavaPlugin implements Listener {
 		if (e.getPlayer().getName().equals(newMapPlayerEditor)) {
 			newMapPlayerEditor = null;
 			newMapName = null;
-			newMapDifficulty = null;
+			newMapPrevious = 0;
+			newMapNext = 0;
 			newMapCheckpoints.clear();
 			CheckpointNumber = 0;
 			NewMapNumber = 0;
@@ -798,7 +823,6 @@ public class Parkour extends JavaPlugin implements Listener {
 							e.setLine(0, "Parkour #" + MapNumber);
 							e.setLine(1, "---------------");
 							e.setLine(2, AQUA + getMapName(MapNumber));
-							e.setLine(3, getMapDifficulty(MapNumber));
 						} else {
 							e.setCancelled(true);
 						}
@@ -959,7 +983,7 @@ public class Parkour extends JavaPlugin implements Listener {
 
 					int Checkpoint = getCheckpoint(cLoc.get(bLoc).toString());
 
-					if (!p.hasPermission("parkour.use")) {
+					if (!permission.has(p, "parkour.use")) {
 						p.sendMessage(PREFIX + RED + "You don't have permission to do this parkour");
 						p.teleport(lobby);
 						return;
@@ -1657,12 +1681,20 @@ public class Parkour extends JavaPlugin implements Listener {
 		}
 		return 0;
 	}
-	public String getMapDifficulty(int mapNumber) {
-		if (getConfig().contains("Parkour.map" + mapNumber + ".mapDifficulty")) {
-			return getConfig().getString("Parkour.map" + mapNumber + ".mapDifficulty");
+	public int getMapPrevious(int mapNumber) {
+		if (getConfig().contains("Parkour.map" + mapNumber + ".mapPrevious")) {
+			return getConfig().getInt("Parkour.map" + mapNumber + ".mapPrevious");
 
 		} else {
-			return "unknownDifficulty";
+			return 0;
+		}
+	}
+	public int getMapNext(int mapNumber) {
+		if (getConfig().contains("Parkour.map" + mapNumber + ".mapNext")) {
+			return getConfig().getInt("Parkour.map" + mapNumber + ".mapNext");
+
+		} else {
+			return 0;
 		}
 	}
 
