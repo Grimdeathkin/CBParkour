@@ -56,7 +56,8 @@ public class Parkour extends JavaPlugin implements Listener {
 	// Vault initiation
 	public static Economy economy = null;
 	public static Permission permission = null;
-
+	boolean vault;
+	
 	// Used for parkour creation
 	ArrayList<Location> newMapCheckpoints = new ArrayList<Location>();
 	boolean newMap = false;
@@ -78,8 +79,6 @@ public class Parkour extends JavaPlugin implements Listener {
 	boolean LastCheckpointTeleport = false;
 	boolean rewardEnable = false;
 	boolean rewardIfBetterScore = true;
-
-	boolean vault;
 
 	// Used for player parkour management
 	Location lobby = null;
@@ -941,7 +940,8 @@ public class Parkour extends JavaPlugin implements Listener {
 			lobby = loc;
 		}
 	}
-	/* Note Pitch | Note Pitch
+	
+/* Note Pitch | Note Pitch
 	 * f#	0.500 | F#	1.000
 	 * G	0.525 | G	1.050
 	 * G#	0.550 | G#	1.100
@@ -954,8 +954,8 @@ public class Parkour extends JavaPlugin implements Listener {
 	 * D#	0.850 | D#	1.700
 	 * E	0.900 | E	1.750
 	 * F	0.950 | F	1.900
-	 */
-	private void playJingle(final Player player){
+	 */	
+private void playJingle(final Player player){
 		new BukkitRunnable(){
 		    int count = 0;
 		    public void run(){
@@ -1139,8 +1139,6 @@ public class Parkour extends JavaPlugin implements Listener {
 		return sortByValue(records);
 	}
 
-
-	
 	/**
 	 * Converts a time in ms into a good read readable format
 	 * 
@@ -1245,6 +1243,7 @@ public class Parkour extends JavaPlugin implements Listener {
 			return 0;
 		}
 	}
+	
 	public int getMapNext(int mapNumber) {
 		if (getConfig().contains("Parkour.map" + mapNumber + ".mapNext")) {
 			return getConfig().getInt("Parkour.map" + mapNumber + ".mapNext");
@@ -1265,16 +1264,8 @@ public class Parkour extends JavaPlugin implements Listener {
 	public String getPrefix(){
 		return PREFIX;
 	}
-	
+
 	public String getAPrefix(){
 		return APREFIX;
-	}
-	
-	public ArrayList<Integer> getMaps(){
-		return maps;
-	}
-	
-	public HashMap<String, String> getParkourContainer(){
-		return ParkourContainer;
 	}
 }
