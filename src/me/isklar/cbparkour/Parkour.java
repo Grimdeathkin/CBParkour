@@ -60,7 +60,7 @@ public class Parkour extends JavaPlugin implements Listener {
 	// Used for parkour creation
 	ArrayList<Location> newMapCheckpoints = new ArrayList<Location>();
 	boolean newMap = false;
-	String newMapPlayerEditor = "";
+	public String newMapPlayerEditor = "";
 	int CheckpointNumber = 0;
 	int NewMapNumber = 0;
 	String newMapName = null;
@@ -83,10 +83,10 @@ public class Parkour extends JavaPlugin implements Listener {
 
 	// Used for player parkour management
 	Location lobby = null;
-	ArrayList<Integer> maps = new ArrayList<Integer>();
-	HashMap<Integer, Boolean> toggleParkour = new HashMap<Integer, Boolean>(); // Parkour active or not
-	HashMap<Location, String> cLoc = new HashMap<Location, String>(); // HashMap infos> Location : mapNumber_Chekcpoint
-	HashMap<String, String> Parkour = new HashMap<String, String>(); // HashMap infos> playerName :
+	public ArrayList<Integer> maps = new ArrayList<Integer>();
+	public HashMap<Integer, Boolean> toggleParkour = new HashMap<Integer, Boolean>(); // Parkour active or not
+	HashMap<Location, String> cLoc = new HashMap<Location, String>(); // HashMap infos> Location : mapNumber_Checkpoint
+	public HashMap<String, String> ParkourContainer = new HashMap<String, String>(); // HashMap infos> playerName :
 																		// mapNumber_parkourStartTime_Chekcpoint
 	HashMap<String, Long> Records = new HashMap<String, Long>(); // Map:Player, Time
 	HashMap<String, Long> rewardPlayersCooldown = new HashMap<String, Long>(); // HashMap infos> playerName :
@@ -120,8 +120,8 @@ public class Parkour extends JavaPlugin implements Listener {
 	ChatColor ITALIC = ChatColor.ITALIC;			//\u00A7o
 	ChatColor RESET = ChatColor.RESET;				//\u00A7r
 	// Prefixes, user and admin
-	String PREFIX;
-	String APREFIX;
+	public String PREFIX;
+	public String APREFIX;
 	
 /*
  * 	Setup
@@ -142,7 +142,8 @@ public class Parkour extends JavaPlugin implements Listener {
 		setupEconomy();
 
 		getServer().getPluginManager().registerEvents(this, this);
-
+		this.getCommand("pk").setExecutor(new ParkourCommand(this));
+		
 		if (!scores.getAbsoluteFile().exists()) {
 			try {
 				scores.createNewFile();
@@ -174,7 +175,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		maps.clear();
 		toggleParkour.clear();
 		cLoc.clear();
-		Parkour.clear();
+		ParkourContainer.clear();
 		Records.clear();
 		rewardPlayersCooldown.clear();
 		
@@ -214,611 +215,14 @@ public class Parkour extends JavaPlugin implements Listener {
 		return (economy != null);
 	}
 	
-
-/*
- * 	Commands
- */
-	
-	public boolean onCommand(CommandSender sender, Command cmd, String CommandLabel, String[] args) {
-		Player p = null;
-		if (sender instanceof Player) {
-			p = (Player) sender;
-		}
-
-		if (cmd.getName().equalsIgnoreCase("parkour") && p != null) {
-			if (args.length == 0) {
-				p.sendMessage(GOLD + "---------=[ " + D_AQUA + "Citi-Build Parkour Commands" + GOLD + " ]=---------");
-
-				if (permission.has(p, "parkour.mapeditor") || permission.has(p, "parkour.admin")) {
-					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " create <mapName> <previous mapnum> <next mapnum>" + WHITE + " - Create a new map");
-					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " done" + WHITE + " - Confirm and create the map");
-					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " delete <mapNumber>" + WHITE + " - Delete a map");
-					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changeMapName <mapNumber> <newMapName>" + WHITE + " - Change the map name");
-					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changePrevious <mapNumber> <previous mapnum>" + WHITE + " - Change the previous map");
-					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changePrevious <mapNumber> <next mapnum>" + WHITE + " - Change the next map");
-					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " setSpawn <mapNumber>" + WHITE + " - Set the map spawn");
-					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " toggleWater <mapNumber>" + WHITE + " - Toggles Water repsawn on this Map");
-					p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " toggleLava <mapNumber>" + WHITE + " - Toggles Lava Respawn on this Map");
-				}
-				if (permission.has(p, "parkour.admin")) {
-					p.sendMessage(APREFIX + D_GREEN + "/" + CommandLabel + " toggle <mapNumber>" + WHITE + " - toggle ON/OFF a parkour");
-					p.sendMessage(APREFIX + D_GREEN + "/" + CommandLabel + " setLobby" + WHITE + " - Set the lobby spawn");
-					p.sendMessage(APREFIX + D_GREEN + "/" + CommandLabel + " resetScores <mapNumber>" + WHITE + "- Reset All scores for a map");
-					p.sendMessage(APREFIX + D_GREEN + "/" + CommandLabel + " pReset <Player> [<mapNumber> / all]" + WHITE + " - Reset scores for a player");
-				}
-				p.sendMessage(PREFIX + GRAY + "/" + CommandLabel + " join <mapNumber>" + WHITE + " - Join a map");
-				p.sendMessage(PREFIX + GRAY + "/" + CommandLabel + " leave" + WHITE + " - Leave the map");
-				p.sendMessage(PREFIX + GRAY + "/" + CommandLabel + " lobby" + WHITE + " - Return to the lobby");
-				p.sendMessage(PREFIX + GRAY + "/" + CommandLabel + " cp | checkpoint" + WHITE + " - Teleport to your last checkpoint");
-				p.sendMessage(PREFIX + GRAY + "/" + CommandLabel + " maplist" + WHITE + " - Show all the maps");
-				p.sendMessage(PREFIX + GRAY + "/" + CommandLabel + " best <MapNumber>" + WHITE + " - Show the best score of a map");
-			} 
-			
-			else {
-/*
- * User Commands | parkour.use
- * Join, Leave, Lobby, Checkpoint, Maplist, Best
- */
-				if (args[0].equalsIgnoreCase("test")) {
-					if(p.getName().equalsIgnoreCase("Isklar")){
-						final Player player = p;
-						playJingle(p);
-						boolean worked = permission.playerAddTransient(p, "parkour.completed.map");
-						Bukkit.broadcastMessage(String.valueOf(worked));
-						boolean hasperm = permission.has(p, "parkour.completed.map");
-						Bukkit.broadcastMessage(String.valueOf(hasperm));
-					}
-				}
-				
-				if (args[0].equalsIgnoreCase("join")) {
-					if (permission.has(p, "parkour.use")) {
-						if (args.length == 2) {
-							if (isNumber(args[1])) {
-								if (maps.contains(toInt(args[1]))) {
-									int mapNumber = toInt(args[1]);
-
-									if (toggleParkour.get(mapNumber)) {
-										
-										if(permission.has(p, "parkour.completed.map"+getMapPrevious(mapNumber)) || getMapPrevious(mapNumber) == 0){
-												
-												if (Parkour.containsKey(p.getName())) {
-													Parkour.remove(p.getName());
-												}
-				
-							
-												FileConfiguration cfg = getConfig();
-				
-												if (cfg.contains("Parkour.map" + args[1] + ".spawn")) {
-													Location loc = new Location(getServer().getWorld(
-															getConfig().get("Parkour.map" + args[1] + ".world").toString()),
-															cfg.getDouble("Parkour.map" + args[1] + ".spawn.posX"),
-															cfg.getDouble("Parkour.map" + args[1] + ".spawn.posY"),
-															cfg.getDouble("Parkour.map" + args[1] + ".spawn.posZ"));
-													loc.setPitch((float) cfg.getDouble("Parkour.map" + args[1] + ".spawn.posPitch"));
-													loc.setYaw((float) cfg.getDouble("Parkour.map" + args[1] + ".spawn.posYaw"));
-				
-													p.teleport(loc);
-												} 
-												else {
-													p.sendMessage(PREFIX + RED + "The spawn for map " +GREEN + args[1] +RED + " is not set");
-												}	
-										}
-										else{
-											p.sendMessage(PREFIX + RED + "You have not unlocked this parkour, complete "+GREEN + getMapName(getMapPrevious(mapNumber))+RED+" to progress");
-										}
-									}
-									else{
-										p.sendMessage(PREFIX + "This parkour is" + RED + " disabled");
-									}
-									
-								} else {
-									p.sendMessage(PREFIX + RED + args[1] +" is not a valid map number");
-								}
-							} else {
-								p.sendMessage(PREFIX + RED + args[1] +" is not a valid number");
-							}
-						} else {
-							p.sendMessage(PREFIX + "You must specify the map number");
-						}
-					}
-					else {
-						p.sendMessage(PREFIX + "You do not have permission to use this command");
-					}
-				} 
-/* Leave */				
-				else if (args[0].equalsIgnoreCase("leave")) {
-					if (permission.has(p,"parkour.use")) {
-						if (Parkour.containsKey(p.getName())) {
-							p.sendMessage(PREFIX + AQUA + "You have left the parkour");
-							Parkour.remove(p.getName());
-							if (lobby != null) {
-								p.teleport(lobby);
-							}
-	
-						} else {
-							p.sendMessage(PREFIX + RED + "You are not in a parkour, use /pk lobby to return to the lobby");
-						}
-					}
-				}
-				
-/* Lobby */				
-				else if (args[0].equalsIgnoreCase("lobby")) {
-					if (permission.has(p,"parkour.use")) {
-						if (Parkour.containsKey(p.getName())) {
-							p.sendMessage(PREFIX + RED + "You are in a parkour course, use /pk leave to leave");
-						} else {
-							if (lobby != null) {
-								p.teleport(lobby);
-								p.sendMessage(PREFIX + AQUA + "You have returned to the lobby");
-							}
-						}
-					}
-				}
-/* Checkpoint */
-				else if ((args[0].equalsIgnoreCase("cp")) || (args[0].equalsIgnoreCase("checkpoint"))) {
-					if (permission.has(p, "parkour.use")) {
-						if (Parkour.containsKey(p.getName())) {
-							teleportLastCheckpoint(p);
-						} else {
-							p.sendMessage(PREFIX + RED + "You are not in a parkour");
-						}
-					}
-				}
-/* Maplist */				
-				else if (args[0].equalsIgnoreCase("MapList")) {
-					if (permission.has(p, "parkour.use")) {
-						p.sendMessage(GOLD + "---------=[ " + D_AQUA + "Parkour Map List" + GOLD + " ]=---------");
-						p.sendMessage(GOLD + "-------=[ " + AQUA + "Enabled:" + GREEN + "■" +D_AQUA+ GRAY + " | " +AQUA+ "Disabled:" + GRAY + "■" + GOLD + " ]=-------");
-						boolean isToggled = false;
-						for (int i : maps) {
-							String mapNumber = "" + i;
-							
-							if (maps.contains(toInt(mapNumber))) {
-								FileConfiguration cfg = getConfig();
-		
-								String mode = RED + "■";
-								isToggled = false;
-								if (toggleParkour.get(i)) {
-									mode = GREEN + "■";
-									isToggled = true;
-								}
-								String waterActive = AQUA + " Water-Respawn:"+ GRAY + "■";
-								String lavaActive = AQUA + " Lava-Respawn:"+ GRAY + "■";
-								boolean isWaterActive = cfg.getBoolean("Parkour.map" + mapNumber + ".waterrespawn");
-								boolean isLavaActive = cfg.getBoolean("Parkour.map" + mapNumber + ".lavarespawn");
-								if (isWaterActive){
-									waterActive = AQUA + " Water-Respawn:"+ GREEN + "■";
-								}
-								if (isLavaActive){
-									lavaActive = AQUA + " Lava-Respawn:"+ GREEN + "■";
-								}
-								
-								if (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor")){
-									p.sendMessage(GRAY + ""+ i + mode + GRAY+ " | " + AQUA + getMapName(i) + GRAY 
-											+ " (" + getCfgTotalCheckpoints(i) + " CPs)" + waterActive + GRAY + " |" + lavaActive);
-								}
-								else if ( permission.has(p, "parkour.use") && isToggled){
-								p.sendMessage(GRAY + ""+ i +"- " + AQUA + getMapName(i) + GRAY + " (" + (getCfgTotalCheckpoints(i)-2) 
-										+ " CPs)" +  waterActive + GRAY + " |" + lavaActive);
-								}
-							}
-						}
-					}
-				}
-/* Best */				
-				else if (args[0].equalsIgnoreCase("best")) {
-					if (permission.has(p, "parkour.use")) {
-						if (args.length == 2) {
-							if (isNumber(args[1])) {
-								if (maps.contains(toInt(args[1]))) {
-									displayHighscores(toInt(args[1]), p);
-								} else {
-									p.sendMessage(PREFIX + RED + args[1] +" is not a valid map number");
-								}
-							} else {
-								p.sendMessage(PREFIX + RED + args[1] +" is not a valid number");
-							}
-						} else {
-							p.sendMessage(PREFIX + RED + "You didn't specify the map");
-						}
-					}
-				}		
-/*
- * Map Commands | parkour.mapeditor
- * Create, Done, Delete, changeMapName, changeMapPrevious, changeMapNext, setSpawn, toggleWater, toggleLava
- */
-				else if (args[0].equalsIgnoreCase("Create")
-						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
-					if (args.length == 4) {
-						if (args[1] != null && args[2] != null && args[3] != null) {
-							if (isNumber(args[2]) && isNumber(args[3])) {
-								if (!newMap) {
-									ItemStack stick = new ItemStack(Material.STICK, 1);
-									p.sendMessage(PREFIX + "MapEditor: " + GREEN + "ON " + GRAY + "(Use the stick and right click on all checkpoint in order)");
-									p.getInventory().addItem(stick);
-									newMapPlayerEditor = p.getName();
-									newMap = true;
-									CheckpointNumber = 1;
-									newMapName = args[1];
-									newMapPrevious = Integer.parseInt(args[2]);
-									newMapNext = Integer.parseInt(args[3]);
-									NewMapNumber = (maxMapNumber() + 1);
-								} else {
-									p.sendMessage(APREFIX + RED + "A player is already using the MapEditor (" + newMapPlayerEditor + ")");
-								}
-							} else {
-								p.sendMessage(APREFIX + RED + args[2] + " or " + args[3] + " is not a valid number");
-							}
-						} else {
-							p.sendMessage(APREFIX + RED + "Correct usage : /pk create <map name> <previous map> <next mapNum>");
-						}
-					} else {
-						p.sendMessage(APREFIX + RED + "Correct usage : /pk create <map name> <previous mapNum> <next mapNum>");
-					}
-				}
-/* Done */			
-				else if (args[0].equalsIgnoreCase("done")
-						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
-					if (!newMap) {
-						p.sendMessage(APREFIX + RED + "MapEditor is not ON");
-					} else {
-						if (p.getName().equalsIgnoreCase(newMapPlayerEditor)) {
-							if (CheckpointNumber >= 3) {
-								p.sendMessage(APREFIX + AQUA + newMapName + " (" +GREEN+ "map "  + NewMapNumber +AQUA + ") created" + GRAY + " | MapEditor: " + RED + "OFF");
-								p.sendMessage(APREFIX + AQUA + "Remember to set a spawn using /pk setspawn <map number>");
-								FileConfiguration cfg = getConfig();
-								cfg.set("Parkour.mapsnumber", (getConfig().getInt("Parkour.mapsnumber")) + 1);
-								cfg.set("Parkour.map" + NewMapNumber + ".world", p.getWorld().getName());
-								cfg.set("Parkour.map" + NewMapNumber + ".mapName", newMapName);
-								cfg.set("Parkour.map" + NewMapNumber + ".mapPrevious", newMapPrevious);
-								cfg.set("Parkour.map" + NewMapNumber + ".mapNext", newMapNext);
-								cfg.set("Parkour.map" + NewMapNumber + ".numberCp", (CheckpointNumber - 1));
-								cfg.set("Parkour.map" + NewMapNumber + ".toggle", true);
-								cfg.set("Parkour.map" + NewMapNumber + ".waterrespawn", false);
-								cfg.set("Parkour.map" + NewMapNumber + ".lavarespawn", false);
-
-								saveConfig();
-								intMaps();
-								loadToggleMap();
-
-								newMapName = null;
-								newMapPrevious = 0;
-								newMapNext = 0;
-								CheckpointNumber = 0;
-								newMap = false;
-								intCheckpointsLoc();
-								newMapCheckpoints.clear();
-
-								newMapPlayerEditor = null;
-							} else {
-								p.sendMessage(APREFIX + RED + "A parkour need at least 3 checkpoints" + GRAY + " | MapEditor: " + RED + "OFF");
-								newMapPlayerEditor = null;
-								newMapName = null;
-								newMapPrevious = 0;
-								newMapNext = 0;
-								newMapCheckpoints.clear();
-								CheckpointNumber = 0;
-								NewMapNumber = 0;
-								newMap = false;
-							}
-
-						} else {
-							p.sendMessage(APREFIX + RED + "A player is already using the Map Editor (" + newMapPlayerEditor + ") You must wait a bit");
-						}
-					}
-				}
-/* Delete */				
-				else if (args[0].equalsIgnoreCase("delete")
-						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
-					if (args.length == 2) {
-						if (isNumber(args[1])) {
-							if (maps.contains(toInt(args[1]))) {
-								String mapNumber = args[1].toString();
-								getConfig().getConfigurationSection("Parkour").set("map" + mapNumber, null);
-								getConfig().set("Parkour.mapsnumber",
-										Integer.valueOf(getConfig().getInt("Parkour.mapsnumber") - 1));
-								saveConfig();
-								p.sendMessage(APREFIX +AQUA + "map " +GREEN + mapNumber +AQUA + " is now deleted");
-
-								for (Iterator<String> it = Records.keySet().iterator(); it.hasNext();) {
-									String key = it.next();
-									String[] KeySplit = key.split(":");
-									if (KeySplit[0].equals(args[1])) {
-										it.remove();
-									}
-								}
-								saveScore();
-								intCheckpointsLoc();
-								intMaps();
-								loadToggleMap();
-							} else {
-								p.sendMessage(APREFIX + RED + args[1] + " is not a valid map number");
-							}
-						} else {
-							p.sendMessage(APREFIX + RED + args[1] + " is not a valid number");
-						}
-					} else {
-						p.sendMessage(APREFIX + RED + "You must specify the map number");
-					}
-				}
-/* ChangeMapName */				
-				else if (args[0].equalsIgnoreCase("changeMapName")
-						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
-					if (args.length == 3) {
-						if (isNumber(args[1])) {
-							if (maps.contains(toInt(args[1]))) {
-								getConfig().set("Parkour.map" + args[1] + ".mapName", args[2]);
-								saveConfig();
-								p.sendMessage(APREFIX + AQUA + "Map name set to '" + AQUA + args[2] + "' for map " + GREEN + args[1]);
-							} else {
-								p.sendMessage(APREFIX + RED + args[1] + " is not a valid map number");
-							}
-						} else {
-							p.sendMessage(APREFIX + RED + args[1] + " is not a valid number");
-						}
-					} else {
-						p.sendMessage(APREFIX + RED + "Correct usage : /pk changeMapName <map number> <new map name>");
-					}
-				}
-/* ChangeMapPrevious */
-				else if (args[0].equalsIgnoreCase("changePrevious")
-						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
-					if (args.length == 3) {
-						if (isNumber(args[1]) && isNumber(args[2])) {
-							if (maps.contains(toInt(args[1]))) {
-								getConfig().set("Parkour.map" + args[1] + ".mapPrevious", Integer.parseInt(args[2]));
-								saveConfig();
-								p.sendMessage(APREFIX + AQUA + "Previous map set to '" + AQUA + args[2] + "' for map " + GREEN + args[1]);
-							} else {
-								p.sendMessage(APREFIX + RED + args[1] + " is not a valid map number");
-							}
-						} else {
-							p.sendMessage(APREFIX + RED + args[1] + " or " + args[2] + " is not a valid number");
-						}
-					} else {
-						p.sendMessage(APREFIX + RED + "Correct usage /pk changePrevious <map number> <previous map>");
-					}
-				}
-/* ChangeMapNext */
-				else if (args[0].equalsIgnoreCase("changeNext")
-						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
-					if (args.length == 3) {
-						if (isNumber(args[1]) && isNumber(args[2])) {
-							if (maps.contains(toInt(args[1]))) {
-								getConfig().set("Parkour.map" + args[1] + ".mapNext", Integer.parseInt(args[2]));
-								saveConfig();
-								p.sendMessage(APREFIX + AQUA + "Next map set to '" + AQUA + args[2] + "' for map " + GREEN + args[1]);
-							} else {
-								p.sendMessage(APREFIX + RED + args[1] + " is not a valid map number");
-							}
-						} else {
-							p.sendMessage(APREFIX + RED + args[1] + " or " + args[2] + " is not a valid number");
-						}
-					} else {
-						p.sendMessage(APREFIX + RED + "Correct usage /pk changePrevious <map number> <next mapnumber>");
-					}
-				}
-/* SetSpawn */				
-				else if (args[0].equalsIgnoreCase("setspawn")
-						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
-					if (args.length == 2) {
-						if (isNumber(args[1])) {
-							if (maps.contains(toInt(args[1]))) {
-								FileConfiguration cfg = getConfig();
-								String mapNumber = args[1].toString();
-								cfg.set("Parkour.map" + mapNumber + ".spawn.posX", p.getLocation().getX());
-								cfg.set("Parkour.map" + mapNumber + ".spawn.posY", p.getLocation().getY());
-								cfg.set("Parkour.map" + mapNumber + ".spawn.posZ", p.getLocation().getZ());
-								cfg.set("Parkour.map" + mapNumber + ".spawn.posPitch", p.getLocation().getPitch());
-								cfg.set("Parkour.map" + mapNumber + ".spawn.posYaw", p.getLocation().getYaw());
-								saveConfig();
-								p.sendMessage(APREFIX + AQUA + "Parkour spawn set for map " + GREEN + mapNumber);
-							} else {
-								p.sendMessage(APREFIX + RED + "It is not a valid map number");
-							}
-						} else {
-							p.sendMessage(APREFIX + RED + args[1] + " is not a valid number");
-						}
-
-					} else {
-						p.sendMessage(APREFIX + RED + "Correct usage /pk setspawn <map number>");
-					}
-				} 
-/* ToggleWater */				
-				else if (args[0].equalsIgnoreCase("toggleWater")
-						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
-					if (args.length == 2) {
-						if (isNumber(args[1])) {
-							if (maps.contains(toInt(args[1]))) {
-								FileConfiguration cfg = getConfig();
-								String mapNumber = args[1].toString();
-								boolean isActive = !cfg.getBoolean("Parkour.map" + mapNumber + ".waterrespawn");
-								cfg.set("Parkour.map" + mapNumber + ".waterrespawn", isActive);
-								saveConfig();
-								if (isActive) p.sendMessage(APREFIX + AQUA + "Waterrespawn is now "+GREEN +"ON" + AQUA + " for map " +GREEN + mapNumber);
-								else p.sendMessage(APREFIX + AQUA + "Waterrespawn is now "+RED +"OFF" +AQUA + " for map " +GREEN + mapNumber);
-							} else {
-								p.sendMessage(APREFIX + RED + args[1] + " is not a valid map number");
-							}
-						} else {
-							p.sendMessage(APREFIX + RED + args[1] + " is not a valid number");
-						}
-
-					} else {
-						p.sendMessage(APREFIX + RED + "Correct usage /pk toggleWater <map number>");
-					}
-				} 
-/* ToggleLava */			
-				else if (args[0].equalsIgnoreCase("toggleLava")
-						&& (permission.has(p, "parkour.admin") || permission.has(p, "parkour.mapeditor"))) {
-					if (args.length == 2) {
-						if (isNumber(args[1])) {
-							if (maps.contains(toInt(args[1]))) {
-								FileConfiguration cfg = getConfig();
-								String mapNumber = args[1].toString();
-								boolean isActive = !cfg.getBoolean("Parkour.map" + mapNumber + ".lavarespawn");
-								cfg.set("Parkour.map" + mapNumber + ".lavarespawn", isActive);
-								saveConfig();
-								if (isActive) p.sendMessage(APREFIX + AQUA + "Lavarespawn is now "+GREEN +"ON" + AQUA + " for map " +GREEN + mapNumber);
-								else p.sendMessage(APREFIX + AQUA + "Lavarespawn is now "+RED +"OFF" +AQUA + " for map " +GREEN + mapNumber);
-							} else {
-								p.sendMessage(APREFIX + RED + args[1] + " is not a valid map number");
-							}
-						} else {
-							p.sendMessage(APREFIX + RED + args[1] + " is not a valid number");
-						}
-
-					} else {
-						p.sendMessage(APREFIX + RED + "Correct usage /pk toggleLava <map number>");
-					}
-				}
-				
-/*
- * Admin Commands | parkour.admin
- * Toggle, SetLobby, ResetScores, PReset
- */				
-				else if (args[0].equalsIgnoreCase("toggle") && permission.has(p, "parkour.admin")) {
-					if (args.length == 2) {
-						if (isNumber(args[1])) {
-							if (maps.contains(toInt(args[1]))) {
-								if (getConfig().getBoolean("Parkour.map" + args[1] + ".toggle")) {
-									p.sendMessage(APREFIX + AQUA + "Map "+ args[1] + " toggled " + RED + "OFF");
-									getConfig().set("Parkour.map" + args[1] + ".toggle", false);
-									saveConfig();
-								} else {
-									p.sendMessage(APREFIX + AQUA + "Map "+ args[1] + " toggled " + GREEN + "ON");
-									getConfig().set("Parkour.map" + args[1] + ".toggle", true);
-									saveConfig();
-								}
-								loadToggleMap();
-							} else {
-								p.sendMessage(APREFIX + RED + args[1] + " is not a valid map number");
-							}
-						} else {
-							p.sendMessage(APREFIX + RED + args[1] + " is not a valid number");
-						}
-					} else {
-						p.sendMessage(APREFIX + RED + "Correct usage /pk toggle <map number>");
-					}
-				}
-/* SetLobby */			
-				else if (args[0].equalsIgnoreCase("setLobby") && permission.has(p, "parkour.admin")) {
-					FileConfiguration cfg = getConfig();
-					cfg.set("Lobby.world", p.getWorld().getName());
-					cfg.set("Lobby.posX", p.getLocation().getX());
-					cfg.set("Lobby.posY", p.getLocation().getY());
-					cfg.set("Lobby.posZ", p.getLocation().getZ());
-					cfg.set("Lobby.posPitch", p.getLocation().getPitch());
-					cfg.set("Lobby.posYaw", p.getLocation().getYaw());
-					saveConfig();
-					p.sendMessage(APREFIX + AQUA + "Lobby set");
-					loadLobby();
-				}
-/* PlayerReset */
-				else if (args[0].equalsIgnoreCase("pReset") && permission.has(p, "parkour.admin")) {
-					if (args.length == 3) {
-						boolean DeleteOnAllMaps = false;
-						if (args[2].equalsIgnoreCase("all")) {
-							DeleteOnAllMaps = true;
-						}
-
-						if (isNumber(args[2]) || DeleteOnAllMaps) {
-							if ((isNumber(args[2]) && maps.contains(toInt(args[2]))) || DeleteOnAllMaps) {
-								boolean PlayerFound = false;
-								String playerName = args[1];
-								Player targetPlayer = Bukkit.getServer().getPlayerExact(playerName);
-								String mapNumber = args[2];
-
-								Iterator<String> it = Records.keySet().iterator();
-								
-								while (it.hasNext()) {
-									String key = it.next();
-									String[] KeySplit = key.split(":");
-
-									System.out.println("Key: " + key);
-
-									if (KeySplit[1].equalsIgnoreCase(playerName)) {
-										if (DeleteOnAllMaps) {
-											permission.playerRemove(targetPlayer, "parkour.completed.map"+KeySplit[0]);
-											it.remove();
-											PlayerFound = true;
-										} else if (Integer.parseInt(KeySplit[0]) == Integer.parseInt(mapNumber)) {
-											PlayerFound = true;
-											it.remove();
-											permission.playerRemove(targetPlayer, "parkour.completed.map"+mapNumber);
-										}
-									}
-								}
-								saveScore();
-
-								if (!PlayerFound) {
-									p.sendMessage(APREFIX + RED + "Player not found in this scoreboard");
-									return true;
-								}
-
-								if (DeleteOnAllMaps) {
-									p.sendMessage(APREFIX + AQUA + "Scores and unlocks reset for player " + GREEN + playerName +AQUA+ " on all maps");
-								} else {
-									p.sendMessage(APREFIX + AQUA + "Scores and unlocks reset for player "+GREEN + playerName + AQUA + " on map " +GREEN+ mapNumber);
-								}
-
-								loadScore();
-							} else {
-								p.sendMessage(APREFIX + RED + "It is not a valid map number");
-							}
-						} else {
-							p.sendMessage(APREFIX + RED + "It is not a valid number");
-							p.sendMessage(APREFIX + RED + "Correct usage /pk pReset <username> <map number / all>");
-						}
-					} else {
-						p.sendMessage(APREFIX + RED + "Correct usage /pk pReset <username> <map number / all>");
-					}
-				}
-/* ResetScores */
-				else if (args[0].equalsIgnoreCase("resetScores") && permission.has(p, "parkour.admin")) {
-					if (args.length == 2) {
-						if (isNumber(args[1])) {
-							if (maps.contains(toInt(args[1]))) {
-								int mapNumber = Integer.parseInt(args[1]);
-								p.sendMessage(PREFIX + AQUA + "Scores reset for map " +GREEN + mapNumber);
-
-								for (Iterator<String> it = Records.keySet().iterator(); it.hasNext();) {
-									String key = it.next();
-									String[] pName = key.split(":");
-									int pMap = Integer.parseInt(pName[0]);
-									if (pMap == mapNumber) {
-										it.remove();
-									}
-								}
-								saveScore();
-							} else {
-								p.sendMessage(APREFIX + RED + "It is not a valid map number");
-							}
-						} else {
-							p.sendMessage(PREFIX + RED + "It is not a valid number");
-						}
-					} else {
-						p.sendMessage(PREFIX + RED + "You must specify the map number");
-						p.sendMessage(APREFIX + RED + "Correct usage /pk resetScores <map number>");
-					}
-				}
-
-				else {
-					p.sendMessage(APREFIX + RED + "Use /pk for help");
-				}
-			}
-		}
-		return true;
-	}
-
 /*
  * 	Events
  */
 	
 	@EventHandler
 	public void onDisconnect(PlayerQuitEvent e) {
-		if (Parkour.containsKey(e.getPlayer().getName())) {
-			Parkour.remove(e.getPlayer().getName());
+		if (ParkourContainer.containsKey(e.getPlayer().getName())) {
+			ParkourContainer.remove(e.getPlayer().getName());
 		}
 		if (rewardPlayersCooldown.containsKey(e.getPlayer().getName())) {
 			rewardPlayersCooldown.remove(e.getPlayer().getName());
@@ -839,7 +243,7 @@ public class Parkour extends JavaPlugin implements Listener {
 	public void onPlayerDmg(EntityDamageEvent e) {
 		if (e.getEntity() instanceof Player) {
 			Player p = (Player) e.getEntity();
-			if (Parkour.containsKey(p.getName()) && InvincibleWhileParkour) {
+			if (ParkourContainer.containsKey(p.getName()) && InvincibleWhileParkour) {
 				e.setCancelled(true);
 				p.setFireTicks(0);
 			}
@@ -945,8 +349,8 @@ public class Parkour extends JavaPlugin implements Listener {
 								}
 								
 	
-								if (Parkour.containsKey(p.getName())) {
-									Parkour.remove(p.getName());
+								if (ParkourContainer.containsKey(p.getName())) {
+									ParkourContainer.remove(p.getName());
 								}
 	
 								FileConfiguration cfg = getConfig();
@@ -977,9 +381,9 @@ public class Parkour extends JavaPlugin implements Listener {
 					}	
 					
 					if (s.getLine(1).equalsIgnoreCase("leave")) {
-						if (Parkour.containsKey(e.getPlayer().getName())) {
+						if (ParkourContainer.containsKey(e.getPlayer().getName())) {
 							e.getPlayer().sendMessage(AQUA + "You have left the parkour");
-							Parkour.remove(e.getPlayer().getName());
+							ParkourContainer.remove(e.getPlayer().getName());
 	
 						}
 						if (lobby != null) {
@@ -1093,14 +497,14 @@ public class Parkour extends JavaPlugin implements Listener {
 					}
 					
 					// Player starts course
-					if (!Parkour.containsKey(p.getName())) {
+					if (!ParkourContainer.containsKey(p.getName())) {
 
 						if (Checkpoint == 1) {
 							int Map = getCpMapNumber(cLoc.get(bLoc).toString());
 							
 							getServer().getPluginManager().callEvent(new ParkourStartEvent(p, Map, false));
 							
-							Parkour.put(
+							ParkourContainer.put(
 									p.getName(),
 									(getCpMapNumber(cLoc.get(bLoc).toString()) + "_"
 											+ Long.valueOf(System.currentTimeMillis()) + "_1"));
@@ -1123,16 +527,16 @@ public class Parkour extends JavaPlugin implements Listener {
 					} 
 					// Player is in a parkour and hits a checkpoint
 					else {
-						int PlCheckpoint = getPlCheckpoint(Parkour.get(p.getName()).toString());
+						int PlCheckpoint = getPlCheckpoint(ParkourContainer.get(p.getName()).toString());
 						int CpMap = getCpMapNumber(cLoc.get(bLoc).toString());
-						int Map = getPlMapNumber(Parkour.get(p.getName()).toString());
+						int Map = getPlMapNumber(ParkourContainer.get(p.getName()).toString());
 						int TotalCheckpoints = getCfgTotalCheckpoints(Map);
 						// Start new course
 						if (CpMap != Map) {
 							if (Checkpoint == 1) {
 								getServer().getPluginManager().callEvent(new ParkourStartEvent(p, Map, false));						
 								p.sendMessage(PREFIX + AQUA + "You have started your timer for " + GREEN + getMapName(CpMap));
-								Parkour.put(
+								ParkourContainer.put(
 										p.getName(),
 										(getCpMapNumber(cLoc.get(bLoc).toString()) + "_"
 												+ Long.valueOf(System.currentTimeMillis()) + "_1"));
@@ -1199,8 +603,8 @@ public class Parkour extends JavaPlugin implements Listener {
 								}
 								
 								long totalTime = System.currentTimeMillis()
-										- Long.valueOf(getPlTime(Parkour.get(p.getName())));
-								Parkour.remove(p.getName());
+										- Long.valueOf(getPlTime(ParkourContainer.get(p.getName())));
+								ParkourContainer.remove(p.getName());
 								
 								
 								if (!Records.containsKey(Map + ":" + p.getName())) {
@@ -1298,7 +702,7 @@ public class Parkour extends JavaPlugin implements Listener {
 
 								setPlCheckpoint(p.getName(), Checkpoint);
 								p.sendMessage(PREFIX + AQUA + "Checkpoint " + (Checkpoint - 1) + "/" + (TotalCheckpoints - 2));
-								getServer().getPluginManager().callEvent(new ParkourCheckpointEvent(p, Map, (Checkpoint-1), System.currentTimeMillis() - getPlTime(Parkour.get(p.getName()))));
+								getServer().getPluginManager().callEvent(new ParkourCheckpointEvent(p, Map, (Checkpoint-1), System.currentTimeMillis() - getPlTime(ParkourContainer.get(p.getName()))));
 
 							} else if (Checkpoint <= PlCheckpoint) {
 								p.sendMessage(PREFIX + RED + "You already reached this checkpoint!");
@@ -1311,8 +715,8 @@ public class Parkour extends JavaPlugin implements Listener {
 					}
 				}
 			}
-			if (Parkour.containsKey(p.getName())) {
-				int Map = getPlMapNumber(Parkour.get(p.getName()).toString());
+			if (ParkourContainer.containsKey(p.getName())) {
+				int Map = getPlMapNumber(ParkourContainer.get(p.getName()).toString());
 				if ((e.getTo().getBlock().getType() == Material.WATER || e.getTo().getBlock().getType() == Material.STATIONARY_WATER)) {
 					if (getConfig().getBoolean("Parkour.map" + Map + ".waterrespawn"))
 						teleportLastCheckpoint(e.getPlayer());
@@ -1330,12 +734,12 @@ public class Parkour extends JavaPlugin implements Listener {
  * 	Functions
  */
 	
-	private void teleportLastCheckpoint(Player p) {
+	public void teleportLastCheckpoint(Player p) {
 		FileConfiguration cfg = getConfig();
 		Location lastCheckpoint = null;
 
-		int MapNumber = getPlMapNumber(Parkour.get(p.getName()));
-		int PlCheckpoint = getPlCheckpoint(Parkour.get(p.getName()));
+		int MapNumber = getPlMapNumber(ParkourContainer.get(p.getName()));
+		int PlCheckpoint = getPlCheckpoint(ParkourContainer.get(p.getName()));
 
 		if (PlCheckpoint == 1 || !LastCheckpointTeleport) // Teleport to map spawn
 		{
@@ -1373,17 +777,17 @@ public class Parkour extends JavaPlugin implements Listener {
 	}
 
 	private void setPlCheckpoint(String p, int Cp) {
-		String HashTableSrc = Parkour.get(p);
+		String HashTableSrc = ParkourContainer.get(p);
 		String[] Splitter = HashTableSrc.split("_");
 		String CpFinal = Splitter[0] + "_" + Splitter[1] + "_" + Cp;
-		Parkour.put(p, CpFinal);
+		ParkourContainer.put(p, CpFinal);
 	}
 
 	private void setPlTime(String p, Long Time) {
-		String HashTableSrc = Parkour.get(p);
+		String HashTableSrc = ParkourContainer.get(p);
 		String[] Splitter = HashTableSrc.split("_");
 		String TimeFinal = Splitter[0] + "_" + Time + "_" + Splitter[2];
-		Parkour.put(p, TimeFinal);
+		ParkourContainer.put(p, TimeFinal);
 	}
 
 	private Long getPlTime(String HashTable) {
@@ -1416,7 +820,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		return CpMap;
 	}
 
-	private int getCfgTotalCheckpoints(int mapNumber) {
+	public int getCfgTotalCheckpoints(int mapNumber) {
 		return getConfig().getInt("Parkour.map" + mapNumber + ".numberCp");
 	}
 
@@ -1428,7 +832,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		}
 	}
 
-	private boolean isNumber(String number) {
+	public boolean isNumber(String number) {
 		try {
 			Integer.parseInt(number);
 			return true;
@@ -1437,7 +841,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		}
 	}
 
-	private void intCheckpointsLoc() {
+	public void intCheckpointsLoc() {
 		cLoc.clear();
 		FileConfiguration cfg = getConfig();
 		for (int mapNumber : maps) {
@@ -1452,7 +856,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		}
 	}
 
-	private void intMaps() {
+	public void intMaps() {
 		maps.clear();
 		String mapList = getConfig().getConfigurationSection("Parkour").getKeys(false).toString().replaceAll("\\s", "")
 				.replace("[", "").replace("]", "");
@@ -1465,7 +869,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		Collections.sort(maps);
 	}
 
-	private void loadToggleMap() {
+	public void loadToggleMap() {
 		toggleParkour.clear();
 		for (int mapNumber : maps) {
 			if (getConfig().contains("Parkour.map" + mapNumber + ".toggle")) {
@@ -1525,7 +929,7 @@ public class Parkour extends JavaPlugin implements Listener {
 
 	}
 
-	private void loadLobby() {
+	public void loadLobby() {
 		FileConfiguration cfg = getConfig();
 
 		if (cfg.contains("Lobby")) {
@@ -1582,12 +986,12 @@ public class Parkour extends JavaPlugin implements Listener {
 		}.runTaskTimer(this, 0L, 2L);
 	}
 
-	private int maxMapNumber() {
+	public int maxMapNumber() {
 		return getConfig().getInt("Parkour.mapsnumber");
 	}
 	
 
-	private void saveScore() {
+	public void saveScore() {
 		try {
 			ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream((path))));
 			oos.writeObject((Object) Records);
@@ -1598,7 +1002,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		}
 	}
 
-	private void loadScore() {
+	public void loadScore() {
 		try {
 			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(path)));
 			Records.clear();
@@ -1611,7 +1015,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		}
 	}
 
-	private int toInt(String msg) {
+	public int toInt(String msg) {
 		return Integer.parseInt(msg);
 	}
 
@@ -1717,7 +1121,7 @@ public class Parkour extends JavaPlugin implements Listener {
 /*
  *  Public API
  */
-	
+
 	/**
 	 * Returns all Records on the given Map - <Playername, Time>
 	 * 
@@ -1856,5 +1260,21 @@ public class Parkour extends JavaPlugin implements Listener {
 				return i; }
 		}
 		return 0;
+	}
+	
+	public String getPrefix(){
+		return PREFIX;
+	}
+	
+	public String getAPrefix(){
+		return APREFIX;
+	}
+	
+	public ArrayList<Integer> getMaps(){
+		return maps;
+	}
+	
+	public HashMap<String, String> getParkourContainer(){
+		return ParkourContainer;
 	}
 }

@@ -5,6 +5,6 @@ author: Isklar
 depend: [Vault]
 main: me.isklar.cbparkour.Parkour
 commands:
-  parkour:
+  pk:
     aliases: [pk, cbparkour]
     description: Main command.
