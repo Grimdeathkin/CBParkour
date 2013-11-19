@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>CBParkour</groupId>
   <artifactId>CBParkour</artifactId>
-  <version>1.6</version>
+  <version>1.6.0</version>
   <name>CBParkour</name>
   <description>Parkour plugin for CB</description>
           <repositories>
@@ -33,7 +33,7 @@
                         <resource>
                                 <targetPath>.</targetPath>
                                 <filtering>true</filtering>
-                                <directory>${basedir}/src/</directory>
+                                <directory>${basedir}/</directory>
                                 <includes>
                                         <include>plugin.yml</include>
                                 </includes>
