@@ -1,5 +1,5 @@
 name: CBParkour
-version: 1.6
+version: "${project.version}"
 description: CB's parkour plugin
 author: Isklar
 depend: [Vault]
