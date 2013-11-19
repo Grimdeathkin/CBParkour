@@ -12,28 +12,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import me.isklar.cbparkour.ParkourCheckpointEvent;
-import me.isklar.cbparkour.ParkourFinishEvent;
-import me.isklar.cbparkour.ParkourStartEvent;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Sign;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -59,7 +52,7 @@ public class Parkour extends JavaPlugin implements Listener {
 	boolean vault;
 	
 	// Used for parkour creation
-	ArrayList<Location> newMapCheckpoints = new ArrayList<Location>();
+	ArrayList<Location> newMapCheckpoints = new ArrayList<>();
 	boolean newMap = false;
 	public String newMapPlayerEditor = "";
 	int CheckpointNumber = 0;
@@ -82,13 +75,13 @@ public class Parkour extends JavaPlugin implements Listener {
 
 	// Used for player parkour management
 	Location lobby = null;
-	public ArrayList<Integer> maps = new ArrayList<Integer>();
-	public HashMap<Integer, Boolean> toggleParkour = new HashMap<Integer, Boolean>(); // Parkour active or not
-	HashMap<Location, String> cLoc = new HashMap<Location, String>(); // HashMap infos> Location : mapNumber_Checkpoint
-	public HashMap<String, String> ParkourContainer = new HashMap<String, String>(); // HashMap infos> playerName :
+	public ArrayList<Integer> maps = new ArrayList<>();
+	public HashMap<Integer, Boolean> toggleParkour = new HashMap<>(); // Parkour active or not
+	HashMap<Location, String> cLoc = new HashMap<>(); // HashMap infos> Location : mapNumber_Checkpoint
+	public HashMap<String, String> ParkourContainer = new HashMap<>(); // HashMap infos> playerName :
 																		// mapNumber_parkourStartTime_Chekcpoint
-	HashMap<String, Long> Records = new HashMap<String, Long>(); // Map:Player, Time
-	HashMap<String, Long> rewardPlayersCooldown = new HashMap<String, Long>(); // HashMap infos> playerName :
+	HashMap<String, Long> Records = new HashMap<>(); // Map:Player, Time
+	HashMap<String, Long> rewardPlayersCooldown = new HashMap<>(); // HashMap infos> playerName :
 																				// LastRewardTime
 
 	// Used for saving/loading scores
@@ -127,6 +120,7 @@ public class Parkour extends JavaPlugin implements Listener {
  */
 	private static final Logger log = Logger.getLogger("Minecraft");
 	
+        @Override
 	public void onEnable() {
 		
 		LoadCfg();
@@ -148,7 +142,7 @@ public class Parkour extends JavaPlugin implements Listener {
 				scores.createNewFile();
 				saveScore();
 			} catch (IOException e) {
-				e.printStackTrace();
+				e.printStackTrace(System.out);
 			}
 		}
 
@@ -594,6 +588,7 @@ public class Parkour extends JavaPlugin implements Listener {
 										p.sendMessage(PREFIX + GOLD + "Map unlocked! - "+ GREEN + nextMapName);
 										final Player player = p;
 										getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+                                                                                        @Override
 											public void run() {
 												playJingle(player);
 											}
@@ -688,6 +683,7 @@ public class Parkour extends JavaPlugin implements Listener {
 								final String pl = p.getName();
 								if (lobby != null) {
 									getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+                                                                                @Override
 										public void run() {
 											getServer().getPlayer(pl).teleport(lobby);
 										}
@@ -824,18 +820,14 @@ public class Parkour extends JavaPlugin implements Listener {
 	}
 
 	private boolean mapExist(String MapNumber) {
-		if (getConfig().getInt("Parkour.map" + MapNumber + ".numberCp") != 0) {
-			return true;
-		} else {
-			return false;
-		}
+            return getConfig().getInt("Parkour.map" + MapNumber + ".numberCp") != 0;
 	}
 
 	public boolean isNumber(String number) {
 		try {
 			Integer.parseInt(number);
 			return true;
-		} catch (Exception e) {
+		} catch (NumberFormatException e) {
 			return false;
 		}
 	}
@@ -958,6 +950,7 @@ public class Parkour extends JavaPlugin implements Listener {
 private void playJingle(final Player player){
 		new BukkitRunnable(){
 		    int count = 0;
+                    @Override
 		    public void run(){
 		        if(count < 4){
 		        	switch (count){
@@ -993,25 +986,25 @@ private void playJingle(final Player player){
 
 	public void saveScore() {
 		try {
-			ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream((path))));
-			oos.writeObject((Object) Records);
-			oos.flush();
-			oos.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+                    try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream((path))))) {
+                        oos.writeObject((Object) Records);
+                        oos.flush();
+                    }
+		} catch (IOException e) {
+			e.printStackTrace(System.out);
 		}
 	}
 
 	public void loadScore() {
 		try {
-			ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(path)));
-			Records.clear();
-			@SuppressWarnings("unchecked")
-			HashMap<String, Long> scoreMap = (HashMap<String, Long>) ois.readObject();
-			Records = scoreMap;
-			ois.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+                    try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(path)))) {
+                        Records.clear();
+                        @SuppressWarnings("unchecked")
+                                HashMap<String, Long> scoreMap = (HashMap<String, Long>) ois.readObject();
+                        Records = scoreMap;
+                    }
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace(System.out);
 		}
 	}
 
@@ -1104,14 +1097,15 @@ private void playJingle(final Player player){
 	}
 
 	private <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
-		List<Map.Entry<K, V>> list = new LinkedList<Map.Entry<K, V>>(map.entrySet());
+		List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
 		Collections.sort(list, new Comparator<Map.Entry<K, V>>() {
+                        @Override
 			public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
 				return (o1.getValue()).compareTo(o2.getValue());
 			}
 		});
 
-		Map<K, V> result = new LinkedHashMap<K, V>();
+		Map<K, V> result = new LinkedHashMap<>();
 		for (Map.Entry<K, V> entry : list) {
 			result.put(entry.getKey(), entry.getValue());
 		}
@@ -1129,7 +1123,7 @@ private void playJingle(final Player player){
 	 * @return
 	 */
 	public Map<String, Long> getRecords(int map) {
-		Map<String, Long> records = new HashMap<String, Long>();
+		Map<String, Long> records = new HashMap<>();
 		for (String m : Records.keySet()) {
 			String[] s = m.split(":");
 			if (toInt(s[0]) == map) {
