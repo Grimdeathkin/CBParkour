@@ -251,7 +251,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		}
 
 		if (e.getPlayer().hasPermission("parkour.mapeditor")) {
-			// 15 char max par lines (on sign)
+			// 15 char max per lines (on sign)
 
 			if (e.getLine(0).equalsIgnoreCase("[cbpk]")) {
 				if (e.getLine(1).equalsIgnoreCase("leave")) {
@@ -1197,7 +1197,7 @@ private void playJingle(final Player player){
 	}
 
 	/**
-	 * Displays the highscores of a map to a player
+	 * Displays the high-scores of a map to a player
 	 * 
 	 * @param map
 	 * @param player
