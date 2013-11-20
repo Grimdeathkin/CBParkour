@@ -39,7 +39,7 @@ public class ParkourCommand implements CommandExecutor{
 	ChatColor ITALIC = ChatColor.ITALIC;			//\u00A7o
 	ChatColor RESET = ChatColor.RESET;				//\u00A7r
 		
-	private Parkour plugin;
+	private final Parkour plugin;
 	public ParkourCommand(Parkour plugin) {
 		this.plugin = plugin;
 	}
@@ -193,7 +193,6 @@ public class ParkourCommand implements CommandExecutor{
 						if (Parkour.permission.has(p, "parkour.use")) {
 							p.sendMessage(GOLD + "---------=[ " + D_AQUA + "Parkour Map List" + GOLD + " ]=---------");
 							p.sendMessage(GOLD + "-------=[ " + AQUA + "Enabled:" + GREEN + "■" +D_AQUA+ GRAY + " | " +AQUA+ "Disabled:" + GRAY + "■" + GOLD + " ]=-------");
-							boolean isToggled = false;
 							for (int i : plugin.maps) {
 								String mapNumber = "" + i;
 								
@@ -201,7 +200,7 @@ public class ParkourCommand implements CommandExecutor{
 									FileConfiguration cfg = plugin.getConfig();
 			
 									String mode = RED + "■";
-									isToggled = false;
+									boolean isToggled = false;
 									if (plugin.toggleParkour.get(i)) {
 										mode = GREEN + "■";
 										isToggled = true;

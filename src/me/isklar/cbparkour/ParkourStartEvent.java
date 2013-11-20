@@ -8,9 +8,9 @@ public class ParkourStartEvent extends Event
 {
 	private static final HandlerList handlers = new HandlerList();
 	
-	private Player player;
-	private int MapNumber;
-	private boolean restart;
+	private final Player player;
+	private final int MapNumber;
+	private final boolean restart;
 	
 	public ParkourStartEvent(Player player, int MapNumber, boolean restart) {
 		this.player = player;
@@ -30,6 +30,7 @@ public class ParkourStartEvent extends Event
 		return restart;
 	}
 	
+    @Override
 	public HandlerList getHandlers() {
 	    return handlers;
 	}

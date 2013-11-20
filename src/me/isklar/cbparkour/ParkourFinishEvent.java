@@ -8,10 +8,10 @@ public class ParkourFinishEvent extends Event
 {
 	private static final HandlerList handlers = new HandlerList();
 	
-	private Player player;
-	private int MapNumber;
-	private long time;
-	private boolean firstTime;
+	private final Player player;
+	private final int MapNumber;
+	private final long time;
+	private final boolean firstTime;
 	
 	public ParkourFinishEvent(Player player, int MapNumber, long time, boolean firstTime) {
 		this.player = player;
@@ -36,6 +36,7 @@ public class ParkourFinishEvent extends Event
 		return firstTime;
 	}
 	
+    @Override
 	public HandlerList getHandlers() {
 	    return handlers;
 	}

@@ -8,10 +8,10 @@ public class ParkourCheckpointEvent extends Event
 {
 	private static final HandlerList handlers = new HandlerList();
 	
-	private Player player;
-	private int MapNumber;
-	private int CheckpointNumber;
-	private long time;
+	private final Player player;
+	private final int MapNumber;
+	private final int CheckpointNumber;
+	private final long time;
 	
 	public ParkourCheckpointEvent(Player player, int MapNumber, int CheckpointNumber, long time) {
 		this.player = player;
@@ -36,6 +36,7 @@ public class ParkourCheckpointEvent extends Event
 		return time;
 	}
 	
+    @Override
 	public HandlerList getHandlers() {
 	    return handlers;
 	}
