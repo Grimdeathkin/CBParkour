@@ -43,7 +43,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 
-@SuppressWarnings("unused")
 public class Parkour extends JavaPlugin implements Listener {
 
 	// Vault initiation
@@ -450,15 +449,15 @@ public class Parkour extends JavaPlugin implements Listener {
 				|| ((int) e.getFrom().getY() != (int) e.getTo().getY())
 				|| ((int) e.getFrom().getZ() != (int) e.getTo().getZ())) {
 			if (e.getTo().getBlock().getType() == Material.STONE_PLATE) {
-				int x = (int) e.getTo().getBlock().getX();
-				int y = (int) e.getTo().getBlock().getY();
-				int z = (int) e.getTo().getBlock().getZ();
+				int x = e.getTo().getBlock().getX();
+				int y = e.getTo().getBlock().getY();
+				int z = e.getTo().getBlock().getZ();
 				Location bLoc = new Location(e.getTo().getWorld(), x, y, z);
 
 				if (cLoc.containsKey(bLoc)) {
 
-					int Checkpoint = getCheckpoint(cLoc.get(bLoc).toString());
-					int mapNumber = getCpMapNumber(cLoc.get(bLoc).toString());
+					int Checkpoint = getCheckpoint(cLoc.get(bLoc));
+					int mapNumber = getCpMapNumber(cLoc.get(bLoc));
 					
 					if (!permission.has(p, "parkour.use")) {
 						p.sendMessage(PREFIX + RED + "You don't have permission to do this parkour");
@@ -493,14 +492,14 @@ public class Parkour extends JavaPlugin implements Listener {
 					if (!ParkourContainer.containsKey(p.getName())) {
 
 						if (Checkpoint == 1) {
-							int Map = getCpMapNumber(cLoc.get(bLoc).toString());
+							int Map = getCpMapNumber(cLoc.get(bLoc));
 							
 							getServer().getPluginManager().callEvent(new ParkourStartEvent(p, Map, false));
 							
 							ParkourContainer.put(
 									p.getName(),
-									(getCpMapNumber(cLoc.get(bLoc).toString()) + "_"
-											+ Long.valueOf(System.currentTimeMillis()) + "_1"));
+									(getCpMapNumber(cLoc.get(bLoc)) + "_"
+											+ System.currentTimeMillis() + "_1"));
 							p.sendMessage(PREFIX + AQUA + "You have started your timer for " + GREEN + getMapName(Map));
 							
 							if (CheckpointEffect) {
@@ -520,9 +519,9 @@ public class Parkour extends JavaPlugin implements Listener {
 					} 
 					// Player is in a parkour and hits a checkpoint
 					else {
-						int PlCheckpoint = getPlCheckpoint(ParkourContainer.get(p.getName()).toString());
-						int CpMap = getCpMapNumber(cLoc.get(bLoc).toString());
-						int Map = getPlMapNumber(ParkourContainer.get(p.getName()).toString());
+						int PlCheckpoint = getPlCheckpoint(ParkourContainer.get(p.getName()));
+						int CpMap = getCpMapNumber(cLoc.get(bLoc));
+						int Map = getPlMapNumber(ParkourContainer.get(p.getName()));
 						int TotalCheckpoints = getCfgTotalCheckpoints(Map);
 						// Start new course
 						if (CpMap != Map) {
