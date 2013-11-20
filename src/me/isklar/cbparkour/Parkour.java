@@ -118,7 +118,7 @@ public class Parkour extends JavaPlugin implements Listener {
  * 	Setup
  */
 	private static final Logger log = Logger.getLogger("Minecraft");
-	
+
         @Override
 	public void onEnable() {
 		
@@ -530,8 +530,8 @@ public class Parkour extends JavaPlugin implements Listener {
 								p.sendMessage(PREFIX + AQUA + "You have started your timer for " + GREEN + getMapName(CpMap));
 								ParkourContainer.put(
 										p.getName(),
-										(getCpMapNumber(cLoc.get(bLoc).toString()) + "_"
-												+ Long.valueOf(System.currentTimeMillis()) + "_1"));
+										(getCpMapNumber(cLoc.get(bLoc)) + "_"
+												+ System.currentTimeMillis() + "_1"));
 								
 								if (CheckpointEffect) {
 									p.playEffect(bLoc, Effect.POTION_BREAK, 2);
@@ -567,7 +567,7 @@ public class Parkour extends JavaPlugin implements Listener {
 								}
 								getServer().getPluginManager().callEvent(new ParkourStartEvent(p, Map, true));
 								p.sendMessage(PREFIX + AQUA + "You have restarted your time for " +GREEN+ getMapName(Map));
-								setPlTime(p.getName(), Long.valueOf(System.currentTimeMillis()));
+								setPlTime(p.getName(), System.currentTimeMillis());
 								setPlCheckpoint(p.getName(), 1);
 
 							} 
@@ -596,7 +596,7 @@ public class Parkour extends JavaPlugin implements Listener {
 								}
 								
 								long totalTime = System.currentTimeMillis()
-										- Long.valueOf(getPlTime(ParkourContainer.get(p.getName())));
+										- getPlTime(ParkourContainer.get(p.getName()));
 								ParkourContainer.remove(p.getName());
 								
 								
@@ -625,7 +625,7 @@ public class Parkour extends JavaPlugin implements Listener {
 															.replaceAll("MAPNAME", getMapName(Map)));
 										}
 									}
-									giveReward(p, Map);
+									giveReward(p);
 
 								} else {
 									Map<String, Long> records = getRecords(Map);
@@ -655,7 +655,7 @@ public class Parkour extends JavaPlugin implements Listener {
 											}
 										}
 												
-										giveReward(p, Map);
+										giveReward(p);
 
 									} else {
 										String username;
@@ -670,7 +670,7 @@ public class Parkour extends JavaPlugin implements Listener {
 										}
 										p.sendMessage(PREFIX + AQUA + "Global record: " +GRAY+ username +AQUA+ " | " +GRAY+ convertTime(topTime));
 										if (!rewardIfBetterScore) {
-											giveReward(p, Map);
+											giveReward(p);
 										}
 									}
 									
@@ -710,7 +710,7 @@ public class Parkour extends JavaPlugin implements Listener {
 				}
 			}
 			if (ParkourContainer.containsKey(p.getName())) {
-				int Map = getPlMapNumber(ParkourContainer.get(p.getName()).toString());
+				int Map = getPlMapNumber(ParkourContainer.get(p.getName()));
 				if ((e.getTo().getBlock().getType() == Material.WATER || e.getTo().getBlock().getType() == Material.STATIONARY_WATER)) {
 					if (getConfig().getBoolean("Parkour.map" + Map + ".waterrespawn"))
 						teleportLastCheckpoint(e.getPlayer());
@@ -730,7 +730,7 @@ public class Parkour extends JavaPlugin implements Listener {
 	
 	public void teleportLastCheckpoint(Player p) {
 		FileConfiguration cfg = getConfig();
-		Location lastCheckpoint = null;
+		Location lastCheckpoint;
 
 		int MapNumber = getPlMapNumber(ParkourContainer.get(p.getName()));
 		int PlCheckpoint = getPlCheckpoint(ParkourContainer.get(p.getName()));
@@ -786,32 +786,27 @@ public class Parkour extends JavaPlugin implements Listener {
 
 	private Long getPlTime(String HashTable) {
 		String[] Splitter = HashTable.split("_");
-		Long Time = Long.valueOf(Splitter[1]);
-		return Time;
+        return Long.valueOf(Splitter[1]);
 	}
 
 	private int getPlCheckpoint(String HashTable) {
 		String[] Splitter = HashTable.split("_");
-		int Cp = Integer.parseInt(Splitter[2]);
-		return Cp;
+        return Integer.parseInt(Splitter[2]);
 	}
 
 	private int getPlMapNumber(String HashTable) {
 		String[] Splitter = HashTable.split("_");
-		int mapNumber = Integer.parseInt(Splitter[0]);
-		return mapNumber;
+        return Integer.parseInt(Splitter[0]);
 	}
 
 	private int getCpMapNumber(String HashTable) {
 		String[] Splitter = HashTable.split("_");
-		int CpMap = Integer.parseInt(Splitter[0]);
-		return CpMap;
+        return Integer.parseInt(Splitter[0]);
 	}
 
 	private int getCheckpoint(String HashTable) {
 		String[] Splitter = HashTable.split("_");
-		int CpMap = Integer.parseInt(Splitter[1]);
-		return CpMap;
+        return Integer.parseInt(Splitter[1]);
 	}
 
 	public int getCfgTotalCheckpoints(int mapNumber) {
@@ -986,7 +981,7 @@ private void playJingle(final Player player){
 	public void saveScore() {
 		try {
                     try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream((path))))) {
-                        oos.writeObject((Object) Records);
+                        oos.writeObject(Records);
                         oos.flush();
                     }
 		} catch (IOException e) {
@@ -998,9 +993,7 @@ private void playJingle(final Player player){
 		try {
                     try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(path)))) {
                         Records.clear();
-                        @SuppressWarnings("unchecked")
-                                HashMap<String, Long> scoreMap = (HashMap<String, Long>) ois.readObject();
-                        Records = scoreMap;
+                        Records = (HashMap<String, Long>) ois.readObject();
                     }
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace(System.out);
@@ -1015,7 +1008,7 @@ private void playJingle(final Player player){
 		System.out.println("[ CBParkourDebug ] " + msg);
 	}
 
-	private void giveReward(Player p, int mapNumber) {
+	private void giveReward(Player p) {
 		if (rewardEnable) {
 			FileConfiguration cfg = getConfig();
 
@@ -1119,6 +1112,7 @@ private void playJingle(final Player player){
 	 * Returns all Records on the given Map - <Playername, Time>
 	 * 
 	 * @param map
+     *
 	 * @return
 	 */
 	public Map<String, Long> getRecords(int map) {
@@ -1166,34 +1160,6 @@ private void playJingle(final Player player){
 
 		return hoursS + "h : " + minsS + "m : " + secsS + "s : " + ms2 + "ms";
 	}
-	public String convertTimeShort(long ms) {
-		int ms1 = (int) ms;
-		int secs = ms1 / 1000;
-		int mins = secs / 60;
-		int hours = mins / 60;
-
-		hours %= 24;
-		secs %= 60;
-		mins %= 60;
-		ms1 %= 1000;
-
-		String hoursS = Integer.toString(hours);
-		String secsS = Integer.toString(secs);
-		String minsS = Integer.toString(mins);
-		String ms2 = Integer.toString(ms1);
-
-		if (secs < 10) {
-			secsS = "0" + secsS;
-		}
-		/*if (mins < 10) {
-			minsS = "0" + minsS;
-		}*/
-		/*if (hours < 10) {
-			hoursS = hoursS;
-		}*/
-
-		return hoursS + "h:" + minsS + "m:" + secsS + "s:" + ms2 + "ms";
-	}
 
 	/**
 	 * Displays the high-scores of a map to a player
@@ -1208,7 +1174,7 @@ private void playJingle(final Player player){
 		int counter = 1;
 		for (String p : records.keySet()) {
 			if (p.equals(player.getName())) inTopTen = true;
-			player.sendMessage(WHITE + "#" +AQUA + counter + " " + p + " - " + convertTime(records.get(p).longValue()));
+			player.sendMessage(WHITE + "#" +AQUA + counter + " " + p + " - " + convertTime(records.get(p)));
 			counter++;
 			if (counter == 11) break;
 		}
@@ -1216,7 +1182,7 @@ private void playJingle(final Player player){
 			player.sendMessage(GREEN + "-- Your time --");
 
 			player.sendMessage(WHITE + "#" +AQUA + "x " + player.getName() + " - "
-					+ convertTime(records.get(player.getName()).longValue()));
+					+ convertTime(records.get(player.getName())));
 		}
 	}
 
