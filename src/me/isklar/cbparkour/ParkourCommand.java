@@ -90,7 +90,7 @@ public class ParkourCommand implements CommandExecutor{
 	 */
 					if (args[0].equalsIgnoreCase("test")) {
 						if(p.getName().equalsIgnoreCase("Isklar")){
-							
+
 						}
 					}
 					
