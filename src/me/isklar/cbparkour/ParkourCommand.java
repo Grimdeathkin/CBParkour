@@ -336,7 +336,7 @@ public class ParkourCommand implements CommandExecutor{
 						if (args.length == 2) {
 							if (plugin.isNumber(args[1])) {
 								if (plugin.maps.contains(plugin.toInt(args[1]))) {
-									String mapNumber = args[1].toString();
+									String mapNumber = args[1];
 									plugin.getConfig().getConfigurationSection("Parkour").set("map" + mapNumber, null);
 									plugin.getConfig().set("Parkour.mapsnumber",
 											Integer.valueOf(plugin.getConfig().getInt("Parkour.mapsnumber") - 1));
@@ -428,7 +428,7 @@ public class ParkourCommand implements CommandExecutor{
 							if (plugin.isNumber(args[1])) {
 								if (plugin.maps.contains(plugin.toInt(args[1]))) {
 									FileConfiguration cfg = plugin.getConfig();
-									String mapNumber = args[1].toString();
+									String mapNumber = args[1];
 									cfg.set("Parkour.map" + mapNumber + ".spawn.posX", p.getLocation().getX());
 									cfg.set("Parkour.map" + mapNumber + ".spawn.posY", p.getLocation().getY());
 									cfg.set("Parkour.map" + mapNumber + ".spawn.posZ", p.getLocation().getZ());
@@ -454,7 +454,7 @@ public class ParkourCommand implements CommandExecutor{
 							if (plugin.isNumber(args[1])) {
 								if (plugin.maps.contains(plugin.toInt(args[1]))) {
 									FileConfiguration cfg = plugin.getConfig();
-									String mapNumber = args[1].toString();
+									String mapNumber = args[1];
 									boolean isActive = !cfg.getBoolean("Parkour.map" + mapNumber + ".waterrespawn");
 									cfg.set("Parkour.map" + mapNumber + ".waterrespawn", isActive);
 									plugin.saveConfig();
@@ -478,7 +478,7 @@ public class ParkourCommand implements CommandExecutor{
 							if (plugin.isNumber(args[1])) {
 								if (plugin.maps.contains(plugin.toInt(args[1]))) {
 									FileConfiguration cfg = plugin.getConfig();
-									String mapNumber = args[1].toString();
+									String mapNumber = args[1];
 									boolean isActive = !cfg.getBoolean("Parkour.map" + mapNumber + ".lavarespawn");
 									cfg.set("Parkour.map" + mapNumber + ".lavarespawn", isActive);
 									plugin.saveConfig();

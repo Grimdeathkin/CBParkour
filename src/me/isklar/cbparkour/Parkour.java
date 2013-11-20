@@ -56,7 +56,7 @@ public class Parkour extends JavaPlugin implements Listener {
 	public String newMapPlayerEditor = "";
 	int CheckpointNumber = 0;
 	int NewMapNumber = 0;
-	String newMapName = null;
+    String newMapName = null;
 	int newMapPrevious = 0;
 	int newMapNext = 0;
 
