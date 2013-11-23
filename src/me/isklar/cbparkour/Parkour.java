@@ -393,8 +393,8 @@ public class Parkour extends JavaPlugin implements Listener {
 							}
 						}
 					}
+                    e.setCancelled(true);
 				}
-				e.setCancelled(true);
 			}
 		}
 		/* Map Creation */
