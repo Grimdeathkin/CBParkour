@@ -989,6 +989,7 @@ private void playJingle(final Player player){
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void loadScore() {
 		try {
                     try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(path)))) {
