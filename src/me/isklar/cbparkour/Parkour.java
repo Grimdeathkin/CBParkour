@@ -977,13 +977,21 @@ private void playJingle(final Player player){
 		return getConfig().getInt("Parkour.mapsnumber");
 	}
 	
-
+/*
+ *  Player Functions
+ */
+	private void getUnlocks(Player p){
+		// Get permissions
+		// or get using records
+		
+	}
+	
 	public void saveScore() {
 		try {
-                    try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream((path))))) {
-                        oos.writeObject(Records);
-                        oos.flush();
-                    }
+            try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream((path))))) {
+                oos.writeObject(Records);
+                oos.flush();
+            }
 		} catch (IOException e) {
 			e.printStackTrace(System.out);
 		}
@@ -992,10 +1000,10 @@ private void playJingle(final Player player){
 	@SuppressWarnings("unchecked")
 	public void loadScore() {
 		try {
-                    try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(path)))) {
-                        Records.clear();
-                        Records = (HashMap<String, Long>) ois.readObject();
-                    }
+            try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(path)))) {
+                Records.clear();
+                Records = (HashMap<String, Long>) ois.readObject();
+            }
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace(System.out);
 		}
