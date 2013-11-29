@@ -286,7 +286,7 @@ public class ParkourCommand implements CommandExecutor{
 							p.sendMessage(APREFIX + RED + "MapEditor is not ON");
 						} else {
 							if (p.getName().equalsIgnoreCase(plugin.newMapPlayerEditor)) {
-								if (plugin.CheckpointNumber >= 3) {
+								if (plugin.CheckpointNumber >= 2) {
 									p.sendMessage(APREFIX + AQUA + plugin.newMapName + " (" +GREEN+ "map "  + plugin.NewMapNumber +AQUA + ") created" + GRAY + " | MapEditor: " + RED + "OFF");
 									p.sendMessage(APREFIX + AQUA + "Remember to set a spawn using /pk setspawn <map number>");
 									FileConfiguration cfg = plugin.getConfig();
