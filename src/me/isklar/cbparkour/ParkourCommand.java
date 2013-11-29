@@ -188,7 +188,7 @@ public class ParkourCommand implements CommandExecutor{
 							if (plugin.ParkourContainer.containsKey(p.getName())) {
 								plugin.teleportLastCheckpoint(p);
 							} else {
-								p.sendMessage(PREFIX + RED + "You are not in a parkour");
+								p.sendMessage(PREFIX + RED + "You are not in a parkour, use /pk lobby to return to the lobby");
 							}
 						}
 					}
