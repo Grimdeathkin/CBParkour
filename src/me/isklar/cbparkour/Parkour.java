@@ -499,7 +499,7 @@ public class Parkour extends JavaPlugin implements Listener {
 
 						if (Checkpoint == 1) {
 							int Map = getCpMapNumber(cLoc.get(bLoc));
-							
+							p.setGameMode(GameMode.ADVENTURE);
 							getServer().getPluginManager().callEvent(new ParkourStartEvent(p, Map, false));
 							
 							ParkourContainer.put(
@@ -560,6 +560,7 @@ public class Parkour extends JavaPlugin implements Listener {
 						else {
 
 							if (Checkpoint == 1) {
+								p.setGameMode(GameMode.ADVENTURE);
 								if (CheckpointEffect) {
 									p.playEffect(bLoc, Effect.POTION_BREAK, 2);
 								}
