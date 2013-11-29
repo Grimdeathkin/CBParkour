@@ -60,28 +60,28 @@ public class ParkourCommand implements CommandExecutor{
 					p.sendMessage(GOLD + "---------=[ " + D_AQUA + "Citi-Build Parkour Commands" + GOLD + " ]=---------");
 
 					if (Parkour.permission.has(p, "parkour.mapeditor") || Parkour.permission.has(p, "parkour.admin")) {
-						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " create <mapName> <previous mapnum> <next mapnum>" + WHITE + " - Create a new map");
+						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " create <mapName> <previous mapID> <next mapID>" + WHITE + " - Create a new map");
 						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " done" + WHITE + " - Confirm and create the map");
-						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " delete <mapNumber>" + WHITE + " - Delete a map");
-						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changeMapName <mapNumber> <newMapName>" + WHITE + " - Change the map name");
-						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changePrevious <mapNumber> <previous mapnum>" + WHITE + " - Change the previous map");
-						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changePrevious <mapNumber> <next mapnum>" + WHITE + " - Change the next map");
-						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " setSpawn <mapNumber>" + WHITE + " - Set the map spawn");
-						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " toggleWater <mapNumber>" + WHITE + " - Toggles Water repsawn on this Map");
-						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " toggleLava <mapNumber>" + WHITE + " - Toggles Lava Respawn on this Map");
+						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " delete <mapID>" + WHITE + " - Delete a map");
+						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changeMapName <mapID> <newMapName>" + WHITE + " - Change the map name");
+						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changePrevious <mapID> <previous mapID>" + WHITE + " - Change the previous map");
+						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changePrevious <mapID> <next mapID>" + WHITE + " - Change the next map");
+						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " setSpawn <mapID>" + WHITE + " - Set the map spawn");
+						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " toggleWater <mapID>" + WHITE + " - Toggles Water repsawn on this Map");
+						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " toggleLava <mapID>" + WHITE + " - Toggles Lava Respawn on this Map");
 					}
 					if (Parkour.permission.has(p, "parkour.admin")) {
-						p.sendMessage(APREFIX + D_GREEN + "/" + CommandLabel + " toggle <mapNumber>" + WHITE + " - toggle ON/OFF a parkour");
+						p.sendMessage(APREFIX + D_GREEN + "/" + CommandLabel + " toggle <mapID>" + WHITE + " - toggle ON/OFF a parkour");
 						p.sendMessage(APREFIX + D_GREEN + "/" + CommandLabel + " setLobby" + WHITE + " - Set the lobby spawn");
-						p.sendMessage(APREFIX + D_GREEN + "/" + CommandLabel + " resetScores <mapNumber>" + WHITE + "- Reset All scores for a map");
-						p.sendMessage(APREFIX + D_GREEN + "/" + CommandLabel + " pReset <Player> [<mapNumber> / all]" + WHITE + " - Reset scores for a player");
+						p.sendMessage(APREFIX + D_GREEN + "/" + CommandLabel + " resetScores <mapID>" + WHITE + "- Reset All scores for a map");
+						p.sendMessage(APREFIX + D_GREEN + "/" + CommandLabel + " pReset <Player> <mapID> | all" + WHITE + " - Reset scores for a player");
 					}
-					p.sendMessage(PREFIX + GRAY + "/" + CommandLabel + " join <mapNumber>" + WHITE + " - Join a map");
+					p.sendMessage(PREFIX + GRAY + "/" + CommandLabel + " join <mapID>" + WHITE + " - Join a map");
 					p.sendMessage(PREFIX + GRAY + "/" + CommandLabel + " leave" + WHITE + " - Leave the map");
 					p.sendMessage(PREFIX + GRAY + "/" + CommandLabel + " lobby" + WHITE + " - Return to the lobby");
 					p.sendMessage(PREFIX + GRAY + "/" + CommandLabel + " cp | checkpoint" + WHITE + " - Teleport to your last checkpoint");
 					p.sendMessage(PREFIX + GRAY + "/" + CommandLabel + " maplist" + WHITE + " - Show all the maps");
-					p.sendMessage(PREFIX + GRAY + "/" + CommandLabel + " best <MapNumber>" + WHITE + " - Show the best score of a map");
+					p.sendMessage(PREFIX + GRAY + "/" + CommandLabel + " best <MapID>" + WHITE + " - Show the best score of a map");
 				} 
 				
 				else {
@@ -138,13 +138,13 @@ public class ParkourCommand implements CommandExecutor{
 										}
 										
 									} else {
-										p.sendMessage(PREFIX + RED + args[1] +" is not a valid map number");
+										p.sendMessage(PREFIX + RED + args[1] +" is not a valid map ID");
 									}
 								} else {
 									p.sendMessage(PREFIX + RED + args[1] +" is not a valid number");
 								}
 							} else {
-								p.sendMessage(PREFIX + "You must specify the map number");
+								p.sendMessage(PREFIX + "You must specify the map ID");
 							}
 						}
 						else {
@@ -240,10 +240,10 @@ public class ParkourCommand implements CommandExecutor{
 									if (plugin.maps.contains(plugin.toInt(args[1]))) {
 										plugin.displayHighscores(plugin.toInt(args[1]), p);
 									} else {
-										p.sendMessage(PREFIX + RED + args[1] +" is not a valid map number");
+										p.sendMessage(PREFIX + RED + args[1] +" is not a valid map ID");
 									}
 								} else {
-									p.sendMessage(PREFIX + RED + args[1] +" is not a valid number");
+									p.sendMessage(PREFIX + RED + args[1] +" is not a valid ID");
 								}
 							} else {
 								p.sendMessage(PREFIX + RED + "You didn't specify the map");
@@ -274,13 +274,13 @@ public class ParkourCommand implements CommandExecutor{
 										p.sendMessage(APREFIX + RED + "A player is already using the MapEditor (" + plugin.newMapPlayerEditor + ")");
 									}
 								} else {
-									p.sendMessage(APREFIX + RED + args[2] + " or " + args[3] + " is not a valid number");
+									p.sendMessage(APREFIX + RED + args[2] + " or " + args[3] + " is not a valid ID");
 								}
 							} else {
-								p.sendMessage(APREFIX + RED + "Correct usage : /pk create <map name> <previous map> <next mapNum>");
+								p.sendMessage(APREFIX + RED + "Correct usage : /pk create <map name> <previous map> <next mapID>");
 							}
 						} else {
-							p.sendMessage(APREFIX + RED + "Correct usage : /pk create <map name> <previous mapNum> <next mapNum>");
+							p.sendMessage(APREFIX + RED + "Correct usage : /pk create <map name> <previous mapID> <next mapID>");
 						}
 					}
 	/* Done */			
@@ -292,7 +292,7 @@ public class ParkourCommand implements CommandExecutor{
 							if (p.getName().equalsIgnoreCase(plugin.newMapPlayerEditor)) {
 								if (plugin.CheckpointNumber >= 2) {
 									p.sendMessage(APREFIX + AQUA + plugin.newMapName + " (" +GREEN+ "map "  + plugin.NewMapNumber +AQUA + ") created" + GRAY + " | MapEditor: " + RED + "OFF");
-									p.sendMessage(APREFIX + AQUA + "Remember to set a spawn using /pk setspawn <map number>");
+									p.sendMessage(APREFIX + AQUA + "Remember to set a spawn using /pk setspawn <map ID>");
 									FileConfiguration cfg = plugin.getConfig();
 									cfg.set("Parkour.mapsnumber", (plugin.getConfig().getInt("Parkour.mapsnumber")) + 1);
 									cfg.set("Parkour.map" + plugin.NewMapNumber + ".world", p.getWorld().getName());
@@ -359,13 +359,13 @@ public class ParkourCommand implements CommandExecutor{
 									plugin.intMaps();
 									plugin.loadToggleMap();
 								} else {
-									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map number");
+									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map ID");
 								}
 							} else {
 								p.sendMessage(APREFIX + RED + args[1] + " is not a valid number");
 							}
 						} else {
-							p.sendMessage(APREFIX + RED + "You must specify the map number");
+							p.sendMessage(APREFIX + RED + "You must specify the map ID");
 						}
 					}
 	/* ChangeMapName */				
@@ -378,13 +378,13 @@ public class ParkourCommand implements CommandExecutor{
 									plugin.saveConfig();
 									p.sendMessage(APREFIX + AQUA + "Map name set to '" + AQUA + args[2] + "' for map " + GREEN + args[1]);
 								} else {
-									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map number");
+									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map ID");
 								}
 							} else {
 								p.sendMessage(APREFIX + RED + args[1] + " is not a valid number");
 							}
 						} else {
-							p.sendMessage(APREFIX + RED + "Correct usage : /pk changeMapName <map number> <new map name>");
+							p.sendMessage(APREFIX + RED + "Correct usage : /pk changeMapName <map ID> <new map name>");
 						}
 					}
 	/* ChangeMapPrevious */
@@ -397,13 +397,13 @@ public class ParkourCommand implements CommandExecutor{
 									plugin.saveConfig();
 									p.sendMessage(APREFIX + AQUA + "Previous map set to '" + AQUA + args[2] + "' for map " + GREEN + args[1]);
 								} else {
-									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map number");
+									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map ID");
 								}
 							} else {
 								p.sendMessage(APREFIX + RED + args[1] + " or " + args[2] + " is not a valid number");
 							}
 						} else {
-							p.sendMessage(APREFIX + RED + "Correct usage /pk changePrevious <map number> <previous map>");
+							p.sendMessage(APREFIX + RED + "Correct usage /pk changePrevious <map ID> <previous map>");
 						}
 					}
 	/* ChangeMapNext */
@@ -416,13 +416,13 @@ public class ParkourCommand implements CommandExecutor{
 									plugin.saveConfig();
 									p.sendMessage(APREFIX + AQUA + "Next map set to '" + AQUA + args[2] + "' for map " + GREEN + args[1]);
 								} else {
-									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map number");
+									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map ID");
 								}
 							} else {
 								p.sendMessage(APREFIX + RED + args[1] + " or " + args[2] + " is not a valid number");
 							}
 						} else {
-							p.sendMessage(APREFIX + RED + "Correct usage /pk changePrevious <map number> <next mapnumber>");
+							p.sendMessage(APREFIX + RED + "Correct usage /pk changePrevious <map ID> <new ID>");
 						}
 					}
 	/* SetSpawn */				
@@ -441,14 +441,14 @@ public class ParkourCommand implements CommandExecutor{
 									plugin.saveConfig();
 									p.sendMessage(APREFIX + AQUA + "Parkour spawn set for map " + GREEN + mapNumber);
 								} else {
-									p.sendMessage(APREFIX + RED + "It is not a valid map number");
+									p.sendMessage(APREFIX + RED + "It is not a valid map ID");
 								}
 							} else {
 								p.sendMessage(APREFIX + RED + args[1] + " is not a valid number");
 							}
 
 						} else {
-							p.sendMessage(APREFIX + RED + "Correct usage /pk setspawn <map number>");
+							p.sendMessage(APREFIX + RED + "Correct usage /pk setspawn <map ID>");
 						}
 					} 
 	/* ToggleWater */				
@@ -465,14 +465,14 @@ public class ParkourCommand implements CommandExecutor{
 									if (isActive) p.sendMessage(APREFIX + AQUA + "Waterrespawn is now "+GREEN +"ON" + AQUA + " for map " +GREEN + mapNumber);
 									else p.sendMessage(APREFIX + AQUA + "Waterrespawn is now "+RED +"OFF" +AQUA + " for map " +GREEN + mapNumber);
 								} else {
-									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map number");
+									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map ID");
 								}
 							} else {
 								p.sendMessage(APREFIX + RED + args[1] + " is not a valid number");
 							}
 
 						} else {
-							p.sendMessage(APREFIX + RED + "Correct usage /pk toggleWater <map number>");
+							p.sendMessage(APREFIX + RED + "Correct usage /pk toggleWater <map ID>");
 						}
 					} 
 	/* ToggleLava */			
@@ -489,14 +489,14 @@ public class ParkourCommand implements CommandExecutor{
 									if (isActive) p.sendMessage(APREFIX + AQUA + "Lavarespawn is now "+GREEN +"ON" + AQUA + " for map " +GREEN + mapNumber);
 									else p.sendMessage(APREFIX + AQUA + "Lavarespawn is now "+RED +"OFF" +AQUA + " for map " +GREEN + mapNumber);
 								} else {
-									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map number");
+									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map ID");
 								}
 							} else {
 								p.sendMessage(APREFIX + RED + args[1] + " is not a valid number");
 							}
 
 						} else {
-							p.sendMessage(APREFIX + RED + "Correct usage /plugin toggleLava <map number>");
+							p.sendMessage(APREFIX + RED + "Correct usage /plugin toggleLava <map ID>");
 						}
 					}
 					
@@ -519,13 +519,13 @@ public class ParkourCommand implements CommandExecutor{
 									}
 									plugin.loadToggleMap();
 								} else {
-									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map number");
+									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map ID");
 								}
 							} else {
 								p.sendMessage(APREFIX + RED + args[1] + " is not a valid number");
 							}
 						} else {
-							p.sendMessage(APREFIX + RED + "Correct usage /pk toggle <map number>");
+							p.sendMessage(APREFIX + RED + "Correct usage /pk toggle <map ID>");
 						}
 					}
 	/* SetLobby */			
@@ -591,14 +591,14 @@ public class ParkourCommand implements CommandExecutor{
 
 									plugin.loadScore();
 								} else {
-									p.sendMessage(APREFIX + RED + "It is not a valid map number");
+									p.sendMessage(APREFIX + RED + "It is not a valid map ID");
 								}
 							} else {
 								p.sendMessage(APREFIX + RED + "It is not a valid number");
-								p.sendMessage(APREFIX + RED + "Correct usage /pk pReset <username> <map number / all>");
+								p.sendMessage(APREFIX + RED + "Correct usage /pk pReset <username> <map ID | all>");
 							}
 						} else {
-							p.sendMessage(APREFIX + RED + "Correct usage /pk pReset <username> <map number / all>");
+							p.sendMessage(APREFIX + RED + "Correct usage /pk pReset <username> <map ID | all>");
 						}
 					}
 	/* ResetScores */
@@ -619,14 +619,14 @@ public class ParkourCommand implements CommandExecutor{
 									}
 									plugin.saveScore();
 								} else {
-									p.sendMessage(APREFIX + RED + "It is not a valid map number");
+									p.sendMessage(APREFIX + RED + "It is not a valid map ID");
 								}
 							} else {
 								p.sendMessage(PREFIX + RED + "It is not a valid number");
 							}
 						} else {
-							p.sendMessage(PREFIX + RED + "You must specify the map number");
-							p.sendMessage(APREFIX + RED + "Correct usage /pk resetScores <map number>");
+							p.sendMessage(PREFIX + RED + "You must specify the map ID");
+							p.sendMessage(APREFIX + RED + "Correct usage /pk resetScores <map ID>");
 						}
 					}
 
