@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -122,6 +123,7 @@ public class ParkourCommand implements CommandExecutor{
 														loc.setYaw((float) cfg.getDouble("Parkour.map" + args[1] + ".spawn.posYaw"));
 					
 														p.teleport(loc);
+														p.setGameMode(GameMode.ADVENTURE);
 													} 
 													else {
 														p.sendMessage(PREFIX + RED + "The spawn for map " +GREEN + args[1] +RED + " is not set");
@@ -157,6 +159,7 @@ public class ParkourCommand implements CommandExecutor{
 								plugin.ParkourContainer.remove(p.getName());
 								if (plugin.lobby != null) {
 									p.teleport(plugin.lobby);
+									p.setGameMode(GameMode.ADVENTURE);
 								}
 		
 							} else {
@@ -173,6 +176,7 @@ public class ParkourCommand implements CommandExecutor{
 							} else {
 								if (plugin.lobby != null) {
 									p.teleport(plugin.lobby);
+									p.setGameMode(GameMode.ADVENTURE);
 									p.sendMessage(PREFIX + AQUA + "You have returned to the lobby");
 								}
 							}

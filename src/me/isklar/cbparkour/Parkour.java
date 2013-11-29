@@ -23,6 +23,7 @@ import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -362,6 +363,7 @@ public class Parkour extends JavaPlugin implements Listener {
 									}
 	
 									p.teleport(loc);
+									p.setGameMode(GameMode.ADVENTURE);
 									p.sendMessage(PREFIX+ AQUA+"Welcome to "+ GREEN +getMapName(mapNumber));
 								} else {
 									p.sendMessage(PREFIX + RED + "Map spawn is not set");
@@ -380,6 +382,7 @@ public class Parkour extends JavaPlugin implements Listener {
 						}
 						if (lobby != null) {
 							e.getPlayer().teleport(lobby);
+							e.getPlayer().setGameMode(GameMode.ADVENTURE);
 						}
 					}
 					
@@ -463,6 +466,7 @@ public class Parkour extends JavaPlugin implements Listener {
 						p.sendMessage(PREFIX + RED + "You don't have permission to do this parkour");
 						if (lobby != null) {
 							p.teleport(lobby);
+							p.setGameMode(GameMode.ADVENTURE);
 							p.sendMessage(PREFIX + AQUA + "You have been returned to the lobby");
 						}
 						return;
@@ -472,6 +476,7 @@ public class Parkour extends JavaPlugin implements Listener {
 						p.sendMessage(PREFIX + "This parkour is" + RED + " disabled");
 						if (lobby != null) {
 							p.teleport(lobby);
+							p.setGameMode(GameMode.ADVENTURE);
 							p.sendMessage(PREFIX + AQUA + "You have been returned to the lobby");
 						}
 						return;
@@ -482,6 +487,7 @@ public class Parkour extends JavaPlugin implements Listener {
 							p.sendMessage(PREFIX + RED + "You have not unlocked this parkour, complete "+GREEN + getMapName(getMapPrevious(mapNumber))+RED+" to progress");
 							if (lobby != null) {
 								p.teleport(lobby);
+								p.setGameMode(GameMode.ADVENTURE);
 								p.sendMessage(PREFIX + AQUA + "You have been returned to the lobby");
 							}
 							return;
