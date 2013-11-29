@@ -245,14 +245,14 @@ public class Parkour extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void onSignChange(SignChangeEvent e) {
-		if (e.getLine(0).equalsIgnoreCase("[cbpk]") && !e.getPlayer().hasPermission("parkour.mapeditor")) {
+		if (e.getLine(0).equalsIgnoreCase("[pk]") && !e.getPlayer().hasPermission("parkour.mapeditor")) {
 			e.setCancelled(true);
 		}
 
 		if (e.getPlayer().hasPermission("parkour.mapeditor")) {
 			// 15 char max per lines (on sign)
 
-			if (e.getLine(0).equalsIgnoreCase("[cbpk]")) {
+			if (e.getLine(0).equalsIgnoreCase("[pk]")) {
 				if (e.getLine(1).equalsIgnoreCase("leave")) {
 					e.setLine(0, "[Parkour]");
 					e.setLine(1, "Leave");
