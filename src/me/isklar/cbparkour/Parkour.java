@@ -46,6 +46,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 
+/*
+ * TODO 
+ * - Convert instances of mapNumber to mapID for legibility and clarification.
+ * - Begin getUnlock function to return a list of map IDs a player has unlocked.
+ * - Separate events into classes (PlayerListener, EntityListener, SignListener).
+ * - Add configurable strings (or perhaps add a main colour choice for strings). NB: Josh wants all server plugin colour schemes to be GREEN / WHITE.
+ * - Extension on previous point, separate config into separate class.
+ */
+
 public class Parkour extends JavaPlugin implements Listener {
 
 	// Vault initiation
@@ -1211,10 +1220,8 @@ public class Parkour extends JavaPlugin implements Listener {
 
 	/**
 	 * Returns all Records on the given Map - <Playername, Time>
-	 * 
 	 * @param map
-     *
-	 * @return
+	 * @return a map of records sorted by value
 	 */
 	public Map<String, Long> getRecords(int map) {
 		Map<String, Long> records = new HashMap<>();
@@ -1228,10 +1235,9 @@ public class Parkour extends JavaPlugin implements Listener {
 	}
 
 	/**
-	 * Converts a time in ms into a good read readable format
-	 * 
+	 * Converts a time in ms into a user readable format
 	 * @param ms
-	 * @return
+	 * @return readable time values
 	 */
 	public String convertTime(long ms) {
 		int ms1 = (int) ms;
@@ -1264,13 +1270,12 @@ public class Parkour extends JavaPlugin implements Listener {
 
 	/**
 	 * Displays the high-scores of a map to a player
-	 * 
-	 * @param map
+	 * @param mapID
 	 * @param player
 	 */
-	public void displayHighscores(int map, Player player) {
-		Map<String, Long> records = getRecords(map);
-		player.sendMessage(GOLD + "---------=[ " + D_AQUA + "Best Times for " + getMapName(map) + GOLD + " ]=---------");
+	public void displayHighscores(int mapID, Player player) {
+		Map<String, Long> records = getRecords(mapID);
+		player.sendMessage(GOLD + "---------=[ " + D_AQUA + "Best Times for " + getMapName(mapID) + GOLD + " ]=---------");
 		boolean inTopTen = false;
 		int counter = 1;
 		for (String p : records.keySet()) {
@@ -1287,19 +1292,35 @@ public class Parkour extends JavaPlugin implements Listener {
 		}
 	}
 
-	public Entry<String, Long>  getHighscore(int mapNumber){
-		Map<String, Long> records = getRecords(mapNumber);
+	/**
+	 * Gets the top score for a given mapID
+	 * @param mapID
+	 * @return first entry in records for a map (shortest time)
+	 */
+	public Entry<String, Long>  getHighscore(int mapID){
+		Map<String, Long> records = getRecords(mapID);
 		Map.Entry<String, Long> entry = records.entrySet().iterator().next();
 		return entry;
 	}
-	public String getMapName(int mapNumber) {
-		if (getConfig().contains("Parkour.map" + mapNumber + ".mapName")) {
-			return getConfig().getString("Parkour.map" + mapNumber + ".mapName");
+	
+	/**
+	 * Gets the user friendly map name from a given mapID
+	 * @param mapID
+	 * @return the user friendly map name or "unknownMapName" if none found
+	 */
+	public String getMapName(int mapID) {
+		if (getConfig().contains("Parkour.map" + mapID + ".mapName")) {
+			return getConfig().getString("Parkour.map" + mapID + ".mapName");
 		} else {
 			return "unknownMapName";
 		}
 	}
 
+	/**
+	 * Gets the previous mapID in the unlock chain for a given mapID
+	 * @param mapNumber
+	 * @return the mapID of the previous map from config or 0 if none found
+	 */
 	public int getMapPrevious(int mapNumber) {
 		if (getConfig().contains("Parkour.map" + mapNumber + ".mapPrevious")) {
 			return getConfig().getInt("Parkour.map" + mapNumber + ".mapPrevious");
@@ -1309,6 +1330,11 @@ public class Parkour extends JavaPlugin implements Listener {
 		}
 	}
 	
+	/**
+	 * Gets the next mapID in the unlock chain for a given mapID
+	 * @param mapNumber
+	 * @return the mapID of the next map from config or 0 if none found
+	 */
 	public int getMapNext(int mapNumber) {
 		if (getConfig().contains("Parkour.map" + mapNumber + ".mapNext")) {
 			return getConfig().getInt("Parkour.map" + mapNumber + ".mapNext");
@@ -1318,18 +1344,32 @@ public class Parkour extends JavaPlugin implements Listener {
 		}
 	}
 
+	/**
+	 * Gets a mapID from a user friendly input string
+	 * @param mapName
+	 * @return the mapID of the given map or 0 if not found
+	 */
 	public int getMapNumber(String mapName) {
 		for (int i : maps) {
 			if (getConfig().getString("Parkour.map" + i + ".mapName").equals(mapName)) { 
-				return i; }
+				return i; 
+			}
 		}
 		return 0;
 	}
 	
+	/**
+	 * Gets the current configured messaging prefix for users
+	 * @return the prefix string
+	 */
 	public String getPrefix(){
 		return PREFIX;
 	}
 
+	/**
+	 * Gets the current configured messaging prefix for admins
+	 * @return the prefix string
+	 */
 	public String getAPrefix(){
 		return APREFIX;
 	}
