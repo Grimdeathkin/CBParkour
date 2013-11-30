@@ -216,7 +216,7 @@ public class Parkour extends JavaPlugin implements Listener {
 	
 	@EventHandler
 	public void onDisconnect(PlayerQuitEvent e) {
-		if (ParkourContainer.containsKey(e.getPlayer().getName())) {
+		if (isPlayerInParkour(e.getPlayer())) {
 			ParkourContainer.remove(e.getPlayer().getName());
 		}
 		if (rewardPlayersCooldown.containsKey(e.getPlayer().getName())) {
@@ -238,7 +238,7 @@ public class Parkour extends JavaPlugin implements Listener {
 	public void onPlayerDmg(EntityDamageEvent e) {
 		if (e.getEntity() instanceof Player) {
 			Player p = (Player) e.getEntity();
-			if (ParkourContainer.containsKey(p.getName()) && InvincibleWhileParkour) {
+			if (isPlayerInParkour(p) && InvincibleWhileParkour) {
 				e.setCancelled(true);
 				p.setFireTicks(0);
 			}
@@ -360,7 +360,7 @@ public class Parkour extends JavaPlugin implements Listener {
 								}
 								
 	
-								if (ParkourContainer.containsKey(p.getName())) {
+								if (isPlayerInParkour(p)) {
 									ParkourContainer.remove(p.getName());
 								}
 	
@@ -393,7 +393,7 @@ public class Parkour extends JavaPlugin implements Listener {
 					}	
 					
 					if (s.getLine(1).equalsIgnoreCase("leave")) {
-						if (ParkourContainer.containsKey(e.getPlayer().getName())) {
+						if (isPlayerInParkour(e.getPlayer())) {
 							e.getPlayer().sendMessage(AQUA + "You have left the parkour");
 							ParkourContainer.remove(e.getPlayer().getName());
 	
@@ -513,7 +513,7 @@ public class Parkour extends JavaPlugin implements Listener {
 					}
 					
 					// Player starts course
-					if (!ParkourContainer.containsKey(p.getName())) {
+					if (!isPlayerInParkour(p)) {
 
 						if (Checkpoint == 1) {
 							int Map = getCpMapNumber(cLoc.get(bLoc));
@@ -733,7 +733,7 @@ public class Parkour extends JavaPlugin implements Listener {
 					}
 				}
 			}
-			if (ParkourContainer.containsKey(p.getName())) {
+			if (isPlayerInParkour(p)) {
 				int Map = getPlMapNumber(ParkourContainer.get(p.getName()));
 				if ((e.getTo().getBlock().getType() == Material.WATER || e.getTo().getBlock().getType() == Material.STATIONARY_WATER)) {
 					if (getConfig().getBoolean("Parkour.map" + Map + ".waterrespawn"))

@@ -107,7 +107,7 @@ public class ParkourCommand implements CommandExecutor{
 											
 											if(Parkour.permission.has(p, "parkour.completed.map"+plugin.getMapPrevious(mapNumber)) || plugin.getMapPrevious(mapNumber) == 0){
 													
-													if (plugin.ParkourContainer.containsKey(p.getName())) {
+													if (plugin.isPlayerInParkour(p)) {
 														plugin.ParkourContainer.remove(p.getName());
 													}
 					
@@ -155,7 +155,7 @@ public class ParkourCommand implements CommandExecutor{
 	/* Leave */				
 					else if (args[0].equalsIgnoreCase("leave")) {
 						if (Parkour.permission.has(p,"parkour.use")) {
-							if (plugin.ParkourContainer.containsKey(p.getName())) {
+							if (plugin.isPlayerInParkour(p)) {
 								p.sendMessage(PREFIX + AQUA + "You have left the parkour");
 								plugin.ParkourContainer.remove(p.getName());
 								if (plugin.lobby != null) {
@@ -172,7 +172,7 @@ public class ParkourCommand implements CommandExecutor{
 	/* Lobby */				
 					else if (args[0].equalsIgnoreCase("lobby")) {
 						if (Parkour.permission.has(p,"parkour.use")) {
-							if (plugin.ParkourContainer.containsKey(p.getName())) {
+							if (plugin.isPlayerInParkour(p)) {
 								p.sendMessage(PREFIX + RED + "You are in a parkour course, use /pk leave to leave");
 							} else {
 								if (plugin.lobby != null) {
@@ -186,7 +186,7 @@ public class ParkourCommand implements CommandExecutor{
 	/* Checkpoint */
 					else if ((args[0].equalsIgnoreCase("cp")) || (args[0].equalsIgnoreCase("checkpoint"))) {
 						if (Parkour.permission.has(p, "parkour.use")) {
-							if (plugin.ParkourContainer.containsKey(p.getName())) {
+							if (plugin.isPlayerInParkour(p)) {
 								plugin.teleportLastCheckpoint(p);
 							} else {
 								p.sendMessage(PREFIX + RED + "You are not in a parkour, use /pk lobby to return to the lobby");
