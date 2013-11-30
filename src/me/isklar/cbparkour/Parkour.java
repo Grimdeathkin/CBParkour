@@ -23,27 +23,17 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /*
@@ -110,28 +100,28 @@ public class Parkour extends JavaPlugin implements Listener {
 	File scores = new File(path);
 
 	// Chat colours
-	ChatColor BLACK = ChatColor.BLACK;				//\u00A70
-	ChatColor D_BLUE = ChatColor.DARK_BLUE;			//\u00A71
-	ChatColor D_GREEN = ChatColor.DARK_GREEN;		//\u00A72
-	ChatColor D_AQUA = ChatColor.DARK_AQUA;			//\u00A73
-	ChatColor D_RED = ChatColor.DARK_RED;			//\u00A74
-	ChatColor D_PURPLE = ChatColor. DARK_PURPLE;	//\u00A75
-	ChatColor GOLD = ChatColor.GOLD;				//\u00A76
-	ChatColor D_GRAY = ChatColor.DARK_GRAY;			//\u00A77
-	ChatColor GRAY = ChatColor.GRAY;				//\u00A78
-	ChatColor BLUE = ChatColor.BLUE;				//\u00A79
-	ChatColor GREEN = ChatColor.GREEN;				//\u00A7a
-	ChatColor AQUA = ChatColor.AQUA;				//\u00A7b
-	ChatColor RED = ChatColor.RED;					//\u00A7c
-	ChatColor LIGHT_PURPLE = ChatColor.LIGHT_PURPLE;//\u00A7d
-	ChatColor YELLOW = ChatColor.YELLOW;			//\u00A7e
-	ChatColor WHITE = ChatColor.WHITE;				//\u00A7f	
+	static ChatColor BLACK = ChatColor.BLACK;				//\u00A70
+	static ChatColor D_BLUE = ChatColor.DARK_BLUE;			//\u00A71
+	static ChatColor D_GREEN = ChatColor.DARK_GREEN;		//\u00A72
+	static ChatColor D_AQUA = ChatColor.DARK_AQUA;			//\u00A73
+	static ChatColor D_RED = ChatColor.DARK_RED;			//\u00A74
+	static ChatColor D_PURPLE = ChatColor. DARK_PURPLE;	//\u00A75
+	static ChatColor GOLD = ChatColor.GOLD;				//\u00A76
+	static ChatColor D_GRAY = ChatColor.DARK_GRAY;			//\u00A77
+	static ChatColor GRAY = ChatColor.GRAY;				//\u00A78
+	static ChatColor BLUE = ChatColor.BLUE;				//\u00A79
+	static ChatColor GREEN = ChatColor.GREEN;				//\u00A7a
+	static ChatColor AQUA = ChatColor.AQUA;				//\u00A7b
+	static ChatColor RED = ChatColor.RED;					//\u00A7c
+	static ChatColor LIGHT_PURPLE = ChatColor.LIGHT_PURPLE;//\u00A7d
+	static ChatColor YELLOW = ChatColor.YELLOW;			//\u00A7e
+	static ChatColor WHITE = ChatColor.WHITE;				//\u00A7f	
 	// Chat effects
-	ChatColor BOLD = ChatColor.BOLD;				//\u00A7l
-	ChatColor STRIKE = ChatColor.STRIKETHROUGH;		//\u00A7m
-	ChatColor ULINE = ChatColor.UNDERLINE;			//\u00A7n
-	ChatColor ITALIC = ChatColor.ITALIC;			//\u00A7o
-	ChatColor RESET = ChatColor.RESET;				//\u00A7r
+	static ChatColor BOLD = ChatColor.BOLD;				//\u00A7l
+	static ChatColor STRIKE = ChatColor.STRIKETHROUGH;		//\u00A7m
+	static ChatColor ULINE = ChatColor.UNDERLINE;			//\u00A7n
+	static ChatColor ITALIC = ChatColor.ITALIC;			//\u00A7o
+	static ChatColor RESET = ChatColor.RESET;				//\u00A7r
 	// Prefixes, user and admin
 	public String PREFIX;
 	public String APREFIX;
@@ -156,6 +146,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		setupEconomy();
 
 		getServer().getPluginManager().registerEvents(this, this);
+		getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
 		this.getCommand("pk").setExecutor(new ParkourCommand(this));
 		
 		if (!scores.getAbsoluteFile().exists()) {
@@ -232,38 +223,6 @@ public class Parkour extends JavaPlugin implements Listener {
 /*
  * 	Events
  */
-	
-	@EventHandler
-	public void onDisconnect(PlayerQuitEvent e) {
-		if (isPlayerInParkour(e.getPlayer())) {
-			ParkourContainer.remove(e.getPlayer().getName());
-		}
-		if (rewardPlayersCooldown.containsKey(e.getPlayer().getName())) {
-			rewardPlayersCooldown.remove(e.getPlayer().getName());
-		}
-		if (e.getPlayer().getName().equals(newMapPlayerEditor)) {
-			newMapPlayerEditor = null;
-			newMapName = null;
-			newMapPrevious = 0;
-			newMapNext = 0;
-			newMapCheckpoints.clear();
-			CheckpointNumber = 0;
-			NewMapNumber = 0;
-			newMap = false;
-		}
-	}
-
-	@EventHandler
-	public void onPlayerDmg(EntityDamageEvent e) {
-		if (e.getEntity() instanceof Player) {
-			Player p = (Player) e.getEntity();
-			if (isPlayerInParkour(p) && InvincibleWhileParkour) {
-				e.setCancelled(true);
-				p.setFireTicks(0);
-			}
-
-		}
-	}
 
 	@EventHandler
 	public void onSignChange(SignChangeEvent e) {
@@ -346,427 +305,6 @@ public class Parkour extends JavaPlugin implements Listener {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
-	@EventHandler
-	public void onIntaract(PlayerInteractEvent e) {
-		/* Sign Interaction */
-		if(e.getClickedBlock() != null){
-			if (e.getClickedBlock().getState() instanceof Sign) {
-				
-				Sign s = (Sign) e.getClickedBlock().getState();
-	
-				if (s.getLine(0).equals("[Parkour]")) {
-					if (s.getLine(1).equalsIgnoreCase("join")) {
-						int mapNumber = getMapNumber(ChatColor.stripColor(s.getLine(2)));
-						if (mapNumber != 0) {
-							if (maps.contains(mapNumber)) {
-								Player p = e.getPlayer();
-								if (!permission.has(p, "parkour.use")) {
-									sendError("noParkourPermission", p, this);
-									return;
-								}
-
-								if (!toggleParkour.get(mapNumber)) {
-									sendError("parkourDisabled", p, this);
-									return;
-								}
-								
-								if(getMapPrevious(mapNumber) != 0){
-									if(!permission.has(p, "parkour.completed.map"+getMapPrevious(mapNumber))){
-										sendInfo("notUnlocked", p, mapNumber);
-										return;
-									}
-								}
-								
-	
-								if (isPlayerInParkour(p)) {
-									ParkourContainer.remove(p.getName());
-								}
-	
-								FileConfiguration cfg = getConfig();
-	
-								if (cfg.contains("Parkour.map" + mapNumber + ".spawn")) {
-									Location loc = new Location(getServer().getWorld(
-											getConfig().getString("Parkour.map" + mapNumber + ".world")),
-											cfg.getDouble("Parkour.map" + mapNumber + ".spawn.posX"),
-											cfg.getDouble("Parkour.map" + mapNumber + ".spawn.posY"),
-											cfg.getDouble("Parkour.map" + mapNumber + ".spawn.posZ"));
-	
-									loc.setPitch((float) cfg.getDouble("Parkour.map" + mapNumber + ".spawn.posPitch"));
-									loc.setYaw((float) cfg.getDouble("Parkour.map" + mapNumber + ".spawn.posYaw"));
-	
-									if (!loc.getChunk().isLoaded()) {
-										loc.getChunk().load(true);
-									}
-	
-									p.teleport(loc);
-									p.setGameMode(GameMode.ADVENTURE);
-									p.sendMessage(PREFIX+ AQUA+"Welcome to "+ GREEN +getMapName(mapNumber));
-								} else {
-									p.sendMessage(PREFIX + RED + "Map spawn is not set");
-								}
-							} else {
-								e.getPlayer().sendMessage(RED + "This map no longer exists");
-							}
-						}
-					}	
-					
-					if (s.getLine(1).equalsIgnoreCase("leave")) {
-						if (isPlayerInParkour(e.getPlayer())) {
-							e.getPlayer().sendMessage(AQUA + "You have left the parkour");
-							ParkourContainer.remove(e.getPlayer().getName());
-	
-						}
-						if (lobby != null) {
-							e.getPlayer().teleport(lobby);
-							e.getPlayer().setGameMode(GameMode.ADVENTURE);
-						}
-					}
-					
-					if (s.getLine(1).equalsIgnoreCase("Best Times")) {
-						int mapNumber = getMapNumber(ChatColor.stripColor(s.getLine(2)));
-						if (mapNumber != 0) {
-							if (maps.contains(mapNumber)) {
-								displayHighscores(mapNumber, e.getPlayer());
-							} else {
-								e.getPlayer().sendMessage(RED + "This map no longer exists");
-							}
-						}
-					}
-                    e.setCancelled(true);
-				}
-			}
-		}
-		/* Map Creation */
-		if (newMap)
-		{
-			if (e.getPlayer().getName().equals(newMapPlayerEditor) && e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-				Player p = e.getPlayer();
-				ItemStack stick = new ItemStack(Material.STICK, 1);
-				if (p.getItemInHand().getTypeId() == 280 && e.getClickedBlock().getTypeId() == 70) {
-					if (!cLoc.containsKey(e.getClickedBlock().getLocation())) {
-						Location bLoc = e.getClickedBlock().getLocation();
-
-						if (newMapCheckpoints.contains(bLoc)) {
-							p.sendMessage(APREFIX + RED + "This checkpoint is alredy used for this map");
-						} else {
-							FileConfiguration cfg = getConfig();
-
-							p.sendMessage(APREFIX + AQUA + "Checkpoint " + GREEN + CheckpointNumber + AQUA + " set on new map " +GREEN+ NewMapNumber);
-
-							cfg.set("Parkour.map" + NewMapNumber + ".cp." + CheckpointNumber + ".posX", bLoc.getX());
-							cfg.set("Parkour.map" + NewMapNumber + ".cp." + CheckpointNumber + ".posY", bLoc.getY());
-							cfg.set("Parkour.map" + NewMapNumber + ".cp." + CheckpointNumber + ".posZ", bLoc.getZ());
-
-							saveConfig();
-							newMapCheckpoints.add(bLoc);
-							CheckpointNumber++;
-
-						}
-					} else {
-						p.sendMessage(APREFIX + RED + "This checkpoint is alredy used for another map");
-					}
-				} else {
-					p.sendMessage(APREFIX + RED + "Use a stick to place checkpoints (Right click on stone pressure plate)");
-					p.getInventory().addItem(stick);
-				}
-			}
-		}
-		/* Teleport to last Checkpoint 
-		if ((e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) && e.getPlayer().getItemInHand().getTypeId() == CheckpointItem){
-			if (Parkour.containsKey(e.getPlayer().getName())) teleportLastCheckpoint(e.getPlayer());
-			e.setCancelled(true);
-		}*/
-	}
-
-	@SuppressWarnings("deprecation")
-	@EventHandler
-	public void onPlayerMove(PlayerMoveEvent e) {
-
-		Player p = e.getPlayer();
-		/* Player hits a registered checkpoint */
-		if (((int) e.getFrom().getX() != (int) e.getTo().getX())
-				|| ((int) e.getFrom().getY() != (int) e.getTo().getY())
-				|| ((int) e.getFrom().getZ() != (int) e.getTo().getZ())) {
-			if (e.getTo().getBlock().getType() == Material.STONE_PLATE) {
-				int x = e.getTo().getBlock().getX();
-				int y = e.getTo().getBlock().getY();
-				int z = e.getTo().getBlock().getZ();
-				Location bLoc = new Location(e.getTo().getWorld(), x, y, z);
-
-				if (cLoc.containsKey(bLoc)) {
-
-					int Checkpoint = getCheckpoint(cLoc.get(bLoc));
-					int mapNumber = getCpMapNumber(cLoc.get(bLoc));
-					
-					if (!permission.has(p, "parkour.use")) {
-						sendError("noParkourPermission", p, this);
-						if (lobby != null) {
-							p.teleport(lobby);
-							p.setGameMode(GameMode.ADVENTURE);
-							p.sendMessage(PREFIX + AQUA + "You have been returned to the lobby");
-						}
-						return;
-					}
-
-					if (!toggleParkour.get(mapNumber)) {
-						sendError("parkourDisabled", p, this);
-						if (lobby != null) {
-							p.teleport(lobby);
-							p.setGameMode(GameMode.ADVENTURE);
-							p.sendMessage(PREFIX + AQUA + "You have been returned to the lobby");
-						}
-						return;
-					}
-					
-					if(getMapPrevious(mapNumber) != 0){
-						if(!permission.has(p, "parkour.completed.map"+getMapPrevious(mapNumber))){
-							sendInfo("notUnlocked", p, mapNumber);
-							if (lobby != null) {
-								p.teleport(lobby);
-								p.setGameMode(GameMode.ADVENTURE);
-								p.sendMessage(PREFIX + AQUA + "You have been returned to the lobby");
-							}
-							return;
-						}
-					}
-					
-					// Player starts course
-					if (!isPlayerInParkour(p)) {
-
-						if (Checkpoint == 1) {
-							int Map = getCpMapNumber(cLoc.get(bLoc));
-							p.setGameMode(GameMode.ADVENTURE);
-							getServer().getPluginManager().callEvent(new ParkourStartEvent(p, Map, false));
-							
-							ParkourContainer.put(
-									p.getName(),
-									(getCpMapNumber(cLoc.get(bLoc)) + "_"
-											+ System.currentTimeMillis() + "_1"));
-							p.sendMessage(PREFIX + AQUA + "You have started your timer for " + GREEN + getMapName(Map));
-							
-							if (CheckpointEffect) {
-								p.playEffect(bLoc, Effect.POTION_BREAK, 2);
-							}
-							if (removePotionsEffectsOnParkour) {
-								for (PotionEffect effect : p.getActivePotionEffects()) {
-									p.removePotionEffect(effect.getType());
-								}
-							}
-							if (FullHunger) {
-								p.setFoodLevel(20);
-							}
-						} else {
-							p.sendMessage(PREFIX + RED + "You must start at the checkpoint 1");
-						}
-					} 
-					// Player is in a parkour and hits a checkpoint
-					else {
-						int PlCheckpoint = getPlCheckpoint(ParkourContainer.get(p.getName()));
-						int CpMap = getCpMapNumber(cLoc.get(bLoc));
-						int Map = getPlMapNumber(ParkourContainer.get(p.getName()));
-						int TotalCheckpoints = getCfgTotalCheckpoints(Map);
-						// Start new course
-						if (CpMap != Map) {
-							if (Checkpoint == 1) {
-								getServer().getPluginManager().callEvent(new ParkourStartEvent(p, Map, false));						
-								p.sendMessage(PREFIX + AQUA + "You have started your timer for " + GREEN + getMapName(CpMap));
-								ParkourContainer.put(
-										p.getName(),
-										(getCpMapNumber(cLoc.get(bLoc)) + "_"
-												+ System.currentTimeMillis() + "_1"));
-								
-								if (CheckpointEffect) {
-									p.playEffect(bLoc, Effect.POTION_BREAK, 2);
-								}
-								if (removePotionsEffectsOnParkour) {
-									for (PotionEffect effect : p.getActivePotionEffects()) {
-										p.removePotionEffect(effect.getType());
-									}
-								}
-								if (FullHunger) {
-									p.setFoodLevel(20);
-								}
-
-							} else {
-								p.sendMessage(PREFIX + RED + "You are not in this parkour");
-
-							}
-						} 
-						/* Player restarts course */
-						else {
-
-							if (Checkpoint == 1) {
-								p.setGameMode(GameMode.ADVENTURE);
-								if (CheckpointEffect) {
-									p.playEffect(bLoc, Effect.POTION_BREAK, 2);
-								}
-								if (removePotionsEffectsOnParkour) {
-									for (PotionEffect effect : p.getActivePotionEffects()) {
-										p.removePotionEffect(effect.getType());
-									}
-								}
-								if (FullHunger) {
-									p.setFoodLevel(20);
-								}
-								getServer().getPluginManager().callEvent(new ParkourStartEvent(p, Map, true));
-								p.sendMessage(PREFIX + AQUA + "You have restarted your time for " +GREEN+ getMapName(Map));
-								setPlTime(p.getName(), System.currentTimeMillis());
-								setPlCheckpoint(p.getName(), 1);
-
-							} 
-							/* Player completes course */
-							else if ((Checkpoint == TotalCheckpoints) && (PlCheckpoint == (Checkpoint - 1))) {
-								if (CheckpointEffect) {
-									p.playEffect(bLoc, Effect.POTION_BREAK, 2);
-								}
-								
-								// Unlock next course
-								if(!permission.has(p, "parkour.completed.map"+ Map)){
-									permission.playerAdd(p, "parkour.completed.map"+ Map);
-									
-									FileConfiguration cfg = getConfig();
-									if(cfg.getInt("Parkour.map"+Map+".mapNext") != 0){
-										sendInfo("mapUnlock", p, Map);
-										final Player player = p;
-										getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-                                            @Override
-											public void run() {
-												playJingle(player);
-											}
-										}, 5L);
-									}
-								}
-								
-								long totalTime = System.currentTimeMillis()
-										- getPlTime(ParkourContainer.get(p.getName()));
-								ParkourContainer.remove(p.getName());
-								
-								
-								if (!Records.containsKey(Map + ":" + p.getName())) {
-								
-									getServer().getPluginManager().callEvent(new ParkourFinishEvent(p, Map, totalTime, true));
-									p.sendMessage(PREFIX + AQUA + "You finished for the first time in " +
-											GRAY + convertTime(totalTime));
-									Records.put(Map + ":" + p.getName(), totalTime);
-									saveScore();
-									
-									Map<String, Long> records = getRecords(Map);
-									Map.Entry<String, Long> entry = records.entrySet().iterator().next();
-									Long topTime = entry.getValue();
-									String topName = entry.getKey();
-									if(!topName.equalsIgnoreCase(p.getName())){
-									p.sendMessage(PREFIX + AQUA + "Global record: "+GRAY + topName + AQUA + " | " + GRAY + convertTime(topTime));
-									}
-									//if user time > first record
-									if (totalTime <= topTime){
-										if (BroadcastMessage) {
-											getServer().broadcastMessage(PREFIX+
-													ChatColor.translateAlternateColorCodes('&', BroadcastMsg)
-															.replaceAll("PLAYER", p.getName())
-															.replaceAll("TIME", convertTime(totalTime))
-															.replaceAll("MAPNAME", getMapName(Map)));
-										}
-									}
-									giveReward(p);
-
-								} else {
-									Map<String, Long> records = getRecords(Map);
-									Map.Entry<String, Long> entry = records.entrySet().iterator().next();
-									Long topTime = entry.getValue();
-									String topName = entry.getKey();
-									
-									// Player beat old score
-									if (Records.get(Map + ":" + p.getName()) >= totalTime) {
-										p.sendMessage(PREFIX + GREEN + "You beat your old time of " + GRAY + convertTime(Records.get(Map + ":" + p.getName())));
-										p.sendMessage(PREFIX + AQUA + "You finished this parkour in " + GRAY + convertTime(totalTime));
-										
-										Records.put(Map + ":" + p.getName(), totalTime);
-										saveScore();
-										if(!topName.equalsIgnoreCase(p.getName())){
-										p.sendMessage(PREFIX + AQUA + "Global record: "+ GRAY + topName + AQUA + " | " + GRAY + convertTime(topTime));
-										}
-										
-										// Player beat best global time
-										if (totalTime <= topTime){
-											if (BroadcastMessage) {
-												getServer().broadcastMessage(PREFIX+
-														ChatColor.translateAlternateColorCodes('&', BroadcastMsg)
-																.replaceAll("PLAYER", p.getName())
-																.replaceAll("TIME", convertTime(totalTime))
-																.replaceAll("MAPNAME", getMapName(Map)));
-											}
-										}
-												
-										giveReward(p);
-
-									} else {
-										String username;
-										p.sendMessage(PREFIX + RED + "You didn't beat your old time "+ GRAY + convertTime(Records.get(Map + ":" + p.getName())));
-										p.sendMessage(PREFIX + AQUA + "You finished this parkour in " +GRAY+ convertTime(totalTime));
-
-										if(topName.equalsIgnoreCase(p.getName())){
-											username = "You";
-										}
-										else{
-											username = topName;
-										}
-										p.sendMessage(PREFIX + AQUA + "Global record: " +GRAY+ username +AQUA+ " | " +GRAY+ convertTime(topTime));
-										if (!rewardIfBetterScore) {
-											giveReward(p);
-										}
-									}
-									
-									getServer().getPluginManager().callEvent(new ParkourFinishEvent(p, Map, totalTime, false));
-
-								}
-
-								// Adds delay before lobby TP
-								final String pl = p.getName();
-								if (lobby != null) {
-									getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-                                                                                @Override
-										public void run() {
-											getServer().getPlayer(pl).teleport(lobby);
-										}
-									}, 5L);
-								}
-							} else if (PlCheckpoint == (Checkpoint - 1)) {
-
-								if (CheckpointEffect) {
-									p.playEffect(bLoc, Effect.POTION_BREAK, 2);
-								}
-
-								setPlCheckpoint(p.getName(), Checkpoint);
-								p.sendMessage(PREFIX + AQUA + "Checkpoint " + (Checkpoint - 1) + "/" + (TotalCheckpoints - 2));
-								getServer().getPluginManager().callEvent(new ParkourCheckpointEvent(p, Map, (Checkpoint-1), System.currentTimeMillis() - getPlTime(ParkourContainer.get(p.getName()))));
-
-							} else if (Checkpoint <= PlCheckpoint) {
-								p.sendMessage(PREFIX + RED + "You already reached this checkpoint!");
-
-							} else if (Checkpoint > PlCheckpoint) {
-								p.sendMessage(PREFIX + RED + "You forgot to pass the last checkpoint!");
-
-							}
-						}
-					}
-				}
-			}
-			if (isPlayerInParkour(p)) {
-				int Map = getPlMapNumber(ParkourContainer.get(p.getName()));
-				if ((e.getTo().getBlock().getType() == Material.WATER || e.getTo().getBlock().getType() == Material.STATIONARY_WATER)) {
-					if (getConfig().getBoolean("Parkour.map" + Map + ".waterrespawn"))
-						teleportLastCheckpoint(e.getPlayer());
-				}
-				if ((e.getTo().getBlock().getType() == Material.LAVA || e.getTo().getBlock().getType() == Material.STATIONARY_LAVA)) {
-					if (getConfig().getBoolean("Parkour.map" + Map + ".lavarespawn"))
-						teleportLastCheckpoint(e.getPlayer());
-				}
-			}
-		}
-	}
-
-
 /*
  * 	Functions
  */
@@ -824,41 +362,41 @@ public class Parkour extends JavaPlugin implements Listener {
 		}
 	}
 
-	private void setPlCheckpoint(String p, int Cp) {
+	public void setPlCheckpoint(String p, int Cp) {
 		String HashTableSrc = ParkourContainer.get(p);
 		String[] Splitter = HashTableSrc.split("_");
 		String CpFinal = Splitter[0] + "_" + Splitter[1] + "_" + Cp;
 		ParkourContainer.put(p, CpFinal);
 	}
 
-	private void setPlTime(String p, Long Time) {
+	public void setPlTime(String p, Long Time) {
 		String HashTableSrc = ParkourContainer.get(p);
 		String[] Splitter = HashTableSrc.split("_");
 		String TimeFinal = Splitter[0] + "_" + Time + "_" + Splitter[2];
 		ParkourContainer.put(p, TimeFinal);
 	}
 
-	private Long getPlTime(String HashTable) {
+	public Long getPlTime(String HashTable) {
 		String[] Splitter = HashTable.split("_");
         return Long.valueOf(Splitter[1]);
 	}
 
-	private int getPlCheckpoint(String HashTable) {
+	public int getPlCheckpoint(String HashTable) {
 		String[] Splitter = HashTable.split("_");
         return Integer.parseInt(Splitter[2]);
 	}
 
-	private int getPlMapNumber(String HashTable) {
+	public int getPlMapNumber(String HashTable) {
 		String[] Splitter = HashTable.split("_");
         return Integer.parseInt(Splitter[0]);
 	}
 
-	private int getCpMapNumber(String HashTable) {
+	public int getCpMapNumber(String HashTable) {
 		String[] Splitter = HashTable.split("_");
         return Integer.parseInt(Splitter[0]);
 	}
 
-	private int getCheckpoint(String HashTable) {
+	public int getCheckpoint(String HashTable) {
 		String[] Splitter = HashTable.split("_");
         return Integer.parseInt(Splitter[1]);
 	}
@@ -1017,13 +555,15 @@ public class Parkour extends JavaPlugin implements Listener {
 	 * notUnlocked - User has not unlocked this map
 	 * mapUnlock - User has unlocked the next map
 	 */
-	public void sendInfo(String info, Player player, int mapNumber){
+	public static void sendInfo(String info, Player player, int mapNumber, Plugin plugin){
+		String PREFIX = ((Parkour) plugin).getPrefix();
+		String nextMapName = ((Parkour) plugin).getMapName(((Parkour) plugin).getMapNext(mapNumber));
+		String prevMapName = ((Parkour) plugin).getMapName(((Parkour) plugin).getMapPrevious(mapNumber));
 		if(info.equalsIgnoreCase("notUnlocked")) {
-			player.sendMessage(PREFIX + RED + "You have not unlocked this parkour, complete "+GREEN + getMapName(getMapPrevious(mapNumber))+RED+" to progress");
+			player.sendMessage(PREFIX + RED + "You have not unlocked this parkour, complete "+GREEN + prevMapName +RED+" to progress");
 
 		} else if(info.equalsIgnoreCase("mapUnlock")) {
-			String nextMapName = getMapName(getMapNext(mapNumber));
-			player.sendMessage(PREFIX + GOLD + "Map unlocked! - "+ GREEN + nextMapName);
+		player.sendMessage(PREFIX + GOLD + "Map unlocked! - "+ GREEN + nextMapName);
 			
 		}
 
@@ -1043,7 +583,7 @@ public class Parkour extends JavaPlugin implements Listener {
 	 * E	0.900 | E	1.750
 	 * F	0.950 | F	1.900
 	 */	
-	private void playJingle(final Player player){
+	public void playJingle(final Player player){
 		new BukkitRunnable(){
 		    int count = 0;
                     @Override
@@ -1090,6 +630,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private void getUnlocks(Player p){
 		/* TODO
 		 * getUnlocks function
@@ -1128,7 +669,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		System.out.println("[ CBParkourDebug ] " + msg);
 	}
 
-	private void giveReward(Player p) {
+	public void giveReward(Player p) {
 		if (rewardEnable) {
 			FileConfiguration cfg = getConfig();
 

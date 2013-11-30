@@ -461,11 +461,13 @@ public class ParkourCommand implements CommandExecutor{
 									FileConfiguration cfg = plugin.getConfig();
 									
 									String mode = RED + "■";
+									@SuppressWarnings("unused")
 									boolean isToggled = false;
 									if (plugin.toggleParkour.get(mapNumber)) {
 										mode = GREEN + "■";
 										isToggled = true;
 									}
+							
 									String waterActive = AQUA + " Water:"+ GRAY + "■";
 									String lavaActive = AQUA + " Lava:"+ GRAY + "■";
 									boolean isWaterActive = cfg.getBoolean("Parkour.map" + mapNumber + ".waterrespawn");
