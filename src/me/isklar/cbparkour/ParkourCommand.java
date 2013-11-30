@@ -1,6 +1,7 @@
 package me.isklar.cbparkour;
 
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -442,7 +443,7 @@ public class ParkourCommand implements CommandExecutor{
 									plugin.saveConfig();
 									p.sendMessage(APREFIX + AQUA + "Parkour spawn set for map " + GREEN + mapNumber);
 								} else {
-									p.sendMessage(APREFIX + RED + "It is not a valid map ID");
+									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map ID");
 								}
 							} else {
 								p.sendMessage(APREFIX + RED + args[1] + " is not a valid number");
@@ -452,6 +453,52 @@ public class ParkourCommand implements CommandExecutor{
 							p.sendMessage(APREFIX + RED + "Correct usage /pk setspawn <map ID>");
 						}
 					} 
+	/* MapInfo */			
+					else if (args[0].equalsIgnoreCase("mapInfo") && (Parkour.permission.has(p, "parkour.admin"))) {
+						if (args.length == 2) {
+							if (plugin.isNumber(args[1])) {
+								int mapNumber = Integer.parseInt(args[1]);
+								if (plugin.maps.contains(plugin.toInt(args[1]))) {
+									FileConfiguration cfg = plugin.getConfig();
+									
+									String mode = RED + "■";
+									boolean isToggled = false;
+									if (plugin.toggleParkour.get(mapNumber)) {
+										mode = GREEN + "■";
+										isToggled = true;
+									}
+									String waterActive = AQUA + " Water:"+ GRAY + "■";
+									String lavaActive = AQUA + " Lava:"+ GRAY + "■";
+									boolean isWaterActive = cfg.getBoolean("Parkour.map" + mapNumber + ".waterrespawn");
+									boolean isLavaActive = cfg.getBoolean("Parkour.map" + mapNumber + ".lavarespawn");
+									if (isWaterActive){
+										waterActive = AQUA + " Water:"+ GREEN + "■";
+									}
+									if (isLavaActive){
+										lavaActive = AQUA + " Lava:"+ GREEN + "■";
+									}
+									
+									p.sendMessage(GOLD + "---------=[ " + D_AQUA + " Map Info " + GOLD + " ]=---------");
+									p.sendMessage(PREFIX + AQUA + "Map ID: " + GRAY +args[1]);
+									p.sendMessage(PREFIX + AQUA + "Map Name: " + GRAY +plugin.getMapName(mapNumber));
+									p.sendMessage(PREFIX + AQUA + "Enabled: " + mode);
+									p.sendMessage(PREFIX + AQUA + "Previous Map: "+ GRAY +plugin.getMapPrevious(mapNumber));
+									p.sendMessage(PREFIX + AQUA + "Next Map: "+ GRAY +plugin.getMapNext(mapNumber));
+									p.sendMessage(PREFIX + AQUA + "Checkpoints: " + GRAY +(plugin.getCfgTotalCheckpoints(mapNumber)-2) );
+									p.sendMessage(PREFIX + AQUA + "Respawns: "+ waterActive + lavaActive);
+									Entry<String, Long> topScore = plugin.getHighscore(mapNumber);
+									p.sendMessage(PREFIX + AQUA + "Best Time: " +GRAY + topScore.getKey() + " | " + plugin.convertTime(topScore.getValue()));
+									
+								} else {
+									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map ID");
+								}
+							} else {
+								p.sendMessage(APREFIX + RED + args[1] + " is not a valid number");
+							}
+						} else {
+							p.sendMessage(APREFIX + RED + "Correct usage /pk mapinfo <map ID>");
+						}
+					}
 	/* ToggleWater */				
 					else if (args[0].equalsIgnoreCase("toggleWater")
 							&& (Parkour.permission.has(p, "parkour.admin") || Parkour.permission.has(p, "parkour.mapeditor"))) {
@@ -592,10 +639,10 @@ public class ParkourCommand implements CommandExecutor{
 
 									plugin.loadScore();
 								} else {
-									p.sendMessage(APREFIX + RED + "It is not a valid map ID");
+									p.sendMessage(APREFIX + RED + args[2] + " is not a valid map ID");
 								}
 							} else {
-								p.sendMessage(APREFIX + RED + "It is not a valid number");
+								p.sendMessage(APREFIX + RED + args[2] + " is not a valid number");
 								p.sendMessage(APREFIX + RED + "Correct usage /pk pReset <username> <map ID | all>");
 							}
 						} else {
@@ -620,10 +667,10 @@ public class ParkourCommand implements CommandExecutor{
 									}
 									plugin.saveScore();
 								} else {
-									p.sendMessage(APREFIX + RED + "It is not a valid map ID");
+									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map ID");
 								}
 							} else {
-								p.sendMessage(PREFIX + RED + "It is not a valid number");
+								p.sendMessage(APREFIX + RED + args[1] + " is not a valid number");
 							}
 						} else {
 							p.sendMessage(PREFIX + RED + "You must specify the map ID");

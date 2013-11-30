@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import net.milkbowl.vault.economy.Economy;
@@ -1270,6 +1271,11 @@ public class Parkour extends JavaPlugin implements Listener {
 		}
 	}
 
+	public Entry<String, Long>  getHighscore(int mapNumber){
+		Map<String, Long> records = getRecords(mapNumber);
+		Map.Entry<String, Long> entry = records.entrySet().iterator().next();
+		return entry;
+	}
 	public String getMapName(int mapNumber) {
 		if (getConfig().contains("Parkour.map" + mapNumber + ".mapName")) {
 			return getConfig().getString("Parkour.map" + mapNumber + ".mapName");
