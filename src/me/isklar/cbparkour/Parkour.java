@@ -752,11 +752,36 @@ public class Parkour extends JavaPlugin implements Listener {
  * 	Functions
  */
 	
-	public void teleportFirstCheckpoint(Player p){
-		/* TODO
-		 * Teleport first checkpoint function
-		 */
-	}
+ 	public void teleportFirstCheckpoint(Player p){
+
+		FileConfiguration cfg = getConfig();
+		Location firstCheckpoint;
+
+		int MapNumber = getPlMapNumber(ParkourContainer.get(p.getName()));
+
+		if (cfg.contains("Parkour.map" + MapNumber + ".spawn")) {
+			firstCheckpoint = new Location(
+					getServer().getWorld(cfg.getString("Parkour.map" + MapNumber + ".world")),
+					cfg.getDouble("Parkour.map" + MapNumber + ".spawn.posX"), cfg.getDouble("Parkour.map"
+							+ MapNumber + ".spawn.posY"), cfg.getDouble("Parkour.map" + MapNumber + ".spawn.posZ"));
+
+			firstCheckpoint.setPitch((float) cfg.getDouble("Parkour.map" + MapNumber + ".spawn.posPitch"));
+			firstCheckpoint.setYaw((float) cfg.getDouble("Parkour.map" + MapNumber + ".spawn.posYaw"));
+
+			p.teleport(firstCheckpoint);
+		} else {
+			firstCheckpoint = new Location(
+					getServer().getWorld(cfg.getString("Parkour.map" + MapNumber + ".world")),
+					cfg.getDouble("Parkour.map" + MapNumber + ".cp.1.posX") + 0.5, cfg.getDouble("Parkour.map"
+							+ MapNumber + ".cp.1.posY"),
+					cfg.getDouble("Parkour.map" + MapNumber + ".cp.1.posZ") + 0.5);
+
+
+			firstCheckpoint.setPitch(p.getLocation().getPitch());
+			firstCheckpoint.setYaw(p.getLocation().getYaw());
+			p.teleport(firstCheckpoint);
+		}
+ 	}
 	
 	public void teleportLastCheckpoint(Player p) {
 		FileConfiguration cfg = getConfig();
@@ -767,27 +792,7 @@ public class Parkour extends JavaPlugin implements Listener {
 
 		if (PlCheckpoint == 1 || !LastCheckpointTeleport) // Teleport to map spawn
 		{
-			if (cfg.contains("Parkour.map" + MapNumber + ".spawn")) {
-				lastCheckpoint = new Location(
-						getServer().getWorld(cfg.getString("Parkour.map" + MapNumber + ".world")),
-						cfg.getDouble("Parkour.map" + MapNumber + ".spawn.posX"), cfg.getDouble("Parkour.map"
-								+ MapNumber + ".spawn.posY"), cfg.getDouble("Parkour.map" + MapNumber + ".spawn.posZ"));
-
-				lastCheckpoint.setPitch((float) cfg.getDouble("Parkour.map" + MapNumber + ".spawn.posPitch"));
-				lastCheckpoint.setYaw((float) cfg.getDouble("Parkour.map" + MapNumber + ".spawn.posYaw"));
-
-				p.teleport(lastCheckpoint);
-			} else {
-				lastCheckpoint = new Location(
-						getServer().getWorld(cfg.getString("Parkour.map" + MapNumber + ".world")),
-						cfg.getDouble("Parkour.map" + MapNumber + ".cp.1.posX") + 0.5, cfg.getDouble("Parkour.map"
-								+ MapNumber + ".cp.1.posY"),
-						cfg.getDouble("Parkour.map" + MapNumber + ".cp.1.posZ") + 0.5);
-
-				lastCheckpoint.setPitch(p.getLocation().getPitch());
-				lastCheckpoint.setYaw(p.getLocation().getYaw());
-				p.teleport(lastCheckpoint);
-			}
+			teleportFirstCheckpoint(p);
 		} else {
 			lastCheckpoint = new Location(getServer().getWorld(cfg.getString("Parkour.map" + MapNumber + ".world")),
 					cfg.getDouble("Parkour.map" + MapNumber + ".cp." + PlCheckpoint + ".posX") + 0.5,
@@ -1058,6 +1063,14 @@ public class Parkour extends JavaPlugin implements Listener {
 /*
  *  Player Functions
  */
+	public boolean isPlayerInParkour(Player player) {
+		if(ParkourContainer.containsKey(player.getName())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	private void getUnlocks(Player p){
 		/* TODO
 		 * getUnlocks function
