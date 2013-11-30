@@ -254,7 +254,6 @@ public class ParkourCommand implements CommandExecutor{
 	/*
 	 * Map Commands | parkour.mapeditor
 	 * Create, Done, Delete, changeMapName, changePrevious, changeNext, setSpawn, toggleWater, toggleLava
-	 * TODO Add mapinfo
 	 */
 					else if (args[0].equalsIgnoreCase("Create")
 							&& (Parkour.permission.has(p, "parkour.admin") || Parkour.permission.has(p, "parkour.mapeditor"))) {
