@@ -53,6 +53,15 @@ import org.bukkit.scheduler.BukkitRunnable;
  * - Separate events into classes (PlayerListener, EntityListener, SignListener).
  * - Add configurable strings (or perhaps add a main colour choice for strings). NB: Josh wants all server plugin colour schemes to be GREEN / WHITE.
  * - Extension on previous point, separate config into separate class.
+ * - Add userInfo command to get unlocks and if they hold map records.
+ * - Add sign leaderboard system.
+ * - Integrate slimeball commander into CBParkour.
+ * - Add system to restore gamemode on parkour finish.
+ * - Add system to stop admins changing gamemode during parkour.
+ * - Add reload command for configurations.
+ * - Add system to save progress on disconnect or reload.
+ * - Add ranking system and chat prefixing (like SkyWars).
+ * - Figure out how to seduce bsquid... beer!.
  */
 
 public class Parkour extends JavaPlugin implements Listener {

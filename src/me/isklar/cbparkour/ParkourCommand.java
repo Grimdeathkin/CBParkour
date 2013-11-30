@@ -678,7 +678,7 @@ public class ParkourCommand implements CommandExecutor{
 					}
 
 					else {
-						p.sendMessage(APREFIX + RED + "Use /pk for help");
+						p.sendMessage(APREFIX + RED + "Unrecognised command, use /pk for help");
 					}
 				}
 			}
