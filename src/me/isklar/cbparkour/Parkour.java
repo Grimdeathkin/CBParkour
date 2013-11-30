@@ -735,6 +735,12 @@ public class Parkour extends JavaPlugin implements Listener {
  * 	Functions
  */
 	
+	public void teleportFirstCheckpoint(Player p){
+		/* TODO
+		 * Teleport first checkpoint function
+		 */
+	}
+	
 	public void teleportLastCheckpoint(Player p) {
 		FileConfiguration cfg = getConfig();
 		Location lastCheckpoint;
@@ -948,7 +954,7 @@ public class Parkour extends JavaPlugin implements Listener {
 	 * E	0.900 | E	1.750
 	 * F	0.950 | F	1.900
 	 */	
-private void playJingle(final Player player){
+	private void playJingle(final Player player){
 		new BukkitRunnable(){
 		    int count = 0;
                     @Override
@@ -988,8 +994,9 @@ private void playJingle(final Player player){
  *  Player Functions
  */
 	private void getUnlocks(Player p){
-		// Get permissions
-		// or get using records
+		/* TODO
+		 * getUnlocks function
+		 */
 		
 	}
 	
