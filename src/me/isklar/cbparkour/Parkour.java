@@ -246,8 +246,11 @@ public class Parkour extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void onSignChange(SignChangeEvent e) {
-		if (e.getLine(0).equalsIgnoreCase("[pk]") && !e.getPlayer().hasPermission("parkour.mapeditor")) {
+		Player player = e.getPlayer();
+		if (e.getLine(0).equalsIgnoreCase("[pk]") && !player.hasPermission("parkour.mapeditor")) {
 			e.setCancelled(true);
+			e.getBlock().setType(Material.AIR);
+			sendError("nopermission", player);
 		}
 
 		if (e.getPlayer().hasPermission("parkour.mapeditor")) {
@@ -257,8 +260,7 @@ public class Parkour extends JavaPlugin implements Listener {
 				if (e.getLine(1).equalsIgnoreCase("leave")) {
 					e.setLine(0, "[Parkour]");
 					e.setLine(1, "Leave");
-				}
-				if (e.getLine(1).equalsIgnoreCase("join")) {
+				} else if (e.getLine(1).equalsIgnoreCase("join")) {
 					if (isNumber(e.getLine(2))) {
 						if (maps.contains(toInt(e.getLine(2)))) {
 							int MapNumber = Integer.parseInt(e.getLine(2));
@@ -268,12 +270,15 @@ public class Parkour extends JavaPlugin implements Listener {
 							e.setLine(2, AQUA + getMapName(MapNumber));
 						} else {
 							e.setCancelled(true);
+							e.getBlock().setType(Material.AIR);
+							sendError("badmap", player);
 						}
 					} else {
 						e.setCancelled(true);
+						e.getBlock().setType(Material.AIR);
+						sendError("2notnumber", player);
 					}
-				}
-				if (e.getLine(1).equalsIgnoreCase("info")) {
+				} else if (e.getLine(1).equalsIgnoreCase("info")) {
 					if (isNumber(e.getLine(2))) {
 						if (maps.contains(toInt(e.getLine(2)))) {
 							int MapNumber = Integer.parseInt(e.getLine(2));
@@ -283,12 +288,15 @@ public class Parkour extends JavaPlugin implements Listener {
 							e.setLine(2, AQUA + getMapName(MapNumber));
 						} else {
 							e.setCancelled(true);
+							e.getBlock().setType(Material.AIR);
+							sendError("badmap", player);
 						}
 					} else {
 						e.setCancelled(true);
+						e.getBlock().setType(Material.AIR);
+						sendError("2notnumber", player);
 					}
-				}
-				if (e.getLine(1).equalsIgnoreCase("best")) {
+				} else if (e.getLine(1).equalsIgnoreCase("best")) {
 					if (isNumber(e.getLine(2))) {
 						if (maps.contains(toInt(e.getLine(2)))) {
 							int MapNumber = Integer.parseInt(e.getLine(2));
@@ -300,10 +308,18 @@ public class Parkour extends JavaPlugin implements Listener {
 
 						} else {
 							e.setCancelled(true);
+							e.getBlock().setType(Material.AIR);
+							sendError("badmap", player);
 						}
 					} else {
 						e.setCancelled(true);
+						e.getBlock().setType(Material.AIR);
+						sendError("2notnumber", player);
 					}
+				} else {
+					e.setCancelled(true);
+					e.getBlock().breakNaturally();
+					sendError("badsign", player);
 				}
 			}
 		}
@@ -937,6 +953,25 @@ public class Parkour extends JavaPlugin implements Listener {
 			loc.setPitch((float) cfg.getDouble("Lobby.posPitch"));
 			loc.setYaw((float) cfg.getDouble("Lobby.posYaw"));
 			lobby = loc;
+		}
+	}
+	
+	/*
+	 * badmap = Map not recognized
+	 * 2notnumber = Second line is not a number
+	 * nopermission = No permission to perform the action
+	 * badsign = Sign does not yet exist
+	 */
+	
+	public void sendError(String status, Player player) {
+		if(status.equalsIgnoreCase("2notnumber")) {
+			player.sendMessage(APREFIX + "The second line must be a number. Please try again.");
+		} else if(status.equalsIgnoreCase("badmap")) {
+			player.sendMessage(APREFIX + "That map is not recognized. Please try again.");
+		} else if(status.equalsIgnoreCase("nopermission")) {
+			player.sendMessage(PREFIX + "You do not have permission to do that.");
+		} else if(status.equalsIgnoreCase("badsign")) {
+			player.sendMessage(APREFIX + "That sign is not recognized. Please try again.");
 		}
 	}
 	
