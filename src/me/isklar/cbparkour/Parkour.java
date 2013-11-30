@@ -250,7 +250,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		if (e.getLine(0).equalsIgnoreCase("[pk]") && !player.hasPermission("parkour.mapeditor")) {
 			e.setCancelled(true);
 			e.getBlock().setType(Material.AIR);
-			sendError("nopermission", player);
+			sendError("noPermission", player);
 		}
 
 		if (e.getPlayer().hasPermission("parkour.mapeditor")) {
@@ -341,18 +341,18 @@ public class Parkour extends JavaPlugin implements Listener {
 							if (maps.contains(mapNumber)) {
 								Player p = e.getPlayer();
 								if (!permission.has(p, "parkour.use")) {
-									p.sendMessage(PREFIX + RED + "You don't have permission to do this parkour");
+									sendError("noParkourPermission", p);
 									return;
 								}
 
 								if (!toggleParkour.get(mapNumber)) {
-									p.sendMessage(PREFIX + "This parkour is" + RED + " disabled");
+									sendError("parkourDisabled", p);
 									return;
 								}
 								
 								if(getMapPrevious(mapNumber) != 0){
 									if(!permission.has(p, "parkour.completed.map"+getMapPrevious(mapNumber))){
-										p.sendMessage(PREFIX + RED + "You have not unlocked this parkour, complete "+GREEN + getMapName(getMapPrevious(mapNumber))+RED+" to progress");
+										sendInfo("notUnlocked", p, mapNumber);
 										return;
 									}
 								}
@@ -479,7 +479,7 @@ public class Parkour extends JavaPlugin implements Listener {
 					int mapNumber = getCpMapNumber(cLoc.get(bLoc));
 					
 					if (!permission.has(p, "parkour.use")) {
-						p.sendMessage(PREFIX + RED + "You don't have permission to do this parkour");
+						sendError("noParkourPermission", p);
 						if (lobby != null) {
 							p.teleport(lobby);
 							p.setGameMode(GameMode.ADVENTURE);
@@ -489,7 +489,7 @@ public class Parkour extends JavaPlugin implements Listener {
 					}
 
 					if (!toggleParkour.get(mapNumber)) {
-						p.sendMessage(PREFIX + "This parkour is" + RED + " disabled");
+						sendError("parkourDisabled", p);
 						if (lobby != null) {
 							p.teleport(lobby);
 							p.setGameMode(GameMode.ADVENTURE);
@@ -500,7 +500,7 @@ public class Parkour extends JavaPlugin implements Listener {
 					
 					if(getMapPrevious(mapNumber) != 0){
 						if(!permission.has(p, "parkour.completed.map"+getMapPrevious(mapNumber))){
-							p.sendMessage(PREFIX + RED + "You have not unlocked this parkour, complete "+GREEN + getMapName(getMapPrevious(mapNumber))+RED+" to progress");
+							sendInfo("notUnlocked", p, mapNumber);
 							if (lobby != null) {
 								p.teleport(lobby);
 								p.setGameMode(GameMode.ADVENTURE);
@@ -606,11 +606,10 @@ public class Parkour extends JavaPlugin implements Listener {
 									
 									FileConfiguration cfg = getConfig();
 									if(cfg.getInt("Parkour.map"+Map+".mapNext") != 0){
-										String nextMapName = getMapName(getMapNext(Map));
-										p.sendMessage(PREFIX + GOLD + "Map unlocked! - "+ GREEN + nextMapName);
+										sendInfo("mapUnlock", p, Map);
 										final Player player = p;
 										getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-                                                                                        @Override
+                                            @Override
 											public void run() {
 												playJingle(player);
 											}
@@ -957,22 +956,49 @@ public class Parkour extends JavaPlugin implements Listener {
 	}
 	
 	/*
-	 * badmap = Map not recognized
 	 * 2notnumber = Second line is not a number
-	 * nopermission = No permission to perform the action
+	 * badmap = Map not recognized
+	 * noPermission = No permission to perform the action
+	 * noParkourPermission = user does not have parkour.use
 	 * badsign = Sign does not yet exist
+	 * parkourDisabled = parkour is toggled to disabled
 	 */
-	
 	public void sendError(String status, Player player) {
 		if(status.equalsIgnoreCase("2notnumber")) {
 			player.sendMessage(APREFIX + "The second line must be a number. Please try again.");
+			
 		} else if(status.equalsIgnoreCase("badmap")) {
 			player.sendMessage(APREFIX + "That map is not recognized. Please try again.");
-		} else if(status.equalsIgnoreCase("nopermission")) {
+			
+		} else if(status.equalsIgnoreCase("noPermission")) {
 			player.sendMessage(PREFIX + "You do not have permission to do that.");
+			
+		} else if (status.equalsIgnoreCase("noParkourPermission")){
+			player.sendMessage(PREFIX + RED + "You don't have permission to do this parkour");
+			
 		} else if(status.equalsIgnoreCase("badsign")) {
 			player.sendMessage(APREFIX + "That sign is not recognized. Please try again.");
+			
+		} else if(status.equalsIgnoreCase("parkourDisabled")){
+			player.sendMessage(PREFIX + "This parkour is" + RED + " disabled");
+			
 		}
+	}
+	
+	/*
+	 * notUnlocked - User has not unlocked this map
+	 * mapUnlock - User has unlocked the next map
+	 */
+	public void sendInfo(String info, Player player, int mapNumber){
+		if(info.equalsIgnoreCase("notUnlocked")) {
+			player.sendMessage(PREFIX + RED + "You have not unlocked this parkour, complete "+GREEN + getMapName(getMapPrevious(mapNumber))+RED+" to progress");
+
+		} else if(info.equalsIgnoreCase("mapUnlock")) {
+			String nextMapName = getMapName(getMapNext(mapNumber));
+			player.sendMessage(PREFIX + GOLD + "Map unlocked! - "+ GREEN + nextMapName);
+			
+		}
+
 	}
 	
 /* Note Pitch | Note Pitch

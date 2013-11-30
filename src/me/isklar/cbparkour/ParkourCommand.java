@@ -65,7 +65,7 @@ public class ParkourCommand implements CommandExecutor{
 						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " delete <mapID>" + WHITE + " - Delete a map");
 						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changeMapName <mapID> <newMapName>" + WHITE + " - Change the map name");
 						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changePrevious <mapID> <previous mapID>" + WHITE + " - Change the previous map");
-						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changePrevious <mapID> <next mapID>" + WHITE + " - Change the next map");
+						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " changeNext <mapID> <next mapID>" + WHITE + " - Change the next map");
 						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " setSpawn <mapID>" + WHITE + " - Set the map spawn");
 						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " toggleWater <mapID>" + WHITE + " - Toggles Water repsawn on this Map");
 						p.sendMessage(APREFIX + GREEN + "/" + CommandLabel + " toggleLava <mapID>" + WHITE + " - Toggles Lava Respawn on this Map");
@@ -252,7 +252,8 @@ public class ParkourCommand implements CommandExecutor{
 					}		
 	/*
 	 * Map Commands | parkour.mapeditor
-	 * Create, Done, Delete, changeMapName, changeMapPrevious, changeMapNext, setSpawn, toggleWater, toggleLava
+	 * Create, Done, Delete, changeMapName, changePrevious, changeNext, setSpawn, toggleWater, toggleLava
+	 * TODO Add mapinfo
 	 */
 					else if (args[0].equalsIgnoreCase("Create")
 							&& (Parkour.permission.has(p, "parkour.admin") || Parkour.permission.has(p, "parkour.mapeditor"))) {
