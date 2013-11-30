@@ -40,6 +40,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -251,7 +252,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		if (e.getLine(0).equalsIgnoreCase("[pk]") && !player.hasPermission("parkour.mapeditor")) {
 			e.setCancelled(true);
 			e.getBlock().setType(Material.AIR);
-			sendError("noPermission", player);
+			sendError("noPermission", player, this);
 		}
 
 		if (e.getPlayer().hasPermission("parkour.mapeditor")) {
@@ -272,12 +273,12 @@ public class Parkour extends JavaPlugin implements Listener {
 						} else {
 							e.setCancelled(true);
 							e.getBlock().setType(Material.AIR);
-							sendError("badmap", player);
+							sendError("badmap", player, this);
 						}
 					} else {
 						e.setCancelled(true);
 						e.getBlock().setType(Material.AIR);
-						sendError("2notnumber", player);
+						sendError("2notnumber", player, this);
 					}
 				} else if (e.getLine(1).equalsIgnoreCase("info")) {
 					if (isNumber(e.getLine(2))) {
@@ -290,12 +291,12 @@ public class Parkour extends JavaPlugin implements Listener {
 						} else {
 							e.setCancelled(true);
 							e.getBlock().setType(Material.AIR);
-							sendError("badmap", player);
+							sendError("badmap", player, this);
 						}
 					} else {
 						e.setCancelled(true);
 						e.getBlock().setType(Material.AIR);
-						sendError("2notnumber", player);
+						sendError("2notnumber", player, this);
 					}
 				} else if (e.getLine(1).equalsIgnoreCase("best")) {
 					if (isNumber(e.getLine(2))) {
@@ -310,17 +311,17 @@ public class Parkour extends JavaPlugin implements Listener {
 						} else {
 							e.setCancelled(true);
 							e.getBlock().setType(Material.AIR);
-							sendError("badmap", player);
+							sendError("badmap", player, this);
 						}
 					} else {
 						e.setCancelled(true);
 						e.getBlock().setType(Material.AIR);
-						sendError("2notnumber", player);
+						sendError("2notnumber", player, this);
 					}
 				} else {
 					e.setCancelled(true);
 					e.getBlock().breakNaturally();
-					sendError("badsign", player);
+					sendError("badsign", player, this);
 				}
 			}
 		}
@@ -342,12 +343,12 @@ public class Parkour extends JavaPlugin implements Listener {
 							if (maps.contains(mapNumber)) {
 								Player p = e.getPlayer();
 								if (!permission.has(p, "parkour.use")) {
-									sendError("noParkourPermission", p);
+									sendError("noParkourPermission", p, this);
 									return;
 								}
 
 								if (!toggleParkour.get(mapNumber)) {
-									sendError("parkourDisabled", p);
+									sendError("parkourDisabled", p, this);
 									return;
 								}
 								
@@ -480,7 +481,7 @@ public class Parkour extends JavaPlugin implements Listener {
 					int mapNumber = getCpMapNumber(cLoc.get(bLoc));
 					
 					if (!permission.has(p, "parkour.use")) {
-						sendError("noParkourPermission", p);
+						sendError("noParkourPermission", p, this);
 						if (lobby != null) {
 							p.teleport(lobby);
 							p.setGameMode(GameMode.ADVENTURE);
@@ -490,7 +491,7 @@ public class Parkour extends JavaPlugin implements Listener {
 					}
 
 					if (!toggleParkour.get(mapNumber)) {
-						sendError("parkourDisabled", p);
+						sendError("parkourDisabled", p, this);
 						if (lobby != null) {
 							p.teleport(lobby);
 							p.setGameMode(GameMode.ADVENTURE);
@@ -964,7 +965,9 @@ public class Parkour extends JavaPlugin implements Listener {
 	 * badsign = Sign does not yet exist
 	 * parkourDisabled = parkour is toggled to disabled
 	 */
-	public void sendError(String status, Player player) {
+	public static void sendError(String status, Player player, Plugin plugin) {
+		String APREFIX = ((Parkour) plugin).getAPrefix();
+		String PREFIX = ((Parkour) plugin).getPrefix();
 		if(status.equalsIgnoreCase("2notnumber")) {
 			player.sendMessage(APREFIX + "The second line must be a number. Please try again.");
 			
@@ -975,13 +978,13 @@ public class Parkour extends JavaPlugin implements Listener {
 			player.sendMessage(PREFIX + "You do not have permission to do that.");
 			
 		} else if (status.equalsIgnoreCase("noParkourPermission")){
-			player.sendMessage(PREFIX + RED + "You don't have permission to do this parkour");
+			player.sendMessage(PREFIX + ChatColor.RED + "You don't have permission to do this parkour");
 			
 		} else if(status.equalsIgnoreCase("badsign")) {
 			player.sendMessage(APREFIX + "That sign is not recognized. Please try again.");
 			
 		} else if(status.equalsIgnoreCase("parkourDisabled")){
-			player.sendMessage(PREFIX + "This parkour is" + RED + " disabled");
+			player.sendMessage(PREFIX + "This parkour is" + ChatColor.RED + " disabled");
 			
 		}
 	}
