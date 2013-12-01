@@ -24,13 +24,10 @@ import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -218,91 +215,6 @@ public class Parkour extends JavaPlugin implements Listener {
 		return (economy != null);
 	}
 	
-/*
- * 	Events
- */
-
-	@EventHandler
-	public void onSignChange(SignChangeEvent e) {
-		Player player = e.getPlayer();
-		if (e.getLine(0).equalsIgnoreCase("[pk]") && !player.hasPermission("parkour.mapeditor")) {
-			e.setCancelled(true);
-			e.getBlock().setType(Material.AIR);
-			sendError("noPermission", player, this);
-		}
-
-		if (e.getPlayer().hasPermission("parkour.mapeditor")) {
-			// 15 char max per lines (on sign)
-
-			if (e.getLine(0).equalsIgnoreCase("[pk]")) {
-				if (e.getLine(1).equalsIgnoreCase("leave")) {
-					e.setLine(0, "[Parkour]");
-					e.setLine(1, "Leave");
-				} else if (e.getLine(1).equalsIgnoreCase("join")) {
-					if (isNumber(e.getLine(2))) {
-						if (maps.contains(toInt(e.getLine(2)))) {
-							int MapNumber = Integer.parseInt(e.getLine(2));
-
-							e.setLine(0, "[Parkour]");
-							e.setLine(1, "Join");
-							e.setLine(2, AQUA + getMapName(MapNumber));
-						} else {
-							e.setCancelled(true);
-							e.getBlock().setType(Material.AIR);
-							sendError("badmap", player, this);
-						}
-					} else {
-						e.setCancelled(true);
-						e.getBlock().setType(Material.AIR);
-						sendError("2notnumber", player, this);
-					}
-				} else if (e.getLine(1).equalsIgnoreCase("info")) {
-					if (isNumber(e.getLine(2))) {
-						if (maps.contains(toInt(e.getLine(2)))) {
-							int MapNumber = Integer.parseInt(e.getLine(2));
-
-							e.setLine(0, "Parkour #" + MapNumber);
-							e.setLine(1, "---------------");
-							e.setLine(2, AQUA + getMapName(MapNumber));
-						} else {
-							e.setCancelled(true);
-							e.getBlock().setType(Material.AIR);
-							sendError("badmap", player, this);
-						}
-					} else {
-						e.setCancelled(true);
-						e.getBlock().setType(Material.AIR);
-						sendError("2notnumber", player, this);
-					}
-				} else if (e.getLine(1).equalsIgnoreCase("best")) {
-					if (isNumber(e.getLine(2))) {
-						if (maps.contains(toInt(e.getLine(2)))) {
-							int MapNumber = Integer.parseInt(e.getLine(2));
-
-							e.setLine(0, "[Parkour]");
-							e.setLine(1, "Best Times");
-							e.setLine(2, AQUA + getMapName(MapNumber));
-							e.setLine(3, "Click Me!");
-
-						} else {
-							e.setCancelled(true);
-							e.getBlock().setType(Material.AIR);
-							sendError("badmap", player, this);
-						}
-					} else {
-						e.setCancelled(true);
-						e.getBlock().setType(Material.AIR);
-						sendError("2notnumber", player, this);
-					}
-				} else {
-					e.setCancelled(true);
-					e.getBlock().breakNaturally();
-					sendError("badsign", player, this);
-				}
-			}
-		}
-	}
-
 /*
  * 	Functions
  */
