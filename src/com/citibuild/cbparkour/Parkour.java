@@ -550,14 +550,6 @@ public class Parkour extends JavaPlugin implements Listener {
 		}
 	}
 	
-	@SuppressWarnings("unused")
-	private void getUnlocks(Player p){
-		/* TODO
-		 * getUnlocks function
-		 */
-		
-	}
-	
 	public void saveScore() {
 		try {
             try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream((path))))) {
@@ -689,6 +681,20 @@ public class Parkour extends JavaPlugin implements Listener {
  *  Public API
  */
 
+	/**
+	 * Gets a players unlocked maps
+	 * @param p
+	 */
+	public ArrayList<Integer> getUnlocks(Player p){
+		ArrayList<Integer> unlockedMaps = new ArrayList<>();
+		for (int i : maps) {
+			if(permission.has(p, "parkour.completed.map"+i)){
+				unlockedMaps.add(i);
+			}
+		}
+		return unlockedMaps;
+	}
+	
 	/**
 	 * Returns all Records on the given Map - <Playername, Time>
 	 * @param map
