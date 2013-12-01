@@ -35,8 +35,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /*
- * TODO 
- * - Convert instances of mapNumber to mapID for legibility and clarification.
+ * TODO
  * - Begin getUnlock function to return a list of map IDs a player has unlocked.
  * - Separate events into classes (PlayerListener, EntityListener, SignListener).
  * - Add configurable strings (or perhaps add a main colour choice for strings). NB: Josh wants all server plugin colour schemes to be GREEN / WHITE.
@@ -226,24 +225,24 @@ public class Parkour extends JavaPlugin implements Listener {
 		FileConfiguration cfg = getConfig();
 		Location firstCheckpoint;
 
-		int MapNumber = getPlMapNumber(ParkourContainer.get(p.getName()));
+		int mapID = getPlMapNumber(ParkourContainer.get(p.getName()));
 
-		if (cfg.contains("Parkour.map" + MapNumber + ".spawn")) {
+		if (cfg.contains("Parkour.map" + mapID + ".spawn")) {
 			firstCheckpoint = new Location(
-					getServer().getWorld(cfg.getString("Parkour.map" + MapNumber + ".world")),
-					cfg.getDouble("Parkour.map" + MapNumber + ".spawn.posX"), cfg.getDouble("Parkour.map"
-							+ MapNumber + ".spawn.posY"), cfg.getDouble("Parkour.map" + MapNumber + ".spawn.posZ"));
+					getServer().getWorld(cfg.getString("Parkour.map" + mapID + ".world")),
+					cfg.getDouble("Parkour.map" + mapID + ".spawn.posX"), cfg.getDouble("Parkour.map"
+							+ mapID + ".spawn.posY"), cfg.getDouble("Parkour.map" + mapID + ".spawn.posZ"));
 
-			firstCheckpoint.setPitch((float) cfg.getDouble("Parkour.map" + MapNumber + ".spawn.posPitch"));
-			firstCheckpoint.setYaw((float) cfg.getDouble("Parkour.map" + MapNumber + ".spawn.posYaw"));
+			firstCheckpoint.setPitch((float) cfg.getDouble("Parkour.map" + mapID + ".spawn.posPitch"));
+			firstCheckpoint.setYaw((float) cfg.getDouble("Parkour.map" + mapID + ".spawn.posYaw"));
 
 			p.teleport(firstCheckpoint);
 		} else {
 			firstCheckpoint = new Location(
-					getServer().getWorld(cfg.getString("Parkour.map" + MapNumber + ".world")),
-					cfg.getDouble("Parkour.map" + MapNumber + ".cp.1.posX") + 0.5, cfg.getDouble("Parkour.map"
-							+ MapNumber + ".cp.1.posY"),
-					cfg.getDouble("Parkour.map" + MapNumber + ".cp.1.posZ") + 0.5);
+					getServer().getWorld(cfg.getString("Parkour.map" + mapID + ".world")),
+					cfg.getDouble("Parkour.map" + mapID + ".cp.1.posX") + 0.5, cfg.getDouble("Parkour.map"
+							+ mapID + ".cp.1.posY"),
+					cfg.getDouble("Parkour.map" + mapID + ".cp.1.posZ") + 0.5);
 
 
 			firstCheckpoint.setPitch(p.getLocation().getPitch());
@@ -256,17 +255,17 @@ public class Parkour extends JavaPlugin implements Listener {
 		FileConfiguration cfg = getConfig();
 		Location lastCheckpoint;
 
-		int MapNumber = getPlMapNumber(ParkourContainer.get(p.getName()));
+		int mapID = getPlMapNumber(ParkourContainer.get(p.getName()));
 		int PlCheckpoint = getPlCheckpoint(ParkourContainer.get(p.getName()));
 
 		if (PlCheckpoint == 1 || !LastCheckpointTeleport) // Teleport to map spawn
 		{
 			teleportFirstCheckpoint(p);
 		} else {
-			lastCheckpoint = new Location(getServer().getWorld(cfg.getString("Parkour.map" + MapNumber + ".world")),
-					cfg.getDouble("Parkour.map" + MapNumber + ".cp." + PlCheckpoint + ".posX") + 0.5,
-					cfg.getDouble("Parkour.map" + MapNumber + ".cp." + PlCheckpoint + ".posY"),
-					cfg.getDouble("Parkour.map" + MapNumber + ".cp." + PlCheckpoint + ".posZ") + 0.5);
+			lastCheckpoint = new Location(getServer().getWorld(cfg.getString("Parkour.map" + mapID + ".world")),
+					cfg.getDouble("Parkour.map" + mapID + ".cp." + PlCheckpoint + ".posX") + 0.5,
+					cfg.getDouble("Parkour.map" + mapID + ".cp." + PlCheckpoint + ".posY"),
+					cfg.getDouble("Parkour.map" + mapID + ".cp." + PlCheckpoint + ".posZ") + 0.5);
 
 			lastCheckpoint.setPitch(p.getLocation().getPitch());
 			lastCheckpoint.setYaw(p.getLocation().getYaw());
@@ -313,12 +312,12 @@ public class Parkour extends JavaPlugin implements Listener {
         return Integer.parseInt(Splitter[1]);
 	}
 
-	public int getCfgTotalCheckpoints(int mapNumber) {
-		return getConfig().getInt("Parkour.map" + mapNumber + ".numberCp");
+	public int getCfgTotalCheckpoints(int mapID) {
+		return getConfig().getInt("Parkour.map" + mapID + ".numberCp");
 	}
 
-	private boolean mapExist(String MapNumber) {
-            return getConfig().getInt("Parkour.map" + MapNumber + ".numberCp") != 0;
+	private boolean mapExist(String mapID) {
+            return getConfig().getInt("Parkour.map" + mapID + ".numberCp") != 0;
 	}
 
 	public boolean isNumber(String number) {
@@ -333,13 +332,13 @@ public class Parkour extends JavaPlugin implements Listener {
 	public void intCheckpointsLoc() {
 		cLoc.clear();
 		FileConfiguration cfg = getConfig();
-		for (int mapNumber : maps) {
-			for (int i = cfg.getInt("Parkour.map" + mapNumber + ".numberCp"); i >= 1; i--) {
-				Location loc = new Location(getServer().getWorld(cfg.getString("Parkour.map" + mapNumber + ".world")),
-						cfg.getInt("Parkour.map" + mapNumber + ".cp." + i + ".posX"), cfg.getInt("Parkour.map"
-								+ mapNumber + ".cp." + i + ".posY"), cfg.getInt("Parkour.map" + mapNumber + ".cp." + i
+		for (int mapID : maps) {
+			for (int i = cfg.getInt("Parkour.map" + mapID + ".numberCp"); i >= 1; i--) {
+				Location loc = new Location(getServer().getWorld(cfg.getString("Parkour.map" + mapID + ".world")),
+						cfg.getInt("Parkour.map" + mapID + ".cp." + i + ".posX"), cfg.getInt("Parkour.map"
+								+ mapID + ".cp." + i + ".posY"), cfg.getInt("Parkour.map" + mapID + ".cp." + i
 								+ ".posZ"));
-				String HashTable = mapNumber + "_" + i;
+				String HashTable = mapID + "_" + i;
 				cLoc.put(loc, HashTable);
 			}
 		}
@@ -360,9 +359,9 @@ public class Parkour extends JavaPlugin implements Listener {
 
 	public void loadToggleMap() {
 		toggleParkour.clear();
-		for (int mapNumber : maps) {
-			if (getConfig().contains("Parkour.map" + mapNumber + ".toggle")) {
-				toggleParkour.put(mapNumber, getConfig().getBoolean("Parkour.map" + mapNumber + ".toggle"));
+		for (int mapID : maps) {
+			if (getConfig().contains("Parkour.map" + mapID + ".toggle")) {
+				toggleParkour.put(mapID, getConfig().getBoolean("Parkour.map" + mapID + ".toggle"));
 			}
 		}
 	}
@@ -476,10 +475,10 @@ public class Parkour extends JavaPlugin implements Listener {
 	 * notUnlocked - User has not unlocked this map
 	 * mapUnlock - User has unlocked the next map
 	 */
-	public static void sendInfo(String info, Player player, int mapNumber, Plugin plugin){
+	public static void sendInfo(String info, Player player, int mapID, Plugin plugin){
 		String PREFIX = ((Parkour) plugin).getPrefix();
-		String nextMapName = ((Parkour) plugin).getMapName(((Parkour) plugin).getMapNext(mapNumber));
-		String prevMapName = ((Parkour) plugin).getMapName(((Parkour) plugin).getMapPrevious(mapNumber));
+		String nextMapName = ((Parkour) plugin).getMapName(((Parkour) plugin).getMapNext(mapID));
+		String prevMapName = ((Parkour) plugin).getMapName(((Parkour) plugin).getMapPrevious(mapID));
 		if(info.equalsIgnoreCase("notUnlocked")) {
 			player.sendMessage(PREFIX + RED + "You have not unlocked this parkour, complete "+GREEN + prevMapName +RED+" to progress");
 
@@ -790,12 +789,12 @@ public class Parkour extends JavaPlugin implements Listener {
 
 	/**
 	 * Gets the previous mapID in the unlock chain for a given mapID
-	 * @param mapNumber
+	 * @param mapID
 	 * @return the mapID of the previous map from config or 0 if none found
 	 */
-	public int getMapPrevious(int mapNumber) {
-		if (getConfig().contains("Parkour.map" + mapNumber + ".mapPrevious")) {
-			return getConfig().getInt("Parkour.map" + mapNumber + ".mapPrevious");
+	public int getMapPrevious(int mapID) {
+		if (getConfig().contains("Parkour.map" + mapID + ".mapPrevious")) {
+			return getConfig().getInt("Parkour.map" + mapID + ".mapPrevious");
 
 		} else {
 			return 0;
@@ -804,12 +803,12 @@ public class Parkour extends JavaPlugin implements Listener {
 	
 	/**
 	 * Gets the next mapID in the unlock chain for a given mapID
-	 * @param mapNumber
+	 * @param mapID
 	 * @return the mapID of the next map from config or 0 if none found
 	 */
-	public int getMapNext(int mapNumber) {
-		if (getConfig().contains("Parkour.map" + mapNumber + ".mapNext")) {
-			return getConfig().getInt("Parkour.map" + mapNumber + ".mapNext");
+	public int getMapNext(int mapID) {
+		if (getConfig().contains("Parkour.map" + mapID + ".mapNext")) {
+			return getConfig().getInt("Parkour.map" + mapID + ".mapNext");
 
 		} else {
 			return 0;

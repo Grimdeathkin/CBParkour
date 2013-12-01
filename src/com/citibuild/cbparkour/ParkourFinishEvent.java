@@ -9,13 +9,13 @@ public class ParkourFinishEvent extends Event
 	private static final HandlerList handlers = new HandlerList();
 	
 	private final Player player;
-	private final int MapNumber;
+	private final int mapID;
 	private final long time;
 	private final boolean firstTime;
 	
-	public ParkourFinishEvent(Player player, int MapNumber, long time, boolean firstTime) {
+	public ParkourFinishEvent(Player player, int mapID, long time, boolean firstTime) {
 		this.player = player;
-		this.MapNumber = MapNumber;
+		this.mapID = mapID;
 		this.time = time;
 		this.firstTime = firstTime;
 	}
@@ -25,7 +25,7 @@ public class ParkourFinishEvent extends Event
 	}
 	
 	public int getMapNumber() {
-		return MapNumber;
+		return mapID;
 	}
 	
 	public long getTime() {
