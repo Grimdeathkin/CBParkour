@@ -1,6 +1,5 @@
 package com.citibuild.cbparkour;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,9 +10,6 @@ import java.util.logging.Logger;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -38,76 +34,10 @@ public class Parkour extends JavaPlugin implements Listener {
 	public static Permission permission = null;
 	boolean vault;
 	
-	// Used for parkour creation
-	ArrayList<Location> newMapCheckpoints = new ArrayList<>();
-	boolean newMap = false;
-	public String newMapPlayerEditor = "";
-	int CheckpointNumber = 0;
-	int NewMapNumber = 0;
-    String newMapName = null;
-	int newMapPrevious = 0;
-	int newMapNext = 0;
-
-	// Options
-	boolean removePotionsEffectsOnParkour = false;
-	boolean BroadcastMessage = false;
-	String BroadcastMsg = "&7&oPLAYER &aset a new record of &7&oTIME &aon &7&oMAPNAME";
-	String PrefixString = "PK";
-	boolean CheckpointEffect = true;
-	boolean InvincibleWhileParkour = true;
-	boolean FullHunger = false;
-	boolean LastCheckpointTeleport = false;
-	boolean rewardEnable = false;
-	boolean rewardIfBetterScore = true;
-
-	// Used for player parkour management
-	Location lobby = null;
-	public ArrayList<Integer> maps = new ArrayList<>();
-	public HashMap<Integer, Boolean> toggleParkour = new HashMap<>(); // Parkour active or not
-	HashMap<Location, String> cLoc = new HashMap<>(); // HashMap infos> Location : mapNumber_Checkpoint
-	public HashMap<String, String> ParkourContainer = new HashMap<>(); // HashMap infos> playerName :
-																		// mapNumber_parkourStartTime_Chekcpoint
-	HashMap<String, Long> Records = new HashMap<>(); // Map:Player, Time
-	HashMap<String, Long> rewardPlayersCooldown = new HashMap<>(); // HashMap infos> playerName :
-																				// LastRewardTime
-
-	// Used for saving/loading scores
-	String path = "plugins" + File.separator + "CBParkour" + File.separator + "PlayersScores.scores";
-	File scores = new File(path);
-
-	// Chat colours
-	static ChatColor BLACK = ChatColor.BLACK;				//\u00A70
-	static ChatColor D_BLUE = ChatColor.DARK_BLUE;			//\u00A71
-	static ChatColor D_GREEN = ChatColor.DARK_GREEN;		//\u00A72
-	static ChatColor D_AQUA = ChatColor.DARK_AQUA;			//\u00A73
-	static ChatColor D_RED = ChatColor.DARK_RED;			//\u00A74
-	static ChatColor D_PURPLE = ChatColor. DARK_PURPLE;	//\u00A75
-	static ChatColor GOLD = ChatColor.GOLD;				//\u00A76
-	static ChatColor D_GRAY = ChatColor.DARK_GRAY;			//\u00A77
-	static ChatColor GRAY = ChatColor.GRAY;				//\u00A78
-	static ChatColor BLUE = ChatColor.BLUE;				//\u00A79
-	static ChatColor GREEN = ChatColor.GREEN;				//\u00A7a
-	static ChatColor AQUA = ChatColor.AQUA;				//\u00A7b
-	static ChatColor RED = ChatColor.RED;					//\u00A7c
-	static ChatColor LIGHT_PURPLE = ChatColor.LIGHT_PURPLE;//\u00A7d
-	static ChatColor YELLOW = ChatColor.YELLOW;			//\u00A7e
-	static ChatColor WHITE = ChatColor.WHITE;				//\u00A7f	
-	// Chat effects
-	static ChatColor BOLD = ChatColor.BOLD;				//\u00A7l
-	static ChatColor STRIKE = ChatColor.STRIKETHROUGH;		//\u00A7m
-	static ChatColor ULINE = ChatColor.UNDERLINE;			//\u00A7n
-	static ChatColor ITALIC = ChatColor.ITALIC;			//\u00A7o
-	static ChatColor RESET = ChatColor.RESET;				//\u00A7r
-	// Prefixes, user and admin
-	public String PREFIX;
-	public String APREFIX;
-	
-	//GameMode Variable
-	public GameMode prePKGM = GameMode.SURVIVAL;
-	
-	//Parkour Items and Config Class definition
+	//Class definitions
 	public ParkourItems pkItems;
 	public ParkourFunctions pkFuncs;
+	public ParkourVars pkVars;
 	
 /*
  * 	Setup
@@ -118,10 +48,10 @@ public class Parkour extends JavaPlugin implements Listener {
 	public void onEnable() {
         pkItems = new ParkourItems(this);
         pkFuncs = new ParkourFunctions(this);
+        pkVars = new ParkourVars(this);
         	
 		pkFuncs.LoadCfg();
-		PREFIX = (GRAY+ "[" + D_AQUA + PrefixString + GRAY + "] ");
-		APREFIX = (GRAY+ "[" + RED + PrefixString + GRAY + "] ");
+		
 		
 		if (!setupPermissions() ) {
             log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
@@ -135,9 +65,9 @@ public class Parkour extends JavaPlugin implements Listener {
 		getServer().getPluginManager().registerEvents(new SignListener(this), this);
 		this.getCommand("pk").setExecutor(new ParkourCommand(this));
 		
-		if (!scores.getAbsoluteFile().exists()) {
+		if (!pkVars.scores.getAbsoluteFile().exists()) {
 			try {
-				scores.createNewFile();
+				pkVars.scores.createNewFile();
 				pkFuncs.saveScore();
 			} catch (IOException e) {
 				e.printStackTrace(System.out);
@@ -156,21 +86,21 @@ public class Parkour extends JavaPlugin implements Listener {
 	@Override
 	public void onDisable() {
 		// Reset everything
-		newMap = false;
-		newMapCheckpoints.clear();
-		newMapPrevious = 0;
-		newMapNext = 0;
-		newMapName = "";
-		newMapPlayerEditor = "";
-		NewMapNumber = 0;
-		CheckpointNumber = 0;
+		pkVars.newMap = false;
+		pkVars.newMapCheckpoints.clear();
+		pkVars.newMapPrevious = 0;
+		pkVars.newMapNext = 0;
+		pkVars.newMapName = "";
+		pkVars.newMapPlayerEditor = "";
+		pkVars.NewMapNumber = 0;
+		pkVars.CheckpointNumber = 0;
 
-		maps.clear();
-		toggleParkour.clear();
-		cLoc.clear();
-		ParkourContainer.clear();
-		Records.clear();
-		rewardPlayersCooldown.clear();
+		pkVars.maps.clear();
+		pkVars.toggleParkour.clear();
+		pkVars.cLoc.clear();
+		pkVars.ParkourContainer.clear();
+		pkVars.Records.clear();
+		pkVars.rewardPlayersCooldown.clear();
 		
 		pkFuncs.intMaps();
 		pkFuncs.loadScore();
@@ -224,7 +154,7 @@ public class Parkour extends JavaPlugin implements Listener {
 	 */
 	public ArrayList<Integer> getUnlocks(Player p){
 		ArrayList<Integer> unlockedMaps = new ArrayList<>();
-		for (int i : maps) {
+		for (int i : pkVars.maps) {
 			if(permission.has(p, "parkour.completed.map"+i)){
 				unlockedMaps.add(i);
 			}
@@ -239,10 +169,10 @@ public class Parkour extends JavaPlugin implements Listener {
 	 */
 	public Map<String, Long> getRecords(int map) {
 		Map<String, Long> records = new HashMap<>();
-		for (String m : Records.keySet()) {
+		for (String m : pkVars.Records.keySet()) {
 			String[] s = m.split(":");
 			if (pkFuncs.toInt(s[0]) == map) {
-				records.put(s[1], Records.get(m));
+				records.put(s[1], pkVars.Records.get(m));
 			}
 		}
 		return pkFuncs.sortByValue(records);
@@ -289,19 +219,19 @@ public class Parkour extends JavaPlugin implements Listener {
 	 */
 	public void displayHighscores(int mapID, Player player) {
 		Map<String, Long> records = getRecords(mapID);
-		player.sendMessage(GOLD + "---------=[ " + D_AQUA + "Best Times for " + getMapName(mapID) + GOLD + " ]=---------");
+		player.sendMessage(pkVars.GOLD + "---------=[ " + pkVars.D_AQUA + "Best Times for " + getMapName(mapID) + pkVars.GOLD + " ]=---------");
 		boolean inTopTen = false;
 		int counter = 1;
 		for (String p : records.keySet()) {
 			if (p.equals(player.getName())) inTopTen = true;
-			player.sendMessage(WHITE + "#" +AQUA + counter + " " + p + " - " + convertTime(records.get(p)));
+			player.sendMessage(pkVars.WHITE + "#" + pkVars.AQUA + counter + " " + p + " - " + convertTime(records.get(p)));
 			counter++;
 			if (counter == 11) break;
 		}
 		if (!inTopTen && records.containsKey(player.getName())) {
-			player.sendMessage(GREEN + "-- Your time --");
+			player.sendMessage(pkVars.GREEN + "-- Your time --");
 
-			player.sendMessage(WHITE + "#" +AQUA + "x " + player.getName() + " - "
+			player.sendMessage(pkVars.WHITE + "#" + pkVars.AQUA + "x " + player.getName() + " - "
 					+ convertTime(records.get(player.getName())));
 		}
 	}
@@ -364,7 +294,7 @@ public class Parkour extends JavaPlugin implements Listener {
 	 * @return the mapID of the given map or 0 if not found
 	 */
 	public int getMapNumber(String mapName) {
-		for (int i : maps) {
+		for (int i : pkVars.maps) {
 			if (getConfig().getString("Parkour.map" + i + ".mapName").equals(mapName)) { 
 				return i; 
 			}
@@ -377,7 +307,7 @@ public class Parkour extends JavaPlugin implements Listener {
 	 * @return the prefix string
 	 */
 	public String getPrefix(){
-		return PREFIX;
+		return pkVars.PREFIX;
 	}
 
 	/**
@@ -385,6 +315,6 @@ public class Parkour extends JavaPlugin implements Listener {
 	 * @return the prefix string
 	 */
 	public String getAPrefix(){
-		return APREFIX;
+		return pkVars.APREFIX;
 	}
 }

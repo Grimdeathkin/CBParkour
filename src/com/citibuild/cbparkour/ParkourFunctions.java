@@ -67,21 +67,21 @@ public class ParkourFunctions {
 		pk.saveDefaultConfig();
 		pk.saveConfig();
 
-		pk.removePotionsEffectsOnParkour = cfg.getBoolean("options.removePotionsEffectsOnParkour");
-		pk.InvincibleWhileParkour = cfg.getBoolean("options.InvincibleWhileParkour");
-		pk.CheckpointEffect = cfg.getBoolean("options.CheckpointEffect");
-		pk.BroadcastMessage = cfg.getBoolean("options.BroadcastOnRecord.enable");
-		pk.FullHunger = cfg.getBoolean("options.BroadcastOnRecord.enable");
-		pk.LastCheckpointTeleport = cfg.getBoolean("options.LastCheckpointTeleport");
+		pk.pkVars.removePotionsEffectsOnParkour = cfg.getBoolean("options.removePotionsEffectsOnParkour");
+		pk.pkVars.InvincibleWhileParkour = cfg.getBoolean("options.InvincibleWhileParkour");
+		pk.pkVars.CheckpointEffect = cfg.getBoolean("options.CheckpointEffect");
+		pk.pkVars.BroadcastMessage = cfg.getBoolean("options.BroadcastOnRecord.enable");
+		pk.pkVars.FullHunger = cfg.getBoolean("options.BroadcastOnRecord.enable");
+		pk.pkVars.LastCheckpointTeleport = cfg.getBoolean("options.LastCheckpointTeleport");
 			
-		pk.rewardIfBetterScore = cfg.getBoolean("rewards.rewardIfBetterScore");
-		pk.rewardEnable = cfg.getBoolean("rewards.enable");
+		pk.pkVars.rewardIfBetterScore = cfg.getBoolean("rewards.rewardIfBetterScore");
+		pk.pkVars.rewardEnable = cfg.getBoolean("rewards.enable");
 
-		if (pk.BroadcastMessage) {
-			pk.BroadcastMsg = cfg.getString("options.BroadcastOnRecord.message");
+		if (pk.pkVars.BroadcastMessage) {
+			pk.pkVars.BroadcastMsg = cfg.getString("options.BroadcastOnRecord.message");
 		}
 		
-		pk.PrefixString = cfg.getString("options.PrefixString");
+		pk.pkVars.PrefixString = cfg.getString("options.PrefixString");
 		
 		//ParkourItems Options
 		pk.pkItems.slime_cmd = cfg.getString("options.slime_cmd");
@@ -99,7 +99,7 @@ public class ParkourFunctions {
 		FileConfiguration cfg = pk.getConfig();
 		Location firstCheckpoint;
 
-		int mapID = getPlMapNumber(pk.ParkourContainer.get(p.getName()));
+		int mapID = getPlMapNumber(pk.pkVars.ParkourContainer.get(p.getName()));
 
 		if (cfg.contains("Parkour.map" + mapID + ".spawn")) {
 			firstCheckpoint = new Location(
@@ -129,10 +129,10 @@ public class ParkourFunctions {
 		FileConfiguration cfg = pk.getConfig();
 		Location lastCheckpoint;
 
-		int mapID = getPlMapNumber(pk.ParkourContainer.get(p.getName()));
-		int PlCheckpoint = getPlCheckpoint(pk.ParkourContainer.get(p.getName()));
+		int mapID = getPlMapNumber(pk.pkVars.ParkourContainer.get(p.getName()));
+		int PlCheckpoint = getPlCheckpoint(pk.pkVars.ParkourContainer.get(p.getName()));
 
-		if (PlCheckpoint == 1 || !pk.LastCheckpointTeleport) // Teleport to map spawn
+		if (PlCheckpoint == 1 || !pk.pkVars.LastCheckpointTeleport) // Teleport to map spawn
 		{
 			teleportFirstCheckpoint(p);
 		} else {
@@ -148,17 +148,17 @@ public class ParkourFunctions {
 	}
 
 	public void setPlCheckpoint(String p, int Cp) {
-		String HashTableSrc = pk.ParkourContainer.get(p);
+		String HashTableSrc = pk.pkVars.ParkourContainer.get(p);
 		String[] Splitter = HashTableSrc.split("_");
 		String CpFinal = Splitter[0] + "_" + Splitter[1] + "_" + Cp;
-		pk.ParkourContainer.put(p, CpFinal);
+		pk.pkVars.ParkourContainer.put(p, CpFinal);
 	}
 
 	public void setPlTime(String p, Long Time) {
-		String HashTableSrc = pk.ParkourContainer.get(p);
+		String HashTableSrc = pk.pkVars.ParkourContainer.get(p);
 		String[] Splitter = HashTableSrc.split("_");
 		String TimeFinal = Splitter[0] + "_" + Time + "_" + Splitter[2];
-		pk.ParkourContainer.put(p, TimeFinal);
+		pk.pkVars.ParkourContainer.put(p, TimeFinal);
 	}
 
 	public Long getPlTime(String HashTable) {
@@ -204,38 +204,38 @@ public class ParkourFunctions {
 	}
 
 	public void intCheckpointsLoc() {
-		pk.cLoc.clear();
+		pk.pkVars.cLoc.clear();
 		FileConfiguration cfg = pk.getConfig();
-		for (int mapID : pk.maps) {
+		for (int mapID : pk.pkVars.maps) {
 			for (int i = cfg.getInt("Parkour.map" + mapID + ".numberCp"); i >= 1; i--) {
 				Location loc = new Location(pk.getServer().getWorld(cfg.getString("Parkour.map" + mapID + ".world")),
 						cfg.getInt("Parkour.map" + mapID + ".cp." + i + ".posX"), cfg.getInt("Parkour.map"
 								+ mapID + ".cp." + i + ".posY"), cfg.getInt("Parkour.map" + mapID + ".cp." + i
 								+ ".posZ"));
 				String HashTable = mapID + "_" + i;
-				pk.cLoc.put(loc, HashTable);
+				pk.pkVars.cLoc.put(loc, HashTable);
 			}
 		}
 	}
 
 	public void intMaps() {
-		pk.maps.clear();
+		pk.pkVars.maps.clear();
 		String mapList = pk.getConfig().getConfigurationSection("Parkour").getKeys(false).toString().replaceAll("\\s", "")
 				.replace("[", "").replace("]", "");
 		String[] mapsSplit = mapList.split(",");
 		for (int i = pk.getConfig().getInt("Parkour.mapsnumber"); i >= 0; i--) {
 			if (mapExist(mapsSplit[i].substring(3))) {
-				pk.maps.add(Integer.parseInt(mapsSplit[i].substring(3)));
+				pk.pkVars.maps.add(Integer.parseInt(mapsSplit[i].substring(3)));
 			}
 		}
-		Collections.sort(pk.maps);
+		Collections.sort(pk.pkVars.maps);
 	}
 
 	public void loadToggleMap() {
-		pk.toggleParkour.clear();
-		for (int mapID : pk.maps) {
+		pk.pkVars.toggleParkour.clear();
+		for (int mapID : pk.pkVars.maps) {
 			if (pk.getConfig().contains("Parkour.map" + mapID + ".toggle")) {
-				pk.toggleParkour.put(mapID, pk.getConfig().getBoolean("Parkour.map" + mapID + ".toggle"));
+				pk.pkVars.toggleParkour.put(mapID, pk.getConfig().getBoolean("Parkour.map" + mapID + ".toggle"));
 			}
 		}
 	}
@@ -244,12 +244,12 @@ public class ParkourFunctions {
 		FileConfiguration cfg = pk.getConfig();
 
 		if (cfg.contains("Lobby")) {
-			pk.lobby = null;
+			pk.pkVars.lobby = null;
 			Location loc = new Location(pk.getServer().getWorld(cfg.getString("Lobby.world")),
 					cfg.getDouble("Lobby.posX"), cfg.getDouble("Lobby.posY"), cfg.getDouble("Lobby.posZ"));
 			loc.setPitch((float) cfg.getDouble("Lobby.posPitch"));
 			loc.setYaw((float) cfg.getDouble("Lobby.posYaw"));
-			pk.lobby = loc;
+			pk.pkVars.lobby = loc;
 		}
 	}
 	
@@ -298,10 +298,10 @@ public class ParkourFunctions {
 		String nextMapName = ((Parkour) plugin).getMapName(((Parkour) plugin).getMapNext(mapID));
 		String prevMapName = ((Parkour) plugin).getMapName(((Parkour) plugin).getMapPrevious(mapID));
 		if(info.equalsIgnoreCase("notUnlocked")) {
-			player.sendMessage(PREFIX + Parkour.RED + "You have not unlocked this parkour, complete "+ Parkour.GREEN + prevMapName + Parkour.RED+" to progress");
+			player.sendMessage(PREFIX + pk.pkVars.RED + "You have not unlocked this parkour, complete "+ pk.pkVars.GREEN + prevMapName + pk.pkVars.RED+" to progress");
 
 		} else if(info.equalsIgnoreCase("mapUnlock")) {
-		player.sendMessage(PREFIX + Parkour.GOLD + "Map unlocked! - "+ Parkour.GREEN + nextMapName);
+		player.sendMessage(PREFIX + pk.pkVars.GOLD + "Map unlocked! - "+ pk.pkVars.GREEN + nextMapName);
 			
 		}
 
@@ -361,7 +361,7 @@ public class ParkourFunctions {
  *  Player Functions
  */
 	public boolean isPlayerInParkour(Player player) {
-		if(pk.ParkourContainer.containsKey(player.getName())) {
+		if(pk.pkVars.ParkourContainer.containsKey(player.getName())) {
 			return true;
 		} else {
 			return false;
@@ -370,8 +370,8 @@ public class ParkourFunctions {
 	
 	public void saveScore() {
 		try {
-            try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream((pk.path))))) {
-                oos.writeObject(pk.Records);
+            try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream((pk.pkVars.path))))) {
+                oos.writeObject(pk.pkVars.Records);
                 oos.flush();
             }
 		} catch (IOException e) {
@@ -382,9 +382,9 @@ public class ParkourFunctions {
 	@SuppressWarnings("unchecked")
 	public void loadScore() {
 		try {
-            try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(pk.path)))) {
-            	pk.Records.clear();
-                pk.Records = (HashMap<String, Long>) ois.readObject();
+            try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(pk.pkVars.path)))) {
+            	pk.pkVars.Records.clear();
+                pk.pkVars.Records = (HashMap<String, Long>) ois.readObject();
             }
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace(System.out);
@@ -400,7 +400,7 @@ public class ParkourFunctions {
 	}
 
 	public void giveReward(Player p) {
-		if (pk.rewardEnable) {
+		if (pk.pkVars.rewardEnable) {
 			FileConfiguration cfg = pk.getConfig();
 
 			boolean rewardMoneyEnable = cfg.getBoolean("rewards.money.enable");
@@ -415,39 +415,39 @@ public class ParkourFunctions {
 			int rewardCooldown = cfg.getInt("rewards.cooldown");
 			String rewardCooldownMsg = cfg.getString("rewards.cooldownMessage");
 
-			if (!pk.rewardPlayersCooldown.containsKey(p.getName())) {
+			if (!pk.pkVars.rewardPlayersCooldown.containsKey(p.getName())) {
 				if (rewardMoneyEnable && rewardMoney > 0) {
-					pk.rewardPlayersCooldown.put(p.getName(), System.currentTimeMillis());
+					pk.pkVars.rewardPlayersCooldown.put(p.getName(), System.currentTimeMillis());
 
 					if (pk.vault) Parkour.economy.depositPlayer(p.getName(), rewardMoney);
-					p.sendMessage(pk.PREFIX + ChatColor.translateAlternateColorCodes('&', rewardMoneyMsg).replaceAll("MONEYAMOUNT",
+					p.sendMessage(pk.pkVars.PREFIX + ChatColor.translateAlternateColorCodes('&', rewardMoneyMsg).replaceAll("MONEYAMOUNT",
 							"" + rewardMoney));
 				}
 				if (rewardCommandEnable) {
-					pk.rewardPlayersCooldown.put(p.getName(), System.currentTimeMillis());
+					pk.pkVars.rewardPlayersCooldown.put(p.getName(), System.currentTimeMillis());
 
 					pk.getServer().dispatchCommand(pk.getServer().getConsoleSender(),
 							rewardCmd.replaceAll("PLAYER", p.getName()));
-					p.sendMessage(pk.PREFIX + ChatColor.translateAlternateColorCodes('&', rewardCommandMsg));
+					p.sendMessage(pk.pkVars.PREFIX + ChatColor.translateAlternateColorCodes('&', rewardCommandMsg));
 				}
 			} else {
-				if (System.currentTimeMillis() - pk.rewardPlayersCooldown.get(p.getName()) >= rewardCooldown * 1000) {
+				if (System.currentTimeMillis() - pk.pkVars.rewardPlayersCooldown.get(p.getName()) >= rewardCooldown * 1000) {
 					if (rewardMoneyEnable && rewardMoney > 0) {
-						pk.rewardPlayersCooldown.put(p.getName(), System.currentTimeMillis());
+						pk.pkVars.rewardPlayersCooldown.put(p.getName(), System.currentTimeMillis());
 
 						if (pk.vault) Parkour.economy.depositPlayer(p.getName(), rewardMoney);
-						p.sendMessage(pk.PREFIX + ChatColor.translateAlternateColorCodes('&', rewardMoneyMsg).replaceAll(
+						p.sendMessage(pk.pkVars.PREFIX + ChatColor.translateAlternateColorCodes('&', rewardMoneyMsg).replaceAll(
 								"MONEYAMOUNT", "" + rewardMoney));
 					}
 					if (rewardCommandEnable) {
-						pk.rewardPlayersCooldown.put(p.getName(), System.currentTimeMillis());
+						pk.pkVars.rewardPlayersCooldown.put(p.getName(), System.currentTimeMillis());
 
 						pk.getServer().dispatchCommand(pk.getServer().getConsoleSender(),
 								rewardCmd.replaceAll("PLAYER", p.getName()));
-						p.sendMessage(pk.PREFIX + ChatColor.translateAlternateColorCodes('&', rewardCommandMsg));
+						p.sendMessage(pk.pkVars.PREFIX + ChatColor.translateAlternateColorCodes('&', rewardCommandMsg));
 					}
 				} else {
-					long time = (System.currentTimeMillis() - pk.rewardPlayersCooldown.get(p.getName()));
+					long time = (System.currentTimeMillis() - pk.pkVars.rewardPlayersCooldown.get(p.getName()));
 
 					int ms1 = (int) time;
 					int secs = ms1 / 1000;
@@ -473,7 +473,7 @@ public class ParkourFunctions {
 						hoursS = "0" + hoursS;
 					}
 
-					p.sendMessage(pk.PREFIX + rewardCooldownMsg.replaceAll("TIME", hoursS + "h:" + minsS + "m:" + secsS + "s"));
+					p.sendMessage(pk.pkVars.PREFIX + rewardCooldownMsg.replaceAll("TIME", hoursS + "h:" + minsS + "m:" + secsS + "s"));
 				}
 			}
 		}

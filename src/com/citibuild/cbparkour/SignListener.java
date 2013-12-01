@@ -32,12 +32,12 @@ public class SignListener implements Listener{
 					e.setLine(1, "Leave");
 				} else if (e.getLine(1).equalsIgnoreCase("join")) {
 					if (plugin.pkFuncs.isNumber(e.getLine(2))) {
-						if (plugin.maps.contains(plugin.pkFuncs.toInt(e.getLine(2)))) {
+						if (plugin.pkVars.maps.contains(plugin.pkFuncs.toInt(e.getLine(2)))) {
 							int mapID = Integer.parseInt(e.getLine(2));
 
 							e.setLine(0, "[Parkour]");
 							e.setLine(1, "Join");
-							e.setLine(2, Parkour.AQUA + plugin.getMapName(mapID));
+							e.setLine(2, plugin.pkVars.AQUA + plugin.getMapName(mapID));
 						} else {
 							e.setCancelled(true);
 							e.getBlock().setType(Material.AIR);
@@ -50,12 +50,12 @@ public class SignListener implements Listener{
 					}
 				} else if (e.getLine(1).equalsIgnoreCase("info")) {
 					if (plugin.pkFuncs.isNumber(e.getLine(2))) {
-						if (plugin.maps.contains(plugin.pkFuncs.toInt(e.getLine(2)))) {
+						if (plugin.pkVars.maps.contains(plugin.pkFuncs.toInt(e.getLine(2)))) {
 							int mapID = Integer.parseInt(e.getLine(2));
 
 							e.setLine(0, "Parkour #" + mapID);
 							e.setLine(1, "---------------");
-							e.setLine(2, Parkour.AQUA + plugin.getMapName(mapID));
+							e.setLine(2, plugin.pkVars.AQUA + plugin.getMapName(mapID));
 						} else {
 							e.setCancelled(true);
 							e.getBlock().setType(Material.AIR);
@@ -68,12 +68,12 @@ public class SignListener implements Listener{
 					}
 				} else if (e.getLine(1).equalsIgnoreCase("best")) {
 					if (plugin.pkFuncs.isNumber(e.getLine(2))) {
-						if (plugin.maps.contains(plugin.pkFuncs.toInt(e.getLine(2)))) {
+						if (plugin.pkVars.maps.contains(plugin.pkFuncs.toInt(e.getLine(2)))) {
 							int mapID = Integer.parseInt(e.getLine(2));
 
 							e.setLine(0, "[Parkour]");
 							e.setLine(1, "Best Times");
-							e.setLine(2, Parkour.AQUA + plugin.getMapName(mapID));
+							e.setLine(2, plugin.pkVars.AQUA + plugin.getMapName(mapID));
 							e.setLine(3, "Click Me!");
 
 						} else {
