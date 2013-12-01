@@ -137,7 +137,7 @@ public class PlayerListener implements Listener{
 						}
 						if (plugin.lobby != null) {
 							e.getPlayer().teleport(plugin.lobby);
-							e.getPlayer().setGameMode(GameMode.ADVENTURE);
+							e.getPlayer().setGameMode(GameMode.SURVIVAL);
 						}
 					}
 					
@@ -218,7 +218,7 @@ public class PlayerListener implements Listener{
 						Parkour.sendError("noParkourPermission", p, plugin);
 						if (plugin.lobby != null) {
 							p.teleport(plugin.lobby);
-							p.setGameMode(GameMode.ADVENTURE);
+							p.setGameMode(GameMode.SURVIVAL);
 							p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You have been returned to the lobby");
 						}
 						return;
@@ -228,7 +228,7 @@ public class PlayerListener implements Listener{
 						Parkour.sendError("parkourDisabled", p, plugin);
 						if (plugin.lobby != null) {
 							p.teleport(plugin.lobby);
-							p.setGameMode(GameMode.ADVENTURE);
+							p.setGameMode(GameMode.SURVIVAL);
 							p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You have been returned to the lobby");
 						}
 						return;
@@ -239,7 +239,7 @@ public class PlayerListener implements Listener{
 							Parkour.sendInfo("notUnlocked", p, mapNumber, plugin);
 							if (plugin.lobby != null) {
 								p.teleport(plugin.lobby);
-								p.setGameMode(GameMode.ADVENTURE);
+								p.setGameMode(GameMode.SURVIVAL);
 								p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You have been returned to the lobby");
 							}
 							return;
@@ -277,6 +277,7 @@ public class PlayerListener implements Listener{
 					} 
 					// Player is in a parkour and hits a checkpoint
 					else {
+						p.setGameMode(GameMode.ADVENTURE);
 						int PlCheckpoint = plugin.getPlCheckpoint(plugin.ParkourContainer.get(p.getName()));
 						int CpMap = plugin.getCpMapNumber(plugin.cLoc.get(bLoc));
 						int Map = plugin.getPlMapNumber(plugin.ParkourContainer.get(p.getName()));
