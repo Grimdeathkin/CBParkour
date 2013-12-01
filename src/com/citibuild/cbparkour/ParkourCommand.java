@@ -204,7 +204,7 @@ public class ParkourCommand implements CommandExecutor{
 							if (plugin.isPlayerInParkour(p)) {
 								long totalTime = System.currentTimeMillis()
 										- plugin.getPlTime(plugin.ParkourContainer.get(p.getName()));
-								p.sendMessage(PREFIX + AQUA + "Your current time is: "+plugin.convertTime(totalTime));
+								p.sendMessage(PREFIX + AQUA + "Current time: "+GRAY+plugin.convertTime(totalTime));
 							} else {
 								p.sendMessage(PREFIX + RED + "You are not in a parkour, use /pk lobby to return to the lobby");
 							}

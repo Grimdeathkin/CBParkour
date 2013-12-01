@@ -364,7 +364,7 @@ public class PlayerListener implements Listener{
 								if (!plugin.Records.containsKey(Map + ":" + p.getName())) {
 								
 									plugin.getServer().getPluginManager().callEvent(new ParkourFinishEvent(p, Map, totalTime, true));
-									p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You finished for the first time in " +
+									p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You finished "+Parkour.GREEN + plugin.getMapName(Map)+Parkour.AQUA+ " for the first time in " +
 											Parkour.GRAY + plugin.convertTime(totalTime));
 									plugin.Records.put(Map + ":" + p.getName(), totalTime);
 									plugin.saveScore();
@@ -397,7 +397,7 @@ public class PlayerListener implements Listener{
 									// Player beat old score
 									if (plugin.Records.get(Map + ":" + p.getName()) >= totalTime) {
 										p.sendMessage(plugin.PREFIX + Parkour.GREEN + "You beat your old time of " + Parkour.GRAY + plugin.convertTime(plugin.Records.get(Map + ":" + p.getName())));
-										p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You finished this parkour in " + Parkour.GRAY + plugin.convertTime(totalTime));
+										p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You finished "+Parkour.GREEN + plugin.getMapName(Map)+Parkour.AQUA+ " in " + Parkour.GRAY + plugin.convertTime(totalTime));
 										
 										plugin.Records.put(Map + ":" + p.getName(), totalTime);
 										plugin.saveScore();
@@ -421,7 +421,7 @@ public class PlayerListener implements Listener{
 									} else {
 										String username;
 										p.sendMessage(plugin.PREFIX + Parkour.RED + "You didn't beat your old time "+ Parkour.GRAY + plugin.convertTime(plugin.Records.get(Map + ":" + p.getName())));
-										p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You finished this parkour in " +Parkour.GRAY+ plugin.convertTime(totalTime));
+										p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You finished "+Parkour.GREEN + plugin.getMapName(Map)+Parkour.AQUA+ " in " + Parkour.GRAY + plugin.convertTime(totalTime));
 
 										if(topName.equalsIgnoreCase(p.getName())){
 											username = "You";
