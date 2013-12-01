@@ -23,6 +23,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -43,7 +44,6 @@ import org.bukkit.scheduler.BukkitRunnable;
  * - Add userInfo command to get unlocks and if they hold map records.
  * - Add sign leaderboard system.
  * - Integrate slimeball commander into CBParkour.
- * - Add system to restore gamemode on parkour finish.
  * - Add system to save progress on disconnect or reload.
  * - Add ranking system and chat prefixing (like SkyWars).
  * - Figure out how to seduce bsquid... beer!.
@@ -120,6 +120,9 @@ public class Parkour extends JavaPlugin implements Listener {
 	// Prefixes, user and admin
 	public String PREFIX;
 	public String APREFIX;
+	
+	//GameMode Variable
+	public GameMode prePKGM = GameMode.SURVIVAL;
 	
 /*
  * 	Setup

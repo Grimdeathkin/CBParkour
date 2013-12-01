@@ -252,6 +252,7 @@ public class PlayerListener implements Listener{
 
 						if (Checkpoint == 1) {
 							int Map = plugin.getCpMapNumber(plugin.cLoc.get(bLoc));
+							plugin.prePKGM = p.getGameMode();
 							p.setGameMode(GameMode.ADVENTURE);
 							plugin.getServer().getPluginManager().callEvent(new ParkourStartEvent(p, Map, false));
 							
@@ -445,6 +446,7 @@ public class PlayerListener implements Listener{
                                         @Override
 										public void run() {
                                           plugin.getServer().getPlayer(pl).teleport(plugin.lobby);
+                                          plugin.getServer().getPlayer(pl).setGameMode(plugin.prePKGM);
 										}
 									}, 5L);
 								}
