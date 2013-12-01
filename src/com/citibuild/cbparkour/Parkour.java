@@ -37,12 +37,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 /*
  * TODO
  * - Begin getUnlock function to return a list of map IDs a player has unlocked.
- * - Separate events into classes (PlayerListener, EntityListener, SignListener).
  * - Add configurable strings (or perhaps add a main colour choice for strings). NB: Josh wants all server plugin colour schemes to be GREEN / WHITE.
  * - Extension on previous point, separate config into separate class.
  * - Add userInfo command to get unlocks and if they hold map records.
  * - Add sign leaderboard system.
- * - Integrate slimeball commander into CBParkour.
  * - Add system to save progress on disconnect or reload.
  * - Add ranking system and chat prefixing (like SkyWars).
  * - Figure out how to seduce bsquid... beer!.
@@ -122,6 +120,9 @@ public class Parkour extends JavaPlugin implements Listener {
 	//GameMode Variable
 	public GameMode prePKGM = GameMode.SURVIVAL;
 	
+	//Parkour Items Class definition
+	public ParkourItems pkItems;
+	
 /*
  * 	Setup
  */
@@ -129,7 +130,8 @@ public class Parkour extends JavaPlugin implements Listener {
 
         @Override
 	public void onEnable() {
-		
+        pkItems = new ParkourItems(this);
+        	
 		LoadCfg();
 		PREFIX = (GRAY+ "[" + D_AQUA + PrefixString + GRAY + "] ");
 		APREFIX = (GRAY+ "[" + RED + PrefixString + GRAY + "] ");
@@ -159,6 +161,8 @@ public class Parkour extends JavaPlugin implements Listener {
 		loadToggleMap();
 		loadLobby();
 		intCheckpointsLoc();
+
+		pkItems.loadStartItems();
 	}
 
 	@Override
@@ -377,6 +381,8 @@ public class Parkour extends JavaPlugin implements Listener {
 		cfg.addDefault("options.removePotionsEffectsOnParkour", false);
 		cfg.addDefault("options.setFullHungerOnParkour", false);
 		cfg.addDefault("options.LastCheckpointTeleport", true);
+		cfg.addDefault("options.slime_cmd", "pk cp");
+		cfg.addDefault("options.musicdisk_cmd", "pk time");
 
 		// Rewards
 		cfg.addDefault("rewards.enable", false);
@@ -397,6 +403,7 @@ public class Parkour extends JavaPlugin implements Listener {
 
 		cfg.addDefault("Parkour.mapsnumber", 0);
 		cfg.options().copyDefaults(true);
+		saveDefaultConfig();
 		saveConfig();
 
 		removePotionsEffectsOnParkour = cfg.getBoolean("options.removePotionsEffectsOnParkour");
@@ -414,6 +421,10 @@ public class Parkour extends JavaPlugin implements Listener {
 		}
 		
 		PrefixString = cfg.getString("options.PrefixString");
+		
+		//ParkourItems Options
+		pkItems.slime_cmd = cfg.getString("options.slime_cmd");
+		pkItems.musicdisk_cmd = cfg.getString("options.musicdisk_cmd");
 
 	}
 	
