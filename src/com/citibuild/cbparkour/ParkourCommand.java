@@ -51,6 +51,7 @@ public class ParkourCommand implements CommandExecutor{
 						p.sendMessage(APREFIX + Parkour.D_GREEN + "/" + CommandLabel + " setLobby" + Parkour.WHITE + " - Set the lobby spawn");
 						p.sendMessage(APREFIX + Parkour.D_GREEN + "/" + CommandLabel + " resetScores <mapID>" + Parkour.WHITE + "- Reset All scores for a map");
 						p.sendMessage(APREFIX + Parkour.D_GREEN + "/" + CommandLabel + " pReset <Player> <mapID> | all" + Parkour.WHITE + " - Reset scores for a player");
+						p.sendMessage(APREFIX + Parkour.D_GREEN + "/" + CommandLabel + " reload " + Parkour.WHITE + " - Reloads the config for " + plugin.getName());
 					}
 					p.sendMessage(PREFIX + Parkour.GRAY + "/" + CommandLabel + " join <mapID>" + Parkour.WHITE + " - Join a map");
 					p.sendMessage(PREFIX + Parkour.GRAY + "/" + CommandLabel + " leave" + Parkour.WHITE + " - Leave the map");
@@ -58,6 +59,7 @@ public class ParkourCommand implements CommandExecutor{
 					p.sendMessage(PREFIX + Parkour.GRAY + "/" + CommandLabel + " cp | checkpoint" + Parkour.WHITE + " - Teleport to your last checkpoint");
 					p.sendMessage(PREFIX + Parkour.GRAY + "/" + CommandLabel + " maplist" + Parkour.WHITE + " - Show all the maps");
 					p.sendMessage(PREFIX + Parkour.GRAY + "/" + CommandLabel + " best <MapID>" + Parkour.WHITE + " - Show the best score of a map");
+					p.sendMessage(PREFIX + Parkour.GRAY + "/" + CommandLabel + " time" + Parkour.WHITE + " - Show your current time");
 				} 
 				
 				else {
