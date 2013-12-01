@@ -677,6 +677,12 @@ public class ParkourCommand implements CommandExecutor{
 							p.sendMessage(PREFIX + RED + "You must specify the map ID");
 							p.sendMessage(APREFIX + RED + "Correct usage /pk resetScores <map ID>");
 						}
+					} 
+	/* Reload config */
+					else if(args[0].equalsIgnoreCase("reload") && Parkour.permission.has(p, "parkour.admin")) {
+						plugin.reloadCfg();
+						p.sendMessage(APREFIX + "Configuration reloaded");
+						
 					}
 
 					else {

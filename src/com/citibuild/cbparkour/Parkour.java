@@ -48,7 +48,6 @@ import org.bukkit.scheduler.BukkitRunnable;
  * - Integrate slimeball commander into CBParkour.
  * - Add system to restore gamemode on parkour finish.
  * - Add system to stop admins changing gamemode during parkour.
- * - Add reload command for configurations.
  * - Add system to save progress on disconnect or reload.
  * - Add ranking system and chat prefixing (like SkyWars).
  * - Figure out how to seduce bsquid... beer!.
@@ -455,7 +454,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		}
 	}
 
-	private void LoadCfg() {
+	public void LoadCfg() {
 		FileConfiguration cfg = getConfig();
 
 		// Options
@@ -504,6 +503,11 @@ public class Parkour extends JavaPlugin implements Listener {
 		
 		PrefixString = cfg.getString("options.PrefixString");
 
+	}
+	
+	public void reloadCfg() {
+		reloadConfig();
+		LoadCfg();
 	}
 
 	public void loadLobby() {
