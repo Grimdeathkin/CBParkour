@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -82,7 +81,7 @@ public class ParkourCommand implements CommandExecutor{
 
 										if (plugin.pkVars.toggleParkour.get(mapID)) {
 											
-											if(Parkour.permission.has(p, "parkour.completed.map"+plugin.getMapPrevious(mapID)) || plugin.getMapPrevious(mapID) == 0){
+											if(Parkour.permission.has(p, "parkour.completed.map" + plugin.getMapPrevious(mapID)) || plugin.getMapPrevious(mapID) == 0){
 													
 													if (plugin.pkFuncs.isPlayerInParkour(p)) {
 														plugin.pkVars.ParkourContainer.remove(p.getName());
@@ -101,18 +100,17 @@ public class ParkourCommand implements CommandExecutor{
 														loc.setYaw((float) cfg.getDouble("Parkour.map" + args[1] + ".spawn.posYaw"));
 					
 														p.teleport(loc);
-														p.setGameMode(GameMode.ADVENTURE);
 													} 
 													else {
-														p.sendMessage(PREFIX + plugin.pkVars.RED + "The spawn for map " +plugin.pkVars.GREEN + args[1] +plugin.pkVars.RED + " is not set");
+														p.sendMessage(PREFIX + plugin.pkVars.RED + "The spawn for map " + plugin.pkVars.GREEN + args[1] + plugin.pkVars.RED + " is not set");
 													}	
 											}
 											else{
-												p.sendMessage(PREFIX + plugin.pkVars.RED + "You have not unlocked this parkour, complete "+plugin.pkVars.GREEN + plugin.getMapName(plugin.getMapPrevious(mapID))+plugin.pkVars.RED+" to progress");
+												p.sendMessage(PREFIX + plugin.pkVars.RED + "You have not unlocked this parkour, complete " + plugin.pkVars.GREEN + plugin.getMapName(plugin.getMapPrevious(mapID))+ plugin.pkVars.RED+" to progress");
 											}
 										}
 										else{
-											p.sendMessage(PREFIX + "This parkour is" + plugin.pkVars.RED + " disabled");
+											plugin.pkFuncs.sendError("parkourDisabled", p, plugin);
 										}
 										
 									} else {
@@ -122,7 +120,7 @@ public class ParkourCommand implements CommandExecutor{
 									p.sendMessage(PREFIX + plugin.pkVars.RED + args[1] +" is not a valid number");
 								}
 							} else {
-								p.sendMessage(PREFIX + "You must specify the map ID");
+								plugin.pkFuncs.sendError("specifymapid", p, plugin);
 							}
 						} else{
 							plugin.pkFuncs.sendError("noPermission", p, plugin);
@@ -140,7 +138,7 @@ public class ParkourCommand implements CommandExecutor{
 								}
 		
 							} else {
-								p.sendMessage(PREFIX + plugin.pkVars.RED + "You are not in a parkour, use /pk lobby to return to the lobby");
+								plugin.pkFuncs.sendError("notinpk", p, plugin);
 							}
 						} else{
 							plugin.pkFuncs.sendError("noPermission", p, plugin);
@@ -169,7 +167,7 @@ public class ParkourCommand implements CommandExecutor{
 							if (plugin.pkFuncs.isPlayerInParkour(p)) {
 								plugin.pkFuncs.teleportLastCheckpoint(p);
 							} else {
-								p.sendMessage(PREFIX + plugin.pkVars.RED + "You are not in a parkour, use /pk lobby to return to the lobby");
+								plugin.pkFuncs.sendError("notinpk", p, plugin);
 							}
 						} else{
 							plugin.pkFuncs.sendError("noPermission", p, plugin);
@@ -181,9 +179,9 @@ public class ParkourCommand implements CommandExecutor{
 							if (plugin.pkFuncs.isPlayerInParkour(p)) {
 								long totalTime = System.currentTimeMillis()
 										- plugin.pkFuncs.getPlTime(plugin.pkVars.ParkourContainer.get(p.getName()));
-								p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Current time: "+ plugin.pkVars.GRAY+plugin.convertTime(totalTime));
+								p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Current time: " + plugin.pkVars.GRAY+ plugin.convertTime(totalTime));
 							} else {
-								p.sendMessage(PREFIX + plugin.pkVars.RED + "You are not in a parkour, use /pk lobby to return to the lobby");
+								plugin.pkFuncs.sendError("notinpk", p, plugin);
 							}
 						} else{
 							plugin.pkFuncs.sendError("noPermission", p, plugin);
@@ -193,7 +191,7 @@ public class ParkourCommand implements CommandExecutor{
 					else if (args[0].equalsIgnoreCase("MapList")) {
 						if (Parkour.permission.has(p, "parkour.use")) {
 							p.sendMessage(plugin.pkVars.GOLD + "---------=[ " + plugin.pkVars.D_AQUA + "Parkour Map List" + plugin.pkVars.GOLD + " ]=---------");
-							p.sendMessage(plugin.pkVars.GOLD + "-------=[ " + plugin.pkVars.AQUA + "Enabled:" + plugin.pkVars.GREEN + "■" +plugin.pkVars.D_AQUA+ plugin.pkVars.GRAY + " | " +plugin.pkVars.AQUA+ "Disabled:" + plugin.pkVars.GRAY + "■" + plugin.pkVars.GOLD + " ]=-------");
+							p.sendMessage(plugin.pkVars.GOLD + "-------=[ " + plugin.pkVars.AQUA + "Enabled:" + plugin.pkVars.GREEN + "■" + plugin.pkVars.D_AQUA+ plugin.pkVars.GRAY + " | " + plugin.pkVars.AQUA+ "Disabled:" + plugin.pkVars.GRAY + "■" + plugin.pkVars.GOLD + " ]=-------");
 							for (int i : plugin.pkVars.maps) {
 								String mapID = "" + i;
 								
@@ -206,23 +204,23 @@ public class ParkourCommand implements CommandExecutor{
 										mode = plugin.pkVars.GREEN + "■";
 										isToggled = true;
 									}
-									String waterActive = plugin.pkVars.AQUA + " Water-Respawn:"+ plugin.pkVars.GRAY + "■";
-									String lavaActive = plugin.pkVars.AQUA + " Lava-Respawn:"+ plugin.pkVars.GRAY + "■";
+									String waterActive = plugin.pkVars.AQUA + " Water-Respawn:" + plugin.pkVars.GRAY + "■";
+									String lavaActive = plugin.pkVars.AQUA + " Lava-Respawn:" + plugin.pkVars.GRAY + "■";
 									boolean isWaterActive = cfg.getBoolean("Parkour.map" + mapID + ".waterrespawn");
 									boolean isLavaActive = cfg.getBoolean("Parkour.map" + mapID + ".lavarespawn");
 									if (isWaterActive){
-										waterActive = plugin.pkVars.AQUA + " Water-Respawn:"+ plugin.pkVars.GREEN + "■";
+										waterActive = plugin.pkVars.AQUA + " Water-Respawn:" + plugin.pkVars.GREEN + "■";
 									}
 									if (isLavaActive){
-										lavaActive = plugin.pkVars.AQUA + " Lava-Respawn:"+ plugin.pkVars.GREEN + "■";
+										lavaActive = plugin.pkVars.AQUA + " Lava-Respawn:" + plugin.pkVars.GREEN + "■";
 									}
 									
 									if (Parkour.permission.has(p, "parkour.admin") || Parkour.permission.has(p, "parkour.mapeditor")){
-										p.sendMessage(plugin.pkVars.GRAY + ""+ i + mode + plugin.pkVars.GRAY+ " | " + plugin.pkVars.AQUA + plugin.getMapName(i) + plugin.pkVars.GRAY 
+										p.sendMessage(plugin.pkVars.GRAY + "" + i + mode + plugin.pkVars.GRAY+ " | " + plugin.pkVars.AQUA + plugin.getMapName(i) + plugin.pkVars.GRAY 
 												+ " (" + plugin.pkFuncs.getCfgTotalCheckpoints(i) + " CPs)" + waterActive + plugin.pkVars.GRAY + " |" + lavaActive);
 									}
 									else if ( Parkour.permission.has(p, "parkour.use") && isToggled){
-									p.sendMessage(plugin.pkVars.GRAY + ""+ i +"- " + plugin.pkVars.AQUA + plugin.getMapName(i) + plugin.pkVars.GRAY + " (" + (plugin.pkFuncs.getCfgTotalCheckpoints(i)-2) 
+									p.sendMessage(plugin.pkVars.GRAY + "" + i +"- " + plugin.pkVars.AQUA + plugin.getMapName(i) + plugin.pkVars.GRAY + " (" + (plugin.pkFuncs.getCfgTotalCheckpoints(i)-2) 
 											+ " CPs)" +  waterActive + plugin.pkVars.GRAY + " |" + lavaActive);
 									}
 								}
@@ -292,7 +290,7 @@ public class ParkourCommand implements CommandExecutor{
 						} else {
 							if (p.getName().equalsIgnoreCase(plugin.pkVars.newMapPlayerEditor)) {
 								if (plugin.pkVars.CheckpointNumber >= 2) {
-									p.sendMessage(APREFIX + plugin.pkVars.AQUA + plugin.pkVars.newMapName + " (" +plugin.pkVars.GREEN+ "map "  + plugin.pkVars.NewMapNumber +plugin.pkVars.AQUA + ") created" + plugin.pkVars.GRAY + " | MapEditor: " + plugin.pkVars.RED + "OFF");
+									p.sendMessage(APREFIX + plugin.pkVars.AQUA + plugin.pkVars.newMapName + " (" + plugin.pkVars.GREEN+ "map "  + plugin.pkVars.NewMapNumber + plugin.pkVars.AQUA + ") created" + plugin.pkVars.GRAY + " | MapEditor: " + plugin.pkVars.RED + "OFF");
 									p.sendMessage(APREFIX + plugin.pkVars.AQUA + "Remember to set a spawn using /pk setspawn <map ID>");
 									FileConfiguration cfg = plugin.getConfig();
 									cfg.set("Parkour.mapsnumber", (plugin.getConfig().getInt("Parkour.mapsnumber")) + 1);
@@ -346,7 +344,7 @@ public class ParkourCommand implements CommandExecutor{
 									plugin.getConfig().set("Parkour.mapsnumber",
 											Integer.valueOf(plugin.getConfig().getInt("Parkour.mapsnumber") - 1));
 									plugin.saveConfig();
-									p.sendMessage(APREFIX +plugin.pkVars.AQUA + "map " +plugin.pkVars.GREEN + mapID +plugin.pkVars.AQUA + " is now deleted");
+									p.sendMessage(APREFIX + plugin.pkVars.AQUA + "map " + plugin.pkVars.GREEN + mapID + plugin.pkVars.AQUA + " is now deleted");
 
 									for (Iterator<String> it = plugin.pkVars.Records.keySet().iterator(); it.hasNext();) {
 										String key = it.next();
@@ -468,27 +466,27 @@ public class ParkourCommand implements CommandExecutor{
 										isToggled = true;
 									}
 							
-									String waterActive = plugin.pkVars.AQUA + " Water:"+ plugin.pkVars.GRAY + "■";
-									String lavaActive = plugin.pkVars.AQUA + " Lava:"+ plugin.pkVars.GRAY + "■";
+									String waterActive = plugin.pkVars.AQUA + " Water:" + plugin.pkVars.GRAY + "■";
+									String lavaActive = plugin.pkVars.AQUA + " Lava:" + plugin.pkVars.GRAY + "■";
 									boolean isWaterActive = cfg.getBoolean("Parkour.map" + mapID + ".waterrespawn");
 									boolean isLavaActive = cfg.getBoolean("Parkour.map" + mapID + ".lavarespawn");
 									if (isWaterActive){
-										waterActive = plugin.pkVars.AQUA + " Water:"+ plugin.pkVars.GREEN + "■";
+										waterActive = plugin.pkVars.AQUA + " Water:" + plugin.pkVars.GREEN + "■";
 									}
 									if (isLavaActive){
-										lavaActive = plugin.pkVars.AQUA + " Lava:"+ plugin.pkVars.GREEN + "■";
+										lavaActive = plugin.pkVars.AQUA + " Lava:" + plugin.pkVars.GREEN + "■";
 									}
 									
 									p.sendMessage(plugin.pkVars.GOLD + "---------=[ " + plugin.pkVars.D_AQUA + " Map Info " + plugin.pkVars.GOLD + " ]=---------");
 									p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Map ID: " + plugin.pkVars.GRAY +args[1]);
-									p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Map Name: " + plugin.pkVars.GRAY +plugin.getMapName(mapID));
+									p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Map Name: " + plugin.pkVars.GRAY + plugin.getMapName(mapID));
 									p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Enabled: " + mode);
-									p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Previous Map: "+ plugin.pkVars.GRAY +plugin.getMapPrevious(mapID));
-									p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Next Map: "+ plugin.pkVars.GRAY +plugin.getMapNext(mapID));
+									p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Previous Map: " + plugin.pkVars.GRAY + plugin.getMapPrevious(mapID));
+									p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Next Map: " + plugin.pkVars.GRAY + plugin.getMapNext(mapID));
 									p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Checkpoints: " + plugin.pkVars.GRAY +(plugin.pkFuncs.getCfgTotalCheckpoints(mapID)-2) );
-									p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Respawns: "+ waterActive + lavaActive);
+									p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Respawns: " + waterActive + lavaActive);
 									Entry<String, Long> topScore = plugin.getHighscore(mapID);
-									p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Best Time: " +plugin.pkVars.GRAY + topScore.getKey() + " | " + plugin.convertTime(topScore.getValue()));
+									p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Best Time: " + plugin.pkVars.GRAY + topScore.getKey() + " | " + plugin.convertTime(topScore.getValue()));
 									
 								} else {
 									p.sendMessage(APREFIX + plugin.pkVars.RED + args[1] + " is not a valid map ID");
@@ -511,8 +509,8 @@ public class ParkourCommand implements CommandExecutor{
 									boolean isActive = !cfg.getBoolean("Parkour.map" + mapID + ".waterrespawn");
 									cfg.set("Parkour.map" + mapID + ".waterrespawn", isActive);
 									plugin.saveConfig();
-									if (isActive) p.sendMessage(APREFIX + plugin.pkVars.AQUA + "Waterrespawn is now "+plugin.pkVars.GREEN +"ON" + plugin.pkVars.AQUA + " for map " +plugin.pkVars.GREEN + mapID);
-									else p.sendMessage(APREFIX + plugin.pkVars.AQUA + "Waterrespawn is now "+plugin.pkVars.RED +"OFF" +plugin.pkVars.AQUA + " for map " +plugin.pkVars.GREEN + mapID);
+									if (isActive) p.sendMessage(APREFIX + plugin.pkVars.AQUA + "Waterrespawn is now " + plugin.pkVars.GREEN +"ON" + plugin.pkVars.AQUA + " for map " + plugin.pkVars.GREEN + mapID);
+									else p.sendMessage(APREFIX + plugin.pkVars.AQUA + "Waterrespawn is now " + plugin.pkVars.RED +"OFF" + plugin.pkVars.AQUA + " for map " + plugin.pkVars.GREEN + mapID);
 								} else {
 									p.sendMessage(APREFIX + plugin.pkVars.RED + args[1] + " is not a valid map ID");
 								}
@@ -535,8 +533,8 @@ public class ParkourCommand implements CommandExecutor{
 									boolean isActive = !cfg.getBoolean("Parkour.map" + mapID + ".lavarespawn");
 									cfg.set("Parkour.map" + mapID + ".lavarespawn", isActive);
 									plugin.saveConfig();
-									if (isActive) p.sendMessage(APREFIX + plugin.pkVars.AQUA + "Lavarespawn is now "+plugin.pkVars.GREEN +"ON" + plugin.pkVars.AQUA + " for map " +plugin.pkVars.GREEN + mapID);
-									else p.sendMessage(APREFIX + plugin.pkVars.AQUA + "Lavarespawn is now "+plugin.pkVars.RED +"OFF" +plugin.pkVars.AQUA + " for map " +plugin.pkVars.GREEN + mapID);
+									if (isActive) p.sendMessage(APREFIX + plugin.pkVars.AQUA + "Lavarespawn is now " + plugin.pkVars.GREEN +"ON" + plugin.pkVars.AQUA + " for map " + plugin.pkVars.GREEN + mapID);
+									else p.sendMessage(APREFIX + plugin.pkVars.AQUA + "Lavarespawn is now " + plugin.pkVars.RED +"OFF" + plugin.pkVars.AQUA + " for map " + plugin.pkVars.GREEN + mapID);
 								} else {
 									p.sendMessage(APREFIX + plugin.pkVars.RED + args[1] + " is not a valid map ID");
 								}
@@ -558,11 +556,11 @@ public class ParkourCommand implements CommandExecutor{
 							if (plugin.pkFuncs.isNumber(args[1])) {
 								if (plugin.pkVars.maps.contains(plugin.pkFuncs.toInt(args[1]))) {
 									if (plugin.getConfig().getBoolean("Parkour.map" + args[1] + ".toggle")) {
-										p.sendMessage(APREFIX + plugin.pkVars.AQUA + "Map "+ args[1] + " toggled " + plugin.pkVars.RED + "OFF");
+										p.sendMessage(APREFIX + plugin.pkVars.AQUA + "Map " + args[1] + " toggled " + plugin.pkVars.RED + "OFF");
 										plugin.getConfig().set("Parkour.map" + args[1] + ".toggle", false);
 										plugin.saveConfig();
 									} else {
-										p.sendMessage(APREFIX + plugin.pkVars.AQUA + "Map "+ args[1] + " toggled " + plugin.pkVars.GREEN + "ON");
+										p.sendMessage(APREFIX + plugin.pkVars.AQUA + "Map " + args[1] + " toggled " + plugin.pkVars.GREEN + "ON");
 										plugin.getConfig().set("Parkour.map" + args[1] + ".toggle", true);
 										plugin.saveConfig();
 									}
@@ -615,13 +613,13 @@ public class ParkourCommand implements CommandExecutor{
 
 										if (KeySplit[1].equalsIgnoreCase(playerName)) {
 											if (DeleteOnAllMaps) {
-												Parkour.permission.playerRemove(targetPlayer, "parkour.completed.map"+KeySplit[0]);
+												Parkour.permission.playerRemove(targetPlayer, "parkour.completed.map" +KeySplit[0]);
 												it.remove();
 												PlayerFound = true;
 											} else if (Integer.parseInt(KeySplit[0]) == Integer.parseInt(mapID)) {
 												PlayerFound = true;
 												it.remove();
-												Parkour.permission.playerRemove(targetPlayer, "parkour.completed.map"+mapID);
+												Parkour.permission.playerRemove(targetPlayer, "parkour.completed.map" +mapID);
 											}
 										}
 									}
@@ -633,9 +631,9 @@ public class ParkourCommand implements CommandExecutor{
 									}
 
 									if (DeleteOnAllMaps) {
-										p.sendMessage(APREFIX + plugin.pkVars.AQUA + "Scores and unlocks reset for player " + plugin.pkVars.GREEN + playerName +plugin.pkVars.AQUA+ " on all maps");
+										p.sendMessage(APREFIX + plugin.pkVars.AQUA + "Scores and unlocks reset for player " + plugin.pkVars.GREEN + playerName + plugin.pkVars.AQUA+ " on all maps");
 									} else {
-										p.sendMessage(APREFIX + plugin.pkVars.AQUA + "Scores and unlocks reset for player "+plugin.pkVars.GREEN + playerName + plugin.pkVars.AQUA + " on map " +plugin.pkVars.GREEN+ mapID);
+										p.sendMessage(APREFIX + plugin.pkVars.AQUA + "Scores and unlocks reset for player " + plugin.pkVars.GREEN + playerName + plugin.pkVars.AQUA + " on map " + plugin.pkVars.GREEN+ mapID);
 									}
 
 									plugin.pkFuncs.loadScore();
@@ -656,8 +654,7 @@ public class ParkourCommand implements CommandExecutor{
 							if (plugin.pkFuncs.isNumber(args[1])) {
 								if (plugin.pkVars.maps.contains(plugin.pkFuncs.toInt(args[1]))) {
 									int mapID = Integer.parseInt(args[1]);
-									p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Scores reset for map " +plugin.pkVars.GREEN + mapID);
-
+									p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Scores reset for map " + plugin.pkVars.GREEN + mapID);
 									for (Iterator<String> it = plugin.pkVars.Records.keySet().iterator(); it.hasNext();) {
 										String key = it.next();
 										String[] pName = key.split(":");

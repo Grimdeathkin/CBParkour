@@ -258,9 +258,11 @@ public class ParkourFunctions {
 	 * badmap = Map not recognized
 	 * noPermission = No permission to perform the action
 	 * noParkourPermission = user does not have parkour.use
-	 * badsign = Sign does not yet exist
+	 * badsign = Sign is not recognized as valid
 	 * parkourDisabled = parkour is toggled to disabled
 	 * gmChange = When a player tries to change GameMode while in a Parkour
+	 * specifymapid = Map ID is not specified
+	 * notinpk = Not in a parkour map/session
 	 */
 	public void sendError(String status, Player player, Plugin plugin) {
 		String APREFIX = ((Parkour) plugin).getAPrefix();
@@ -285,6 +287,12 @@ public class ParkourFunctions {
 			
 		} else if(status.equalsIgnoreCase("gmChange")) {
 			player.sendMessage(PREFIX + "You may not change your GameMode while in a Parkour. Please type /pk leave before trying again.");
+			
+		} else if(status.equalsIgnoreCase("mapspawnnotset")) {
+			player.sendMessage(PREFIX + "You must specify the map ID");
+			
+		} else if(status.equalsIgnoreCase("notinpk")) {
+			player.sendMessage(PREFIX + pk.pkVars.RED + "You are not in a parkour, use /pk lobby to return to the lobby");
 			
 		}
 	}
