@@ -1,4 +1,4 @@
-package me.isklar.cbparkour;
+package com.citibuild.cbparkour;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

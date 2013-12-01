@@ -1,23 +1,23 @@
-package me.isklar.cbparkour;
+package com.citibuild.cbparkour;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class ParkourFinishEvent extends Event
+public class ParkourCheckpointEvent extends Event
 {
 	private static final HandlerList handlers = new HandlerList();
 	
 	private final Player player;
 	private final int MapNumber;
+	private final int CheckpointNumber;
 	private final long time;
-	private final boolean firstTime;
 	
-	public ParkourFinishEvent(Player player, int MapNumber, long time, boolean firstTime) {
+	public ParkourCheckpointEvent(Player player, int MapNumber, int CheckpointNumber, long time) {
 		this.player = player;
 		this.MapNumber = MapNumber;
+		this.CheckpointNumber = CheckpointNumber;
 		this.time = time;
-		this.firstTime = firstTime;
 	}
 	
 	public Player getPlayer() {
@@ -28,12 +28,12 @@ public class ParkourFinishEvent extends Event
 		return MapNumber;
 	}
 	
-	public long getTime() {
-		return time;
+	public int getCheckpointNumber() {
+		return CheckpointNumber;
 	}
 	
-	public boolean isFirstTime() {
-		return firstTime;
+	public long getTime() {
+		return time;
 	}
 	
     @Override

@@ -3,7 +3,7 @@ version: "${project.version}"
 description: CB's parkour plugin
 author: Isklar
 depend: [Vault]
-main: me.isklar.cbparkour.Parkour
+main: com.citibuild.cbparkour.Parkour
 commands:
   pk:
     aliases: [pk, cbparkour]

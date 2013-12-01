@@ -1,4 +1,4 @@
-package me.isklar.cbparkour;
+package com.citibuild.cbparkour;
 
 import java.util.Iterator;
 import java.util.Map.Entry;
