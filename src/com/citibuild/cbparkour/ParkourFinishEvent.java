@@ -13,11 +13,16 @@ public class ParkourFinishEvent extends Event
 	private final long time;
 	private final boolean firstTime;
 	
-	public ParkourFinishEvent(Player player, int mapID, long time, boolean firstTime) {
+	public ParkourFinishEvent(Parkour plugin, Player player, int mapID, long time, boolean firstTime) {
 		this.player = player;
 		this.mapID = mapID;
 		this.time = time;
 		this.firstTime = firstTime;
+		
+		plugin.pkVars.loadedUsers.get(player.getName()).setMapID(0);
+		plugin.pkVars.loadedUsers.get(player.getName()).setTime(time);
+		plugin.pkVars.loadedUsers.get(player.getName()).setCheckpoint(0);
+		plugin.pkFuncs.savePlayerInfo(player);
 	}
 	
 	public Player getPlayer() {

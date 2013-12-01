@@ -134,7 +134,7 @@ public class ParkourCommand implements CommandExecutor{
 								plugin.pkVars.ParkourContainer.remove(p.getName());
 								if (plugin.pkVars.lobby != null) {
 									p.teleport(plugin.pkVars.lobby);
-									p.setGameMode(plugin.pkVars.prePKGM);
+									p.setGameMode(plugin.pkVars.loadedUsers.get(p.getName()).getPrevGM());
 								}
 		
 							} else {
@@ -153,7 +153,7 @@ public class ParkourCommand implements CommandExecutor{
 							} else {
 								if (plugin.pkVars.lobby != null) {
 									p.teleport(plugin.pkVars.lobby);
-									p.setGameMode(plugin.pkVars.prePKGM);
+									p.setGameMode(plugin.pkVars.loadedUsers.get(p.getPlayer().getName()).getPrevGM());
 									p.sendMessage(PREFIX + plugin.pkVars.AQUA + "You have returned to the lobby");
 								}
 							}
@@ -179,7 +179,7 @@ public class ParkourCommand implements CommandExecutor{
 							if (plugin.pkFuncs.isPlayerInParkour(p)) {
 								long totalTime = System.currentTimeMillis()
 										- plugin.pkFuncs.getPlTime(plugin.pkVars.ParkourContainer.get(p.getName()));
-								p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Current time: " + plugin.pkVars.GRAY+ plugin.convertTime(totalTime));
+								p.sendMessage(PREFIX + plugin.pkVars.AQUA + "Current time: " + plugin.pkVars.GRAY + plugin.convertTime(totalTime));
 							} else {
 								plugin.pkFuncs.sendError("notinpk", p, plugin);
 							}

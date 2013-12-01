@@ -22,7 +22,6 @@ import org.bukkit.plugin.java.JavaPlugin;
  * - Extension on previous point, separate config into separate class.
  * - Add userInfo command to get unlocks and if they hold map records.
  * - Add sign leaderboard system.
- * - Add system to save progress on disconnect or reload.
  * - Add ranking system and chat prefixing (like SkyWars).
  * - Figure out how to seduce bsquid... beer!.
  */
@@ -52,7 +51,6 @@ public class Parkour extends JavaPlugin implements Listener {
         	
 		pkFuncs.LoadCfg();
 		
-		
 		if (!setupPermissions() ) {
             log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
@@ -73,6 +71,12 @@ public class Parkour extends JavaPlugin implements Listener {
 				e.printStackTrace(System.out);
 			}
 		}
+		
+		if (!pkVars.playerInfoFile.getAbsoluteFile().exists()) {
+			pkFuncs.saveDefaultPlayerInfo();
+		}
+		pkFuncs.loadPlayerInfoFile();
+		pkFuncs.loadUsersPlayerInfo();
 
 		pkFuncs.intMaps();
 		pkFuncs.loadScore();
@@ -85,6 +89,10 @@ public class Parkour extends JavaPlugin implements Listener {
 
 	@Override
 	public void onDisable() {
+		
+		pkFuncs.saveAllPlayerInfo();
+		pkFuncs.savePlayerInfoFile();
+		
 		// Reset everything
 		pkVars.newMap = false;
 		pkVars.newMapCheckpoints.clear();

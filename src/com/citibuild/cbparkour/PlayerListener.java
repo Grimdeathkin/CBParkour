@@ -2,7 +2,6 @@ package com.citibuild.cbparkour;
 
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
@@ -34,8 +33,9 @@ public class PlayerListener implements Listener{
 
 
 	@EventHandler
-	public void onDisconnect(PlayerQuitEvent e) {
-		Bukkit.broadcastMessage("EVENT");
+	public void onDisconnect(PlayerQuitEvent e) {		
+		plugin.pkFuncs.savePlayerInfo(e.getPlayer());
+		
 		if (plugin.pkFuncs.isPlayerInParkour(e.getPlayer())) {
 			plugin.pkVars.ParkourContainer.remove(e.getPlayer().getName());
 		}
@@ -140,7 +140,7 @@ public class PlayerListener implements Listener{
 						}
 						if (plugin.pkVars.lobby != null) {
 							e.getPlayer().teleport(plugin.pkVars.lobby);
-							e.getPlayer().setGameMode(plugin.pkVars.prePKGM);
+							e.getPlayer().setGameMode(plugin.pkVars.loadedUsers.get(e.getPlayer().getName()).getPrevGM());
 						}
 					}
 
@@ -221,16 +221,38 @@ public class PlayerListener implements Listener{
 	@EventHandler
 	public void onDropEvent(PlayerDropItemEvent event) {
 		ItemMeta eMeta = event.getItemDrop().getItemStack().getItemMeta();
-		if(plugin.pkItems.itemsList.contains(ChatColor.stripColor(eMeta.getDisplayName().toLowerCase()))) {
-			event.setCancelled(true);
+		if(eMeta.hasDisplayName()) {
+			if(plugin.pkItems.itemsList.contains(ChatColor.stripColor(eMeta.getDisplayName().toLowerCase()))) {
+				event.setCancelled(true);
+			}
 		}
 	}
 
 	/*
-	 * Give startItems on join
+	 * Things to do on PlayerJoin
 	 */
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
+		String username = player.getName();
+		plugin.pkFuncs.loadPlayerInfo(event.getPlayer());
+		
+		int mapID = plugin.pkVars.loadedUsers.get(username).getMapID();
+		if(mapID == 0) {
+			if(!Parkour.permission.has(player, "parkour.admin")) {
+				player.teleport(plugin.pkVars.lobby);
+			}
+		} else {
+			if(plugin.pkFuncs.mapExist("" + mapID)) {
+				PlayerInfo userPInfo = plugin.pkVars.loadedUsers.get(username);
+				plugin.pkVars.ParkourContainer.put(username, mapID + "_" + (System.currentTimeMillis() - userPInfo.getTime()) + "_" + userPInfo.getCheckpoint());
+			} else {
+				if(!Parkour.permission.has(player, "parkour.admin")) {
+					player.teleport(plugin.pkVars.lobby);
+				}
+			}
+		}
+		
 		plugin.pkItems.giveItems(event.getPlayer());
 	}
 
@@ -259,7 +281,8 @@ public class PlayerListener implements Listener{
 						plugin.pkFuncs.sendError("noParkourPermission", p, plugin);
 						if (plugin.pkVars.lobby != null) {
 							p.teleport(plugin.pkVars.lobby);
-							p.setGameMode(plugin.pkVars.prePKGM);
+							p.setGameMode(plugin.pkVars.loadedUsers.get(e.getPlayer().getName()).getPrevGM());
+							plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
 							p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "You have been returned to the lobby");
 						}
 						return;
@@ -269,7 +292,8 @@ public class PlayerListener implements Listener{
 						plugin.pkFuncs.sendError("parkourDisabled", p, plugin);
 						if (plugin.pkVars.lobby != null) {
 							p.teleport(plugin.pkVars.lobby);
-							p.setGameMode(plugin.pkVars.prePKGM);
+							p.setGameMode(plugin.pkVars.loadedUsers.get(e.getPlayer().getName()).getPrevGM());
+							plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
 							p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "You have been returned to the lobby");
 						}
 						return;
@@ -280,7 +304,8 @@ public class PlayerListener implements Listener{
 							plugin.pkFuncs.sendInfo("notUnlocked", p, mapID, plugin);
 							if (plugin.pkVars.lobby != null) {
 								p.teleport(plugin.pkVars.lobby);
-								p.setGameMode(plugin.pkVars.prePKGM);
+								p.setGameMode(plugin.pkVars.loadedUsers.get(e.getPlayer().getName()).getPrevGM());
+								plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
 								p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "You have been returned to the lobby");
 							}
 							return;
@@ -292,9 +317,11 @@ public class PlayerListener implements Listener{
 
 						if (Checkpoint == 1) {
 							int Map = plugin.pkFuncs.getCpMapNumber(plugin.pkVars.cLoc.get(bLoc));
-							plugin.pkVars.prePKGM = p.getGameMode();
+							plugin.pkFuncs.loadPlayerInfo(p);
+							plugin.pkVars.loadedUsers.get(p.getName()).setPrevGM(p.getGameMode());
+							
 							p.setGameMode(GameMode.ADVENTURE);
-							plugin.getServer().getPluginManager().callEvent(new ParkourStartEvent(p, Map, false));
+							plugin.getServer().getPluginManager().callEvent(new ParkourStartEvent(plugin, p, Map, false));
 
 							plugin.pkVars.ParkourContainer.put(
 									p.getName(),
@@ -327,7 +354,7 @@ public class PlayerListener implements Listener{
 						// Start new course
 						if (CpMap != Map) {
 							if (Checkpoint == 1) {
-								plugin.getServer().getPluginManager().callEvent(new ParkourStartEvent(p, Map, false));						
+								plugin.getServer().getPluginManager().callEvent(new ParkourStartEvent(plugin, p, Map, false));						
 								p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "You have started your timer for " + plugin.pkVars.GREEN + plugin.getMapName(CpMap));
 								plugin.pkVars.ParkourContainer.put(
 										p.getName(),
@@ -355,6 +382,7 @@ public class PlayerListener implements Listener{
 						else {
 
 							if (Checkpoint == 1) {
+								
 								p.setGameMode(GameMode.ADVENTURE);
 								if (plugin.pkVars.CheckpointEffect) {
 									p.playEffect(bLoc, Effect.POTION_BREAK, 2);
@@ -367,7 +395,7 @@ public class PlayerListener implements Listener{
 								if (plugin.pkVars.FullHunger) {
 									p.setFoodLevel(20);
 								}
-								plugin.getServer().getPluginManager().callEvent(new ParkourStartEvent(p, Map, true));
+								plugin.getServer().getPluginManager().callEvent(new ParkourStartEvent(plugin, p, Map, true));
 								p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "You have restarted your time for " + plugin.pkVars.GREEN+ plugin.getMapName(Map));
 								plugin.pkFuncs.setPlTime(p.getName(), System.currentTimeMillis());
 								plugin.pkFuncs.setPlCheckpoint(p.getName(), 1);
@@ -403,7 +431,7 @@ public class PlayerListener implements Listener{
 
 								if (!plugin.pkVars.Records.containsKey(Map + ":" + p.getName())) {
 
-									plugin.getServer().getPluginManager().callEvent(new ParkourFinishEvent(p, Map, totalTime, true));
+									plugin.getServer().getPluginManager().callEvent(new ParkourFinishEvent(plugin, p, Map, totalTime, true));
 									p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "You finished "+plugin.pkVars.GREEN + plugin.getMapName(Map)+plugin.pkVars.AQUA+ " for the first time in " +
 											plugin.pkVars.GRAY + plugin.convertTime(totalTime));
 									plugin.pkVars.Records.put(Map + ":" + p.getName(), totalTime);
@@ -475,7 +503,7 @@ public class PlayerListener implements Listener{
 										}
 									}
 
-									plugin.getServer().getPluginManager().callEvent(new ParkourFinishEvent(p, Map, totalTime, false));
+									plugin.getServer().getPluginManager().callEvent(new ParkourFinishEvent(plugin, p, Map, totalTime, false));
 
 								}
 
@@ -486,7 +514,7 @@ public class PlayerListener implements Listener{
 										@Override
 										public void run() {
 											plugin.getServer().getPlayer(pl).teleport(plugin.pkVars.lobby);
-											plugin.getServer().getPlayer(pl).setGameMode(plugin.pkVars.prePKGM);
+											plugin.getServer().getPlayer(pl).setGameMode(plugin.pkVars.loadedUsers.get(pl).getPrevGM());
 										}
 									}, 5L);
 								}
@@ -503,7 +531,7 @@ public class PlayerListener implements Listener{
 								p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "Checkpoint " + (Checkpoint - 1) + "/" + (TotalCheckpoints - 2) +plugin.pkVars.GRAY+ " | "+ plugin.convertTime(totalTime));
 
 								plugin.getServer().getPluginManager().callEvent(
-										new ParkourCheckpointEvent(p, Map, (Checkpoint-1), totalTime));
+										new ParkourCheckpointEvent(plugin, p, Map, (Checkpoint-1), totalTime));
 
 							} else if (Checkpoint <= PlCheckpoint) {
 								p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.RED + "You already reached this checkpoint!");
