@@ -20,7 +20,7 @@ public class SignListener implements Listener{
 		if (e.getLine(0).equalsIgnoreCase("[pk]") && !player.hasPermission("parkour.mapeditor")) {
 			e.setCancelled(true);
 			e.getBlock().setType(Material.AIR);
-			Parkour.sendError("noPermission", player, plugin);
+			plugin.pkFuncs.sendError("noPermission", player, plugin);
 		}
 
 		if (e.getPlayer().hasPermission("parkour.mapeditor")) {
@@ -31,8 +31,8 @@ public class SignListener implements Listener{
 					e.setLine(0, "[Parkour]");
 					e.setLine(1, "Leave");
 				} else if (e.getLine(1).equalsIgnoreCase("join")) {
-					if (plugin.isNumber(e.getLine(2))) {
-						if (plugin.maps.contains(plugin.toInt(e.getLine(2)))) {
+					if (plugin.pkFuncs.isNumber(e.getLine(2))) {
+						if (plugin.maps.contains(plugin.pkFuncs.toInt(e.getLine(2)))) {
 							int mapID = Integer.parseInt(e.getLine(2));
 
 							e.setLine(0, "[Parkour]");
@@ -41,16 +41,16 @@ public class SignListener implements Listener{
 						} else {
 							e.setCancelled(true);
 							e.getBlock().setType(Material.AIR);
-							Parkour.sendError("badmap", player, plugin);
+							plugin.pkFuncs.sendError("badmap", player, plugin);
 						}
 					} else {
 						e.setCancelled(true);
 						e.getBlock().setType(Material.AIR);
-						Parkour.sendError("2notnumber", player, plugin);
+						plugin.pkFuncs.sendError("2notnumber", player, plugin);
 					}
 				} else if (e.getLine(1).equalsIgnoreCase("info")) {
-					if (plugin.isNumber(e.getLine(2))) {
-						if (plugin.maps.contains(plugin.toInt(e.getLine(2)))) {
+					if (plugin.pkFuncs.isNumber(e.getLine(2))) {
+						if (plugin.maps.contains(plugin.pkFuncs.toInt(e.getLine(2)))) {
 							int mapID = Integer.parseInt(e.getLine(2));
 
 							e.setLine(0, "Parkour #" + mapID);
@@ -59,16 +59,16 @@ public class SignListener implements Listener{
 						} else {
 							e.setCancelled(true);
 							e.getBlock().setType(Material.AIR);
-							Parkour.sendError("badmap", player, plugin);
+							plugin.pkFuncs.sendError("badmap", player, plugin);
 						}
 					} else {
 						e.setCancelled(true);
 						e.getBlock().setType(Material.AIR);
-						Parkour.sendError("2notnumber", player, plugin);
+						plugin.pkFuncs.sendError("2notnumber", player, plugin);
 					}
 				} else if (e.getLine(1).equalsIgnoreCase("best")) {
-					if (plugin.isNumber(e.getLine(2))) {
-						if (plugin.maps.contains(plugin.toInt(e.getLine(2)))) {
+					if (plugin.pkFuncs.isNumber(e.getLine(2))) {
+						if (plugin.maps.contains(plugin.pkFuncs.toInt(e.getLine(2)))) {
 							int mapID = Integer.parseInt(e.getLine(2));
 
 							e.setLine(0, "[Parkour]");
@@ -79,17 +79,17 @@ public class SignListener implements Listener{
 						} else {
 							e.setCancelled(true);
 							e.getBlock().setType(Material.AIR);
-							Parkour.sendError("badmap", player, plugin);
+							plugin.pkFuncs.sendError("badmap", player, plugin);
 						}
 					} else {
 						e.setCancelled(true);
 						e.getBlock().setType(Material.AIR);
-						Parkour.sendError("2notnumber", player, plugin);
+						plugin.pkFuncs.sendError("2notnumber", player, plugin);
 					}
 				} else {
 					e.setCancelled(true);
 					e.getBlock().breakNaturally();
-					Parkour.sendError("badsign", player, plugin);
+					plugin.pkFuncs.sendError("badsign", player, plugin);
 				}
 			}
 		}

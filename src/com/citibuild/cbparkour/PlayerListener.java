@@ -36,7 +36,7 @@ public class PlayerListener implements Listener{
 	@EventHandler
 	public void onDisconnect(PlayerQuitEvent e) {
 		Bukkit.broadcastMessage("EVENT");
-		if (plugin.isPlayerInParkour(e.getPlayer())) {
+		if (plugin.pkFuncs.isPlayerInParkour(e.getPlayer())) {
 			plugin.ParkourContainer.remove(e.getPlayer().getName());
 		}
 		if (plugin.rewardPlayersCooldown.containsKey(e.getPlayer().getName())) {
@@ -59,7 +59,7 @@ public class PlayerListener implements Listener{
 	public void onPlayerDmg(EntityDamageEvent e) {
 		if (e.getEntity() instanceof Player) {
 			Player p = (Player) e.getEntity();
-			if (plugin.isPlayerInParkour(p) && plugin.InvincibleWhileParkour) {
+			if (plugin.pkFuncs.isPlayerInParkour(p) && plugin.InvincibleWhileParkour) {
 				e.setCancelled(true);
 				p.setFireTicks(0);
 			}
@@ -84,24 +84,24 @@ public class PlayerListener implements Listener{
 							if (plugin.maps.contains(mapID)) {
 								Player p = e.getPlayer();
 								if (!Parkour.permission.has(p, "parkour.use")) {
-									Parkour.sendError("noParkourPermission", p, plugin);
+									plugin.pkFuncs.sendError("noParkourPermission", p, plugin);
 									return;
 								}
 
 								if (!plugin.toggleParkour.get(mapID)) {
-									Parkour.sendError("parkourDisabled", p, plugin);
+									plugin.pkFuncs.sendError("parkourDisabled", p, plugin);
 									return;
 								}
 								
 								if(plugin.getMapPrevious(mapID) != 0){
 									if(!Parkour.permission.has(p, "parkour.completed.map"+plugin.getMapPrevious(mapID))){
-										Parkour.sendInfo("notUnlocked", p, mapID, plugin);
+										plugin.pkFuncs.sendInfo("notUnlocked", p, mapID, plugin);
 										return;
 									}
 								}
 								
 	
-								if (plugin.isPlayerInParkour(p)) {
+								if (plugin.pkFuncs.isPlayerInParkour(p)) {
 									plugin.ParkourContainer.remove(p.getName());
 								}
 	
@@ -122,7 +122,6 @@ public class PlayerListener implements Listener{
 									}
 	
 									p.teleport(loc);
-									p.setGameMode(GameMode.ADVENTURE);
 									p.sendMessage(plugin.PREFIX+ Parkour.AQUA+"Welcome to "+ Parkour.GREEN +plugin.getMapName(mapID));
 								} else {
 									p.sendMessage(plugin.PREFIX + Parkour.RED + "Map spawn is not set");
@@ -134,14 +133,14 @@ public class PlayerListener implements Listener{
 					}	
 					
 					if (s.getLine(1).equalsIgnoreCase("leave")) {
-						if (plugin.isPlayerInParkour(e.getPlayer())) {
+						if (plugin.pkFuncs.isPlayerInParkour(e.getPlayer())) {
 							e.getPlayer().sendMessage(Parkour.AQUA + "You have left the parkour");
 							plugin.ParkourContainer.remove(e.getPlayer().getName());
 	
 						}
 						if (plugin.lobby != null) {
 							e.getPlayer().teleport(plugin.lobby);
-							e.getPlayer().setGameMode(GameMode.SURVIVAL);
+							e.getPlayer().setGameMode(plugin.prePKGM);
 						}
 					}
 					
@@ -253,24 +252,24 @@ public class PlayerListener implements Listener{
 
 				if (plugin.cLoc.containsKey(bLoc)) {
 
-					int Checkpoint = plugin.getCheckpoint(plugin.cLoc.get(bLoc));
-					int mapID = plugin.getCpMapNumber(plugin.cLoc.get(bLoc));
+					int Checkpoint = plugin.pkFuncs.getCheckpoint(plugin.cLoc.get(bLoc));
+					int mapID = plugin.pkFuncs.getCpMapNumber(plugin.cLoc.get(bLoc));
 					
 					if (!Parkour.permission.has(p, "parkour.use")) {
-						Parkour.sendError("noParkourPermission", p, plugin);
+						plugin.pkFuncs.sendError("noParkourPermission", p, plugin);
 						if (plugin.lobby != null) {
 							p.teleport(plugin.lobby);
-							p.setGameMode(GameMode.SURVIVAL);
+							p.setGameMode(plugin.prePKGM);
 							p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You have been returned to the lobby");
 						}
 						return;
 					}
 
 					if (!plugin.toggleParkour.get(mapID)) {
-						Parkour.sendError("parkourDisabled", p, plugin);
+						plugin.pkFuncs.sendError("parkourDisabled", p, plugin);
 						if (plugin.lobby != null) {
 							p.teleport(plugin.lobby);
-							p.setGameMode(GameMode.SURVIVAL);
+							p.setGameMode(plugin.prePKGM);
 							p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You have been returned to the lobby");
 						}
 						return;
@@ -278,10 +277,10 @@ public class PlayerListener implements Listener{
 					
 					if(plugin.getMapPrevious(mapID) != 0){
 						if(!Parkour.permission.has(p, "parkour.completed.map"+plugin.getMapPrevious(mapID))){
-							Parkour.sendInfo("notUnlocked", p, mapID, plugin);
+							plugin.pkFuncs.sendInfo("notUnlocked", p, mapID, plugin);
 							if (plugin.lobby != null) {
 								p.teleport(plugin.lobby);
-								p.setGameMode(GameMode.SURVIVAL);
+								p.setGameMode(plugin.prePKGM);
 								p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You have been returned to the lobby");
 							}
 							return;
@@ -289,17 +288,17 @@ public class PlayerListener implements Listener{
 					}
 					
 					// Player starts course
-					if (!plugin.isPlayerInParkour(p)) {
+					if (!plugin.pkFuncs.isPlayerInParkour(p)) {
 
 						if (Checkpoint == 1) {
-							int Map = plugin.getCpMapNumber(plugin.cLoc.get(bLoc));
+							int Map = plugin.pkFuncs.getCpMapNumber(plugin.cLoc.get(bLoc));
 							plugin.prePKGM = p.getGameMode();
 							p.setGameMode(GameMode.ADVENTURE);
 							plugin.getServer().getPluginManager().callEvent(new ParkourStartEvent(p, Map, false));
 							
 							plugin.ParkourContainer.put(
 									p.getName(),
-									(plugin.getCpMapNumber(plugin.cLoc.get(bLoc)) + "_"
+									(plugin.pkFuncs.getCpMapNumber(plugin.cLoc.get(bLoc)) + "_"
 											+ System.currentTimeMillis() + "_1"));
 							p.sendMessage(plugin.PREFIX +Parkour.AQUA + "You have started your timer for " + Parkour.GREEN + plugin.getMapName(Map));
 							
@@ -321,10 +320,10 @@ public class PlayerListener implements Listener{
 					// Player is in a parkour and hits a checkpoint
 					else {
 						p.setGameMode(GameMode.ADVENTURE);
-						int PlCheckpoint = plugin.getPlCheckpoint(plugin.ParkourContainer.get(p.getName()));
-						int CpMap = plugin.getCpMapNumber(plugin.cLoc.get(bLoc));
-						int Map = plugin.getPlMapNumber(plugin.ParkourContainer.get(p.getName()));
-						int TotalCheckpoints = plugin.getCfgTotalCheckpoints(Map);
+						int PlCheckpoint = plugin.pkFuncs.getPlCheckpoint(plugin.ParkourContainer.get(p.getName()));
+						int CpMap = plugin.pkFuncs.getCpMapNumber(plugin.cLoc.get(bLoc));
+						int Map = plugin.pkFuncs.getPlMapNumber(plugin.ParkourContainer.get(p.getName()));
+						int TotalCheckpoints = plugin.pkFuncs.getCfgTotalCheckpoints(Map);
 						// Start new course
 						if (CpMap != Map) {
 							if (Checkpoint == 1) {
@@ -332,7 +331,7 @@ public class PlayerListener implements Listener{
 								p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You have started your timer for " + Parkour.GREEN + plugin.getMapName(CpMap));
 								plugin.ParkourContainer.put(
 										p.getName(),
-										(plugin.getCpMapNumber(plugin.cLoc.get(bLoc)) + "_"
+										(plugin.pkFuncs.getCpMapNumber(plugin.cLoc.get(bLoc)) + "_"
 												+ System.currentTimeMillis() + "_1"));
 								
 								if (plugin.CheckpointEffect) {
@@ -370,8 +369,8 @@ public class PlayerListener implements Listener{
 								}
 								plugin.getServer().getPluginManager().callEvent(new ParkourStartEvent(p, Map, true));
 								p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You have restarted your time for " +Parkour.GREEN+ plugin.getMapName(Map));
-								plugin.setPlTime(p.getName(), System.currentTimeMillis());
-								plugin.setPlCheckpoint(p.getName(), 1);
+								plugin.pkFuncs.setPlTime(p.getName(), System.currentTimeMillis());
+								plugin.pkFuncs.setPlCheckpoint(p.getName(), 1);
 
 							} 
 							/* Player completes course */
@@ -386,19 +385,19 @@ public class PlayerListener implements Listener{
 									
 									FileConfiguration cfg = plugin.getConfig();
 									if(cfg.getInt("Parkour.map"+Map+".mapNext") != 0){
-										Parkour.sendInfo("mapUnlock", p, Map, plugin);
+										plugin.pkFuncs.sendInfo("mapUnlock", p, Map, plugin);
 										final Player player = p;
 										plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                                             @Override
 											public void run() {
-                                            	plugin.playJingle(player);
+                                            	plugin.pkFuncs.playJingle(player);
 											}
 										}, 5L);
 									}
 								}
 								
 								long totalTime = System.currentTimeMillis()
-										- plugin.getPlTime(plugin.ParkourContainer.get(p.getName()));
+										- plugin.pkFuncs.getPlTime(plugin.ParkourContainer.get(p.getName()));
 								plugin.ParkourContainer.remove(p.getName());
 								
 								
@@ -408,7 +407,7 @@ public class PlayerListener implements Listener{
 									p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You finished "+Parkour.GREEN + plugin.getMapName(Map)+Parkour.AQUA+ " for the first time in " +
 											Parkour.GRAY + plugin.convertTime(totalTime));
 									plugin.Records.put(Map + ":" + p.getName(), totalTime);
-									plugin.saveScore();
+									plugin.pkFuncs.saveScore();
 									
 									Map<String, Long> records = plugin.getRecords(Map);
 									Map.Entry<String, Long> entry = records.entrySet().iterator().next();
@@ -427,7 +426,7 @@ public class PlayerListener implements Listener{
 															.replaceAll("MAPNAME", plugin.getMapName(Map)));
 										}
 									}
-									plugin.giveReward(p);
+									plugin.pkFuncs.giveReward(p);
 
 								} else {
 									Map<String, Long> records = plugin.getRecords(Map);
@@ -441,7 +440,7 @@ public class PlayerListener implements Listener{
 										p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You finished "+Parkour.GREEN + plugin.getMapName(Map)+Parkour.AQUA+ " in " + Parkour.GRAY + plugin.convertTime(totalTime));
 										
 										plugin.Records.put(Map + ":" + p.getName(), totalTime);
-										plugin.saveScore();
+										plugin.pkFuncs.saveScore();
 										if(!topName.equalsIgnoreCase(p.getName())){
 										p.sendMessage(plugin.PREFIX + Parkour.AQUA + "Global record: "+ Parkour.GRAY + topName + Parkour.AQUA + " | " + Parkour.GRAY + plugin.convertTime(topTime));
 										}
@@ -457,7 +456,7 @@ public class PlayerListener implements Listener{
 											}
 										}
 												
-										plugin.giveReward(p);
+										plugin.pkFuncs.giveReward(p);
 
 									} else {
 										String username;
@@ -472,7 +471,7 @@ public class PlayerListener implements Listener{
 										}
 										p.sendMessage(plugin.PREFIX + Parkour.AQUA + "Global record: " +Parkour.GRAY+ username +Parkour.AQUA+ " | " +Parkour.GRAY+ plugin.convertTime(topTime));
 										if (!plugin.rewardIfBetterScore) {
-											plugin.giveReward(p);
+											plugin.pkFuncs.giveReward(p);
 										}
 									}
 									
@@ -494,13 +493,13 @@ public class PlayerListener implements Listener{
 							} else if (PlCheckpoint == (Checkpoint - 1)) {
 
 								long totalTime = System.currentTimeMillis()                                        
-										- plugin.getPlTime(plugin.ParkourContainer.get(p.getName()));
+										- plugin.pkFuncs.getPlTime(plugin.ParkourContainer.get(p.getName()));
 																
 								if (plugin.CheckpointEffect) {
 									p.playEffect(bLoc, Effect.POTION_BREAK, 2);
 								}
 
-								plugin.setPlCheckpoint(p.getName(), Checkpoint);
+								plugin.pkFuncs.setPlCheckpoint(p.getName(), Checkpoint);
 								p.sendMessage(plugin.PREFIX + Parkour.AQUA + "Checkpoint " + (Checkpoint - 1) + "/" + (TotalCheckpoints - 2) +Parkour.GRAY+ " | "+plugin.convertTime(totalTime));
 								
 								plugin.getServer().getPluginManager().callEvent(
@@ -517,15 +516,15 @@ public class PlayerListener implements Listener{
 					}
 				}
 			}
-			if (plugin.isPlayerInParkour(p)) {
-				int Map = plugin.getPlMapNumber(plugin.ParkourContainer.get(p.getName()));
+			if (plugin.pkFuncs.isPlayerInParkour(p)) {
+				int Map = plugin.pkFuncs.getPlMapNumber(plugin.ParkourContainer.get(p.getName()));
 				if ((e.getTo().getBlock().getType() == Material.WATER || e.getTo().getBlock().getType() == Material.STATIONARY_WATER)) {
 					if (plugin.getConfig().getBoolean("Parkour.map" + Map + ".waterrespawn"))
-						plugin.teleportLastCheckpoint(e.getPlayer());
+						plugin.pkFuncs.teleportLastCheckpoint(e.getPlayer());
 				}
 				if ((e.getTo().getBlock().getType() == Material.LAVA || e.getTo().getBlock().getType() == Material.STATIONARY_LAVA)) {
 					if (plugin.getConfig().getBoolean("Parkour.map" + Map + ".lavarespawn"))
-						plugin.teleportLastCheckpoint(e.getPlayer());
+						plugin.pkFuncs.teleportLastCheckpoint(e.getPlayer());
 				}
 			}
 		}
@@ -534,8 +533,8 @@ public class PlayerListener implements Listener{
 	@EventHandler
 	public void onGamemodeChange(PlayerGameModeChangeEvent e) {
 		Player p = e.getPlayer();
-		if(plugin.isPlayerInParkour(p)) {
-			Parkour.sendError("gmChange", p, plugin);
+		if(plugin.pkFuncs.isPlayerInParkour(p)) {
+			plugin.pkFuncs.sendError("gmChange", p, plugin);
 			p.setGameMode(GameMode.ADVENTURE);
 			e.setCancelled(true);
 		}
