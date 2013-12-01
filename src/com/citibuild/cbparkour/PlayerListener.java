@@ -364,7 +364,7 @@ public class PlayerListener implements Listener{
 								if (!plugin.Records.containsKey(Map + ":" + p.getName())) {
 								
 									plugin.getServer().getPluginManager().callEvent(new ParkourFinishEvent(p, Map, totalTime, true));
-									p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You finished for the first time in " +
+									p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You finished "+Parkour.GREEN + plugin.getMapName(Map)+Parkour.AQUA+ " for the first time in " +
 											Parkour.GRAY + plugin.convertTime(totalTime));
 									plugin.Records.put(Map + ":" + p.getName(), totalTime);
 									plugin.saveScore();
@@ -397,7 +397,7 @@ public class PlayerListener implements Listener{
 									// Player beat old score
 									if (plugin.Records.get(Map + ":" + p.getName()) >= totalTime) {
 										p.sendMessage(plugin.PREFIX + Parkour.GREEN + "You beat your old time of " + Parkour.GRAY + plugin.convertTime(plugin.Records.get(Map + ":" + p.getName())));
-										p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You finished this parkour in " + Parkour.GRAY + plugin.convertTime(totalTime));
+										p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You finished "+Parkour.GREEN + plugin.getMapName(Map)+Parkour.AQUA+ " in " + Parkour.GRAY + plugin.convertTime(totalTime));
 										
 										plugin.Records.put(Map + ":" + p.getName(), totalTime);
 										plugin.saveScore();
@@ -421,7 +421,7 @@ public class PlayerListener implements Listener{
 									} else {
 										String username;
 										p.sendMessage(plugin.PREFIX + Parkour.RED + "You didn't beat your old time "+ Parkour.GRAY + plugin.convertTime(plugin.Records.get(Map + ":" + p.getName())));
-										p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You finished this parkour in " +Parkour.GRAY+ plugin.convertTime(totalTime));
+										p.sendMessage(plugin.PREFIX + Parkour.AQUA + "You finished "+Parkour.GREEN + plugin.getMapName(Map)+Parkour.AQUA+ " in " + Parkour.GRAY + plugin.convertTime(totalTime));
 
 										if(topName.equalsIgnoreCase(p.getName())){
 											username = "You";
@@ -452,15 +452,18 @@ public class PlayerListener implements Listener{
 								}
 							} else if (PlCheckpoint == (Checkpoint - 1)) {
 
+								long totalTime = System.currentTimeMillis()                                        
+										- plugin.getPlTime(plugin.ParkourContainer.get(p.getName()));
+																
 								if (plugin.CheckpointEffect) {
 									p.playEffect(bLoc, Effect.POTION_BREAK, 2);
 								}
 
 								plugin.setPlCheckpoint(p.getName(), Checkpoint);
-								p.sendMessage(plugin.PREFIX + Parkour.AQUA + "Checkpoint " + (Checkpoint - 1) + "/" + (TotalCheckpoints - 2));
+								p.sendMessage(plugin.PREFIX + Parkour.AQUA + "Checkpoint " + (Checkpoint - 1) + "/" + (TotalCheckpoints - 2) +Parkour.GRAY+ " | "+plugin.convertTime(totalTime));
+								
 								plugin.getServer().getPluginManager().callEvent(
-										new ParkourCheckpointEvent(p, Map, (Checkpoint-1), System.currentTimeMillis() 
-												- plugin.getPlTime(plugin.ParkourContainer.get(p.getName()))));
+										new ParkourCheckpointEvent(p, Map, (Checkpoint-1), totalTime));
 
 							} else if (Checkpoint <= PlCheckpoint) {
 								p.sendMessage(plugin.PREFIX + Parkour.RED + "You already reached this checkpoint!");
