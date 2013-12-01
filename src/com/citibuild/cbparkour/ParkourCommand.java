@@ -91,8 +91,8 @@ public class ParkourCommand implements CommandExecutor{
 	 * Join, Leave, Lobby, Checkpoint, Maplist, Best
 	 */
 					if (args[0].equalsIgnoreCase("test")) {
-						if(p.getName().equalsIgnoreCase("Isklar")){
-
+						if(p.getName().equalsIgnoreCase("Isklar") || p.getName().equalsIgnoreCase("bsquidwrd")){
+							
 						}
 					}
 					

@@ -15,11 +15,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 
 public class PlayerListener implements Listener{
@@ -191,7 +194,45 @@ public class PlayerListener implements Listener{
 				}
 			}
 		}
-		// Teleport item here
+		// Parkour items here
+		if(e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK || 
+				e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			
+			if(e.getPlayer().getItemInHand().getType() == Material.SLIME_BALL && 
+					ChatColor.stripColor(e.getPlayer().getItemInHand().getItemMeta().getDisplayName()).equalsIgnoreCase("checkpoint")) {
+
+				plugin.getServer().dispatchCommand(e.getPlayer(), plugin.pkItems.slime_cmd);
+				plugin.pkItems.giveSlime(e.getPlayer());
+				e.setCancelled(true);
+
+			} else if(e.getPlayer().getItemInHand().getType() == Material.RECORD_6 && 
+					ChatColor.stripColor(e.getPlayer().getItemInHand().getItemMeta().getDisplayName()).equalsIgnoreCase("current time")) {
+
+				plugin.getServer().dispatchCommand(e.getPlayer(), plugin.pkItems.musicdisk_cmd);
+				plugin.pkItems.giveMusicDisk(e.getPlayer());
+				e.setCancelled(true);
+
+			}
+		}
+	}
+	
+	/*
+	 * Stop dropping of ParkourItems
+	 */
+	@EventHandler
+	public void onDropEvent(PlayerDropItemEvent event) {
+		ItemMeta eMeta = event.getItemDrop().getItemStack().getItemMeta();
+		if(plugin.pkItems.itemsList.contains(ChatColor.stripColor(eMeta.getDisplayName().toLowerCase()))) {
+			event.setCancelled(true);
+		}
+	}
+	
+	/*
+	 * Give startItems on join
+	 */
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		plugin.pkItems.giveItems(event.getPlayer());
 	}
 	
 	
