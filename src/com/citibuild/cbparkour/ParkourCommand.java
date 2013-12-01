@@ -101,11 +101,11 @@ public class ParkourCommand implements CommandExecutor{
 							if (args.length == 2) {
 								if (plugin.isNumber(args[1])) {
 									if (plugin.maps.contains(plugin.toInt(args[1]))) {
-										int mapNumber = plugin.toInt(args[1]);
+										int mapID = plugin.toInt(args[1]);
 
-										if (plugin.toggleParkour.get(mapNumber)) {
+										if (plugin.toggleParkour.get(mapID)) {
 											
-											if(Parkour.permission.has(p, "parkour.completed.map"+plugin.getMapPrevious(mapNumber)) || plugin.getMapPrevious(mapNumber) == 0){
+											if(Parkour.permission.has(p, "parkour.completed.map"+plugin.getMapPrevious(mapID)) || plugin.getMapPrevious(mapID) == 0){
 													
 													if (plugin.isPlayerInParkour(p)) {
 														plugin.ParkourContainer.remove(p.getName());
@@ -131,7 +131,7 @@ public class ParkourCommand implements CommandExecutor{
 													}	
 											}
 											else{
-												p.sendMessage(PREFIX + RED + "You have not unlocked this parkour, complete "+GREEN + plugin.getMapName(plugin.getMapPrevious(mapNumber))+RED+" to progress");
+												p.sendMessage(PREFIX + RED + "You have not unlocked this parkour, complete "+GREEN + plugin.getMapName(plugin.getMapPrevious(mapID))+RED+" to progress");
 											}
 										}
 										else{
@@ -209,9 +209,9 @@ public class ParkourCommand implements CommandExecutor{
 							p.sendMessage(GOLD + "---------=[ " + D_AQUA + "Parkour Map List" + GOLD + " ]=---------");
 							p.sendMessage(GOLD + "-------=[ " + AQUA + "Enabled:" + GREEN + "■" +D_AQUA+ GRAY + " | " +AQUA+ "Disabled:" + GRAY + "■" + GOLD + " ]=-------");
 							for (int i : plugin.maps) {
-								String mapNumber = "" + i;
+								String mapID = "" + i;
 								
-								if (plugin.maps.contains(plugin.toInt(mapNumber))) {
+								if (plugin.maps.contains(plugin.toInt(mapID))) {
 									FileConfiguration cfg = plugin.getConfig();
 			
 									String mode = RED + "■";
@@ -222,8 +222,8 @@ public class ParkourCommand implements CommandExecutor{
 									}
 									String waterActive = AQUA + " Water-Respawn:"+ GRAY + "■";
 									String lavaActive = AQUA + " Lava-Respawn:"+ GRAY + "■";
-									boolean isWaterActive = cfg.getBoolean("Parkour.map" + mapNumber + ".waterrespawn");
-									boolean isLavaActive = cfg.getBoolean("Parkour.map" + mapNumber + ".lavarespawn");
+									boolean isWaterActive = cfg.getBoolean("Parkour.map" + mapID + ".waterrespawn");
+									boolean isLavaActive = cfg.getBoolean("Parkour.map" + mapID + ".lavarespawn");
 									if (isWaterActive){
 										waterActive = AQUA + " Water-Respawn:"+ GREEN + "■";
 									}
@@ -351,12 +351,12 @@ public class ParkourCommand implements CommandExecutor{
 						if (args.length == 2) {
 							if (plugin.isNumber(args[1])) {
 								if (plugin.maps.contains(plugin.toInt(args[1]))) {
-									String mapNumber = args[1];
-									plugin.getConfig().getConfigurationSection("Parkour").set("map" + mapNumber, null);
+									String mapID = args[1];
+									plugin.getConfig().getConfigurationSection("Parkour").set("map" + mapID, null);
 									plugin.getConfig().set("Parkour.mapsnumber",
 											Integer.valueOf(plugin.getConfig().getInt("Parkour.mapsnumber") - 1));
 									plugin.saveConfig();
-									p.sendMessage(APREFIX +AQUA + "map " +GREEN + mapNumber +AQUA + " is now deleted");
+									p.sendMessage(APREFIX +AQUA + "map " +GREEN + mapID +AQUA + " is now deleted");
 
 									for (Iterator<String> it = plugin.Records.keySet().iterator(); it.hasNext();) {
 										String key = it.next();
@@ -443,14 +443,14 @@ public class ParkourCommand implements CommandExecutor{
 							if (plugin.isNumber(args[1])) {
 								if (plugin.maps.contains(plugin.toInt(args[1]))) {
 									FileConfiguration cfg = plugin.getConfig();
-									String mapNumber = args[1];
-									cfg.set("Parkour.map" + mapNumber + ".spawn.posX", p.getLocation().getX());
-									cfg.set("Parkour.map" + mapNumber + ".spawn.posY", p.getLocation().getY());
-									cfg.set("Parkour.map" + mapNumber + ".spawn.posZ", p.getLocation().getZ());
-									cfg.set("Parkour.map" + mapNumber + ".spawn.posPitch", p.getLocation().getPitch());
-									cfg.set("Parkour.map" + mapNumber + ".spawn.posYaw", p.getLocation().getYaw());
+									String mapID = args[1];
+									cfg.set("Parkour.map" + mapID + ".spawn.posX", p.getLocation().getX());
+									cfg.set("Parkour.map" + mapID + ".spawn.posY", p.getLocation().getY());
+									cfg.set("Parkour.map" + mapID + ".spawn.posZ", p.getLocation().getZ());
+									cfg.set("Parkour.map" + mapID + ".spawn.posPitch", p.getLocation().getPitch());
+									cfg.set("Parkour.map" + mapID + ".spawn.posYaw", p.getLocation().getYaw());
 									plugin.saveConfig();
-									p.sendMessage(APREFIX + AQUA + "Parkour spawn set for map " + GREEN + mapNumber);
+									p.sendMessage(APREFIX + AQUA + "Parkour spawn set for map " + GREEN + mapID);
 								} else {
 									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map ID");
 								}
@@ -466,22 +466,22 @@ public class ParkourCommand implements CommandExecutor{
 					else if (args[0].equalsIgnoreCase("mapInfo") && (Parkour.permission.has(p, "parkour.admin"))) {
 						if (args.length == 2) {
 							if (plugin.isNumber(args[1])) {
-								int mapNumber = Integer.parseInt(args[1]);
+								int mapID = Integer.parseInt(args[1]);
 								if (plugin.maps.contains(plugin.toInt(args[1]))) {
 									FileConfiguration cfg = plugin.getConfig();
 									
 									String mode = RED + "■";
 									@SuppressWarnings("unused")
 									boolean isToggled = false;
-									if (plugin.toggleParkour.get(mapNumber)) {
+									if (plugin.toggleParkour.get(mapID)) {
 										mode = GREEN + "■";
 										isToggled = true;
 									}
 							
 									String waterActive = AQUA + " Water:"+ GRAY + "■";
 									String lavaActive = AQUA + " Lava:"+ GRAY + "■";
-									boolean isWaterActive = cfg.getBoolean("Parkour.map" + mapNumber + ".waterrespawn");
-									boolean isLavaActive = cfg.getBoolean("Parkour.map" + mapNumber + ".lavarespawn");
+									boolean isWaterActive = cfg.getBoolean("Parkour.map" + mapID + ".waterrespawn");
+									boolean isLavaActive = cfg.getBoolean("Parkour.map" + mapID + ".lavarespawn");
 									if (isWaterActive){
 										waterActive = AQUA + " Water:"+ GREEN + "■";
 									}
@@ -491,13 +491,13 @@ public class ParkourCommand implements CommandExecutor{
 									
 									p.sendMessage(GOLD + "---------=[ " + D_AQUA + " Map Info " + GOLD + " ]=---------");
 									p.sendMessage(PREFIX + AQUA + "Map ID: " + GRAY +args[1]);
-									p.sendMessage(PREFIX + AQUA + "Map Name: " + GRAY +plugin.getMapName(mapNumber));
+									p.sendMessage(PREFIX + AQUA + "Map Name: " + GRAY +plugin.getMapName(mapID));
 									p.sendMessage(PREFIX + AQUA + "Enabled: " + mode);
-									p.sendMessage(PREFIX + AQUA + "Previous Map: "+ GRAY +plugin.getMapPrevious(mapNumber));
-									p.sendMessage(PREFIX + AQUA + "Next Map: "+ GRAY +plugin.getMapNext(mapNumber));
-									p.sendMessage(PREFIX + AQUA + "Checkpoints: " + GRAY +(plugin.getCfgTotalCheckpoints(mapNumber)-2) );
+									p.sendMessage(PREFIX + AQUA + "Previous Map: "+ GRAY +plugin.getMapPrevious(mapID));
+									p.sendMessage(PREFIX + AQUA + "Next Map: "+ GRAY +plugin.getMapNext(mapID));
+									p.sendMessage(PREFIX + AQUA + "Checkpoints: " + GRAY +(plugin.getCfgTotalCheckpoints(mapID)-2) );
 									p.sendMessage(PREFIX + AQUA + "Respawns: "+ waterActive + lavaActive);
-									Entry<String, Long> topScore = plugin.getHighscore(mapNumber);
+									Entry<String, Long> topScore = plugin.getHighscore(mapID);
 									p.sendMessage(PREFIX + AQUA + "Best Time: " +GRAY + topScore.getKey() + " | " + plugin.convertTime(topScore.getValue()));
 									
 								} else {
@@ -517,12 +517,12 @@ public class ParkourCommand implements CommandExecutor{
 							if (plugin.isNumber(args[1])) {
 								if (plugin.maps.contains(plugin.toInt(args[1]))) {
 									FileConfiguration cfg = plugin.getConfig();
-									String mapNumber = args[1];
-									boolean isActive = !cfg.getBoolean("Parkour.map" + mapNumber + ".waterrespawn");
-									cfg.set("Parkour.map" + mapNumber + ".waterrespawn", isActive);
+									String mapID = args[1];
+									boolean isActive = !cfg.getBoolean("Parkour.map" + mapID + ".waterrespawn");
+									cfg.set("Parkour.map" + mapID + ".waterrespawn", isActive);
 									plugin.saveConfig();
-									if (isActive) p.sendMessage(APREFIX + AQUA + "Waterrespawn is now "+GREEN +"ON" + AQUA + " for map " +GREEN + mapNumber);
-									else p.sendMessage(APREFIX + AQUA + "Waterrespawn is now "+RED +"OFF" +AQUA + " for map " +GREEN + mapNumber);
+									if (isActive) p.sendMessage(APREFIX + AQUA + "Waterrespawn is now "+GREEN +"ON" + AQUA + " for map " +GREEN + mapID);
+									else p.sendMessage(APREFIX + AQUA + "Waterrespawn is now "+RED +"OFF" +AQUA + " for map " +GREEN + mapID);
 								} else {
 									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map ID");
 								}
@@ -541,12 +541,12 @@ public class ParkourCommand implements CommandExecutor{
 							if (plugin.isNumber(args[1])) {
 								if (plugin.maps.contains(plugin.toInt(args[1]))) {
 									FileConfiguration cfg = plugin.getConfig();
-									String mapNumber = args[1];
-									boolean isActive = !cfg.getBoolean("Parkour.map" + mapNumber + ".lavarespawn");
-									cfg.set("Parkour.map" + mapNumber + ".lavarespawn", isActive);
+									String mapID = args[1];
+									boolean isActive = !cfg.getBoolean("Parkour.map" + mapID + ".lavarespawn");
+									cfg.set("Parkour.map" + mapID + ".lavarespawn", isActive);
 									plugin.saveConfig();
-									if (isActive) p.sendMessage(APREFIX + AQUA + "Lavarespawn is now "+GREEN +"ON" + AQUA + " for map " +GREEN + mapNumber);
-									else p.sendMessage(APREFIX + AQUA + "Lavarespawn is now "+RED +"OFF" +AQUA + " for map " +GREEN + mapNumber);
+									if (isActive) p.sendMessage(APREFIX + AQUA + "Lavarespawn is now "+GREEN +"ON" + AQUA + " for map " +GREEN + mapID);
+									else p.sendMessage(APREFIX + AQUA + "Lavarespawn is now "+RED +"OFF" +AQUA + " for map " +GREEN + mapID);
 								} else {
 									p.sendMessage(APREFIX + RED + args[1] + " is not a valid map ID");
 								}
@@ -613,7 +613,7 @@ public class ParkourCommand implements CommandExecutor{
 									boolean PlayerFound = false;
 									String playerName = args[1];
 									Player targetPlayer = Bukkit.getServer().getPlayerExact(playerName);
-									String mapNumber = args[2];
+									String mapID = args[2];
 
 									Iterator<String> it = plugin.Records.keySet().iterator();
 									
@@ -628,10 +628,10 @@ public class ParkourCommand implements CommandExecutor{
 												Parkour.permission.playerRemove(targetPlayer, "parkour.completed.map"+KeySplit[0]);
 												it.remove();
 												PlayerFound = true;
-											} else if (Integer.parseInt(KeySplit[0]) == Integer.parseInt(mapNumber)) {
+											} else if (Integer.parseInt(KeySplit[0]) == Integer.parseInt(mapID)) {
 												PlayerFound = true;
 												it.remove();
-												Parkour.permission.playerRemove(targetPlayer, "parkour.completed.map"+mapNumber);
+												Parkour.permission.playerRemove(targetPlayer, "parkour.completed.map"+mapID);
 											}
 										}
 									}
@@ -645,7 +645,7 @@ public class ParkourCommand implements CommandExecutor{
 									if (DeleteOnAllMaps) {
 										p.sendMessage(APREFIX + AQUA + "Scores and unlocks reset for player " + GREEN + playerName +AQUA+ " on all maps");
 									} else {
-										p.sendMessage(APREFIX + AQUA + "Scores and unlocks reset for player "+GREEN + playerName + AQUA + " on map " +GREEN+ mapNumber);
+										p.sendMessage(APREFIX + AQUA + "Scores and unlocks reset for player "+GREEN + playerName + AQUA + " on map " +GREEN+ mapID);
 									}
 
 									plugin.loadScore();
@@ -665,14 +665,14 @@ public class ParkourCommand implements CommandExecutor{
 						if (args.length == 2) {
 							if (plugin.isNumber(args[1])) {
 								if (plugin.maps.contains(plugin.toInt(args[1]))) {
-									int mapNumber = Integer.parseInt(args[1]);
-									p.sendMessage(PREFIX + AQUA + "Scores reset for map " +GREEN + mapNumber);
+									int mapID = Integer.parseInt(args[1]);
+									p.sendMessage(PREFIX + AQUA + "Scores reset for map " +GREEN + mapID);
 
 									for (Iterator<String> it = plugin.Records.keySet().iterator(); it.hasNext();) {
 										String key = it.next();
 										String[] pName = key.split(":");
 										int pMap = Integer.parseInt(pName[0]);
-										if (pMap == mapNumber) {
+										if (pMap == mapID) {
 											it.remove();
 										}
 									}

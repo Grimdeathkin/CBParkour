@@ -9,12 +9,12 @@ public class ParkourStartEvent extends Event
 	private static final HandlerList handlers = new HandlerList();
 	
 	private final Player player;
-	private final int MapNumber;
+	private final int mapID;
 	private final boolean restart;
 	
-	public ParkourStartEvent(Player player, int MapNumber, boolean restart) {
+	public ParkourStartEvent(Player player, int mapID, boolean restart) {
 		this.player = player;
-		this.MapNumber = MapNumber;
+		this.mapID = mapID;
 		this.restart = restart;
 	}
 	
@@ -23,7 +23,7 @@ public class ParkourStartEvent extends Event
 	}
 	
 	public int getMapNumber() {
-		return MapNumber;
+		return mapID;
 	}
 	
 	public boolean isRestarting() {

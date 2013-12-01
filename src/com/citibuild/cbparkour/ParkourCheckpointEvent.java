@@ -9,13 +9,13 @@ public class ParkourCheckpointEvent extends Event
 	private static final HandlerList handlers = new HandlerList();
 	
 	private final Player player;
-	private final int MapNumber;
+	private final int mapID;
 	private final int CheckpointNumber;
 	private final long time;
 	
-	public ParkourCheckpointEvent(Player player, int MapNumber, int CheckpointNumber, long time) {
+	public ParkourCheckpointEvent(Player player, int mapID, int CheckpointNumber, long time) {
 		this.player = player;
-		this.MapNumber = MapNumber;
+		this.mapID = mapID;
 		this.CheckpointNumber = CheckpointNumber;
 		this.time = time;
 	}
@@ -25,7 +25,7 @@ public class ParkourCheckpointEvent extends Event
 	}
 	
 	public int getMapNumber() {
-		return MapNumber;
+		return mapID;
 	}
 	
 	public int getCheckpointNumber() {

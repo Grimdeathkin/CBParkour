@@ -76,23 +76,23 @@ public class PlayerListener implements Listener{
 	
 				if (s.getLine(0).equals("[Parkour]")) {
 					if (s.getLine(1).equalsIgnoreCase("join")) {
-						int mapNumber = plugin.getMapNumber(ChatColor.stripColor(s.getLine(2)));
-						if (mapNumber != 0) {
-							if (plugin.maps.contains(mapNumber)) {
+						int mapID = plugin.getMapNumber(ChatColor.stripColor(s.getLine(2)));
+						if (mapID != 0) {
+							if (plugin.maps.contains(mapID)) {
 								Player p = e.getPlayer();
 								if (!Parkour.permission.has(p, "parkour.use")) {
 									Parkour.sendError("noParkourPermission", p, plugin);
 									return;
 								}
 
-								if (!plugin.toggleParkour.get(mapNumber)) {
+								if (!plugin.toggleParkour.get(mapID)) {
 									Parkour.sendError("parkourDisabled", p, plugin);
 									return;
 								}
 								
-								if(plugin.getMapPrevious(mapNumber) != 0){
-									if(!Parkour.permission.has(p, "parkour.completed.map"+plugin.getMapPrevious(mapNumber))){
-										Parkour.sendInfo("notUnlocked", p, mapNumber, plugin);
+								if(plugin.getMapPrevious(mapID) != 0){
+									if(!Parkour.permission.has(p, "parkour.completed.map"+plugin.getMapPrevious(mapID))){
+										Parkour.sendInfo("notUnlocked", p, mapID, plugin);
 										return;
 									}
 								}
@@ -104,15 +104,15 @@ public class PlayerListener implements Listener{
 	
 								FileConfiguration cfg = plugin.getConfig();
 	
-								if (cfg.contains("Parkour.map" + mapNumber + ".spawn")) {
+								if (cfg.contains("Parkour.map" + mapID + ".spawn")) {
 									Location loc = new Location(plugin.getServer().getWorld(
-											plugin.getConfig().getString("Parkour.map" + mapNumber + ".world")),
-											cfg.getDouble("Parkour.map" + mapNumber + ".spawn.posX"),
-											cfg.getDouble("Parkour.map" + mapNumber + ".spawn.posY"),
-											cfg.getDouble("Parkour.map" + mapNumber + ".spawn.posZ"));
+											plugin.getConfig().getString("Parkour.map" + mapID + ".world")),
+											cfg.getDouble("Parkour.map" + mapID + ".spawn.posX"),
+											cfg.getDouble("Parkour.map" + mapID + ".spawn.posY"),
+											cfg.getDouble("Parkour.map" + mapID + ".spawn.posZ"));
 	
-									loc.setPitch((float) cfg.getDouble("Parkour.map" + mapNumber + ".spawn.posPitch"));
-									loc.setYaw((float) cfg.getDouble("Parkour.map" + mapNumber + ".spawn.posYaw"));
+									loc.setPitch((float) cfg.getDouble("Parkour.map" + mapID + ".spawn.posPitch"));
+									loc.setYaw((float) cfg.getDouble("Parkour.map" + mapID + ".spawn.posYaw"));
 	
 									if (!loc.getChunk().isLoaded()) {
 										loc.getChunk().load(true);
@@ -120,7 +120,7 @@ public class PlayerListener implements Listener{
 	
 									p.teleport(loc);
 									p.setGameMode(GameMode.ADVENTURE);
-									p.sendMessage(plugin.PREFIX+ Parkour.AQUA+"Welcome to "+ Parkour.GREEN +plugin.getMapName(mapNumber));
+									p.sendMessage(plugin.PREFIX+ Parkour.AQUA+"Welcome to "+ Parkour.GREEN +plugin.getMapName(mapID));
 								} else {
 									p.sendMessage(plugin.PREFIX + Parkour.RED + "Map spawn is not set");
 								}
@@ -143,10 +143,10 @@ public class PlayerListener implements Listener{
 					}
 					
 					if (s.getLine(1).equalsIgnoreCase("Best Times")) {
-						int mapNumber = plugin.getMapNumber(ChatColor.stripColor(s.getLine(2)));
-						if (mapNumber != 0) {
-							if (plugin.maps.contains(mapNumber)) {
-								plugin.displayHighscores(mapNumber, e.getPlayer());
+						int mapID = plugin.getMapNumber(ChatColor.stripColor(s.getLine(2)));
+						if (mapID != 0) {
+							if (plugin.maps.contains(mapID)) {
+								plugin.displayHighscores(mapID, e.getPlayer());
 							} else {
 								e.getPlayer().sendMessage(Parkour.RED + "This map no longer exists");
 							}
@@ -213,7 +213,7 @@ public class PlayerListener implements Listener{
 				if (plugin.cLoc.containsKey(bLoc)) {
 
 					int Checkpoint = plugin.getCheckpoint(plugin.cLoc.get(bLoc));
-					int mapNumber = plugin.getCpMapNumber(plugin.cLoc.get(bLoc));
+					int mapID = plugin.getCpMapNumber(plugin.cLoc.get(bLoc));
 					
 					if (!Parkour.permission.has(p, "parkour.use")) {
 						Parkour.sendError("noParkourPermission", p, plugin);
@@ -225,7 +225,7 @@ public class PlayerListener implements Listener{
 						return;
 					}
 
-					if (!plugin.toggleParkour.get(mapNumber)) {
+					if (!plugin.toggleParkour.get(mapID)) {
 						Parkour.sendError("parkourDisabled", p, plugin);
 						if (plugin.lobby != null) {
 							p.teleport(plugin.lobby);
@@ -235,9 +235,9 @@ public class PlayerListener implements Listener{
 						return;
 					}
 					
-					if(plugin.getMapPrevious(mapNumber) != 0){
-						if(!Parkour.permission.has(p, "parkour.completed.map"+plugin.getMapPrevious(mapNumber))){
-							Parkour.sendInfo("notUnlocked", p, mapNumber, plugin);
+					if(plugin.getMapPrevious(mapID) != 0){
+						if(!Parkour.permission.has(p, "parkour.completed.map"+plugin.getMapPrevious(mapID))){
+							Parkour.sendInfo("notUnlocked", p, mapID, plugin);
 							if (plugin.lobby != null) {
 								p.teleport(plugin.lobby);
 								p.setGameMode(GameMode.SURVIVAL);
