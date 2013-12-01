@@ -193,6 +193,16 @@ public class ParkourCommand implements CommandExecutor{
 							}
 						}
 					}
+	/* time */
+					else if(args[0].equalsIgnoreCase("time")){
+						if (Parkour.permission.has(p, "parkour.use")) {
+							if (plugin.isPlayerInParkour(p)) {
+								long totalTime = System.currentTimeMillis()
+										- plugin.getPlTime(plugin.ParkourContainer.get(p.getName()));
+								p.sendMessage(PREFIX + AQUA + "Your current time is: "+plugin.convertTime(totalTime));
+							}
+						}
+					}
 	/* Maplist */				
 					else if (args[0].equalsIgnoreCase("MapList")) {
 						if (Parkour.permission.has(p, "parkour.use")) {

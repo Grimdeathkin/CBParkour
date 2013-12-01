@@ -47,7 +47,6 @@ import org.bukkit.scheduler.BukkitRunnable;
  * - Add system to save progress on disconnect or reload.
  * - Add ranking system and chat prefixing (like SkyWars).
  * - Figure out how to seduce bsquid... beer!.
- * - Add time command to get current time.
  */
 
 public class Parkour extends JavaPlugin implements Listener {
