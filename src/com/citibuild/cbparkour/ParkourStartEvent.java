@@ -12,10 +12,15 @@ public class ParkourStartEvent extends Event
 	private final int mapID;
 	private final boolean restart;
 	
-	public ParkourStartEvent(Player player, int mapID, boolean restart) {
+	public ParkourStartEvent(Parkour plugin, Player player, int mapID, boolean restart) {
 		this.player = player;
 		this.mapID = mapID;
 		this.restart = restart;
+		
+		plugin.pkVars.loadedUsers.get(player.getName()).setMapID(mapID);
+		plugin.pkVars.loadedUsers.get(player.getName()).setTime(0L);
+		plugin.pkVars.loadedUsers.get(player.getName()).setCheckpoint(1);
+		plugin.pkFuncs.savePlayerInfo(player);
 	}
 	
 	public Player getPlayer() {

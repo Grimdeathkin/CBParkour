@@ -13,11 +13,17 @@ public class ParkourCheckpointEvent extends Event
 	private final int CheckpointNumber;
 	private final long time;
 	
-	public ParkourCheckpointEvent(Player player, int mapID, int CheckpointNumber, long time) {
+	public ParkourCheckpointEvent(Parkour plugin, Player player, int mapID, int CheckpointNumber, long time) {
 		this.player = player;
 		this.mapID = mapID;
 		this.CheckpointNumber = CheckpointNumber;
 		this.time = time;
+		
+		plugin.pkVars.loadedUsers.get(player.getName()).setMapID(mapID);
+		plugin.pkVars.loadedUsers.get(player.getName()).setTime(time);
+		plugin.pkVars.loadedUsers.get(player.getName()).setCheckpoint(CheckpointNumber + 1);
+		plugin.pkFuncs.savePlayerInfo(player);
+		
 	}
 	
 	public Player getPlayer() {

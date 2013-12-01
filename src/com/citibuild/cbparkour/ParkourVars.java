@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
 
 public class ParkourVars {
 	
@@ -44,10 +44,17 @@ public class ParkourVars {
 		HashMap<String, Long> Records = new HashMap<>(); // Map:Player, Time
 		HashMap<String, Long> rewardPlayersCooldown = new HashMap<>(); // HashMap infos> playerName :
 																					// LastRewardTime
+		
+		public ArrayList<PlayerInfo> playerInfo = new ArrayList<PlayerInfo>();
+		public HashMap<String, PlayerInfo> loadedUsers = new HashMap<>(); //HashMap infos> username, playerInfo
 
-		// Used for saving/loading scores
-		String path = "plugins" + File.separator + "CBParkour" + File.separator + "PlayersScores.scores";
-		File scores = new File(path);
+		// Used for saving/loading scores and Player status
+		public String configPath = "plugins" + File.separator + "CBParkour" + File.separator;
+		public String scoresPath = configPath + "PlayersScores.scores";
+		public File scores = new File(scoresPath);
+		public String playerInfoPath = configPath + "PlayerInfo.yml";
+		public File playerInfoFile = new File(playerInfoPath);
+		public FileConfiguration playerInfoConfig = null;
 
 		// Chat colours
 		public ChatColor BLACK = ChatColor.BLACK;				//\u00A70
@@ -75,9 +82,6 @@ public class ParkourVars {
 		// Prefixes, user and admin
 		public String PREFIX;
 		public String APREFIX;
-		
-		//GameMode Variable
-		public GameMode prePKGM = GameMode.SURVIVAL;
 	
 	public ParkourVars(Parkour plugin) {
 		this.pk = plugin;

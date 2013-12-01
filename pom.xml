@@ -36,6 +36,7 @@
                                 <directory>${basedir}/</directory>
                                 <includes>
                                         <include>plugin.yml</include>
+                                        <include>PlayerInfo.yml</include>
                                 </includes>
                         </resource>
                 </resources>
