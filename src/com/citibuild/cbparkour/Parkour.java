@@ -44,8 +44,6 @@ import org.bukkit.scheduler.BukkitRunnable;
  * - Add sign leaderboard system.
  * - Integrate slimeball commander into CBParkour.
  * - Add system to restore gamemode on parkour finish.
- * - Add system to stop admins changing gamemode during parkour.
- * - Add reload command for configurations.
  * - Add system to save progress on disconnect or reload.
  * - Add ranking system and chat prefixing (like SkyWars).
  * - Figure out how to seduce bsquid... beer!.
@@ -367,7 +365,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		}
 	}
 
-	private void LoadCfg() {
+	public void LoadCfg() {
 		FileConfiguration cfg = getConfig();
 
 		// Options
@@ -417,6 +415,11 @@ public class Parkour extends JavaPlugin implements Listener {
 		PrefixString = cfg.getString("options.PrefixString");
 
 	}
+	
+	public void reloadCfg() {
+		reloadConfig();
+		LoadCfg();
+	}
 
 	public void loadLobby() {
 		FileConfiguration cfg = getConfig();
@@ -438,6 +441,7 @@ public class Parkour extends JavaPlugin implements Listener {
 	 * noParkourPermission = user does not have parkour.use
 	 * badsign = Sign does not yet exist
 	 * parkourDisabled = parkour is toggled to disabled
+	 * gmChange = When a player tries to change GameMode while in a Parkour
 	 */
 	public static void sendError(String status, Player player, Plugin plugin) {
 		String APREFIX = ((Parkour) plugin).getAPrefix();
@@ -459,6 +463,9 @@ public class Parkour extends JavaPlugin implements Listener {
 			
 		} else if(status.equalsIgnoreCase("parkourDisabled")){
 			player.sendMessage(PREFIX + "This parkour is" + ChatColor.RED + " disabled");
+			
+		} else if(status.equalsIgnoreCase("gmChange")) {
+			player.sendMessage(PREFIX + "You may not change your GameMode while in a Parkour. Please type /pk leave before trying again.");
 			
 		}
 	}

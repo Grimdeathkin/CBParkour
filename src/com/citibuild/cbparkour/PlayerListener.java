@@ -15,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -482,5 +483,16 @@ public class PlayerListener implements Listener{
 				}
 			}
 		}
+	}
+	
+	@EventHandler
+	public void onGamemodeChange(PlayerGameModeChangeEvent e) {
+		Player p = e.getPlayer();
+		if(plugin.isPlayerInParkour(p)) {
+			Parkour.sendError("gmChange", p, plugin);
+			p.setGameMode(GameMode.ADVENTURE);
+			e.setCancelled(true);
+		}
+		
 	}
 }
