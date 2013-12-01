@@ -452,15 +452,18 @@ public class PlayerListener implements Listener{
 								}
 							} else if (PlCheckpoint == (Checkpoint - 1)) {
 
+								long totalTime = System.currentTimeMillis()                                        
+										- plugin.getPlTime(plugin.ParkourContainer.get(p.getName()));
+																
 								if (plugin.CheckpointEffect) {
 									p.playEffect(bLoc, Effect.POTION_BREAK, 2);
 								}
 
 								plugin.setPlCheckpoint(p.getName(), Checkpoint);
-								p.sendMessage(plugin.PREFIX + Parkour.AQUA + "Checkpoint " + (Checkpoint - 1) + "/" + (TotalCheckpoints - 2));
+								p.sendMessage(plugin.PREFIX + Parkour.AQUA + "Checkpoint " + (Checkpoint - 1) + "/" + (TotalCheckpoints - 2) +Parkour.GRAY+ " | "+plugin.convertTime(totalTime));
+								
 								plugin.getServer().getPluginManager().callEvent(
-										new ParkourCheckpointEvent(p, Map, (Checkpoint-1), System.currentTimeMillis() 
-												- plugin.getPlTime(plugin.ParkourContainer.get(p.getName()))));
+										new ParkourCheckpointEvent(p, Map, (Checkpoint-1), totalTime));
 
 							} else if (Checkpoint <= PlCheckpoint) {
 								p.sendMessage(plugin.PREFIX + Parkour.RED + "You already reached this checkpoint!");
