@@ -147,9 +147,8 @@ public class ParkourCommand implements CommandExecutor{
 							} else {
 								p.sendMessage(PREFIX + "You must specify the map ID");
 							}
-						}
-						else {
-							p.sendMessage(PREFIX + "You do not have pk.permission to use this command");
+						} else{
+							Parkour.sendError("noPermission", p, plugin);
 						}
 					} 
 	/* Leave */				
@@ -166,6 +165,8 @@ public class ParkourCommand implements CommandExecutor{
 							} else {
 								p.sendMessage(PREFIX + RED + "You are not in a parkour, use /pk lobby to return to the lobby");
 							}
+						} else{
+							Parkour.sendError("noPermission", p, plugin);
 						}
 					}
 					
@@ -181,6 +182,8 @@ public class ParkourCommand implements CommandExecutor{
 									p.sendMessage(PREFIX + AQUA + "You have returned to the lobby");
 								}
 							}
+						} else{
+							Parkour.sendError("noPermission", p, plugin);
 						}
 					}
 	/* Checkpoint */
@@ -191,6 +194,8 @@ public class ParkourCommand implements CommandExecutor{
 							} else {
 								p.sendMessage(PREFIX + RED + "You are not in a parkour, use /pk lobby to return to the lobby");
 							}
+						} else{
+							Parkour.sendError("noPermission", p, plugin);
 						}
 					}
 	/* time */
@@ -200,7 +205,11 @@ public class ParkourCommand implements CommandExecutor{
 								long totalTime = System.currentTimeMillis()
 										- plugin.getPlTime(plugin.ParkourContainer.get(p.getName()));
 								p.sendMessage(PREFIX + AQUA + "Your current time is: "+plugin.convertTime(totalTime));
+							} else {
+								p.sendMessage(PREFIX + RED + "You are not in a parkour, use /pk lobby to return to the lobby");
 							}
+						} else{
+							Parkour.sendError("noPermission", p, plugin);
 						}
 					}
 	/* Maplist */				
@@ -241,6 +250,8 @@ public class ParkourCommand implements CommandExecutor{
 									}
 								}
 							}
+						} else{
+							Parkour.sendError("noPermission", p, plugin);
 						}
 					}
 	/* Best */				
@@ -259,6 +270,8 @@ public class ParkourCommand implements CommandExecutor{
 							} else {
 								p.sendMessage(PREFIX + RED + "You didn't specify the map");
 							}
+						} else{
+							Parkour.sendError("noPermission", p, plugin);
 						}
 					}		
 	/*
@@ -293,7 +306,7 @@ public class ParkourCommand implements CommandExecutor{
 						} else {
 							p.sendMessage(APREFIX + RED + "Correct usage : /pk create <map name> <previous mapID> <next mapID>");
 						}
-					}
+					} 
 	/* Done */			
 					else if (args[0].equalsIgnoreCase("done")
 							&& (Parkour.permission.has(p, "parkour.admin") || Parkour.permission.has(p, "parkour.mapeditor"))) {
