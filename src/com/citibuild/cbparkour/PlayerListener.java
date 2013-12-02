@@ -320,7 +320,7 @@ public class PlayerListener implements Listener{
 							plugin.pkFuncs.loadPlayerInfo(p);
 							plugin.pkVars.loadedUsers.get(p.getName()).setPrevGM(p.getGameMode());
 							
-							p.setGameMode(GameMode.SURVIVAL);
+							p.setGameMode(GameMode.ADVENTURE);
 							plugin.getServer().getPluginManager().callEvent(new ParkourStartEvent(plugin, p, Map, false));
 
 							plugin.pkVars.ParkourContainer.put(
@@ -346,7 +346,7 @@ public class PlayerListener implements Listener{
 					} 
 					// Player is in a parkour and hits a checkpoint
 					else {
-						p.setGameMode(GameMode.SURVIVAL);
+						p.setGameMode(GameMode.ADVENTURE);
 						int PlCheckpoint = plugin.pkFuncs.getPlCheckpoint(plugin.pkVars.ParkourContainer.get(p.getName()));
 						int CpMap = plugin.pkFuncs.getCpMapNumber(plugin.pkVars.cLoc.get(bLoc));
 						int Map = plugin.pkFuncs.getPlMapNumber(plugin.pkVars.ParkourContainer.get(p.getName()));
@@ -383,7 +383,7 @@ public class PlayerListener implements Listener{
 
 							if (Checkpoint == 1) {
 								
-								p.setGameMode(GameMode.SURVIVAL);
+								p.setGameMode(GameMode.ADVENTURE);
 								if (plugin.pkVars.CheckpointEffect) {
 									p.playEffect(bLoc, Effect.POTION_BREAK, 2);
 								}
@@ -563,7 +563,7 @@ public class PlayerListener implements Listener{
 		Player p = e.getPlayer();
 		if(plugin.pkFuncs.isPlayerInParkour(p)) {
 			plugin.pkFuncs.sendError("gmChange", p, plugin);
-			p.setGameMode(GameMode.SURVIVAL);
+			p.setGameMode(GameMode.ADVENTURE);
 			e.setCancelled(true);
 		}
 

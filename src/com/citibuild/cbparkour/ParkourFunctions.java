@@ -586,7 +586,7 @@ public class ParkourFunctions {
     		loadedPInfo.setTime(pIC.getLong(userPath + "time"));
     		String gm = pIC.getString(userPath + "gamemode");
     		if(gm == null) {
-    			gm = "SURVIVAL";
+    			gm = "ADVENTURE";
     		}
     		loadedPInfo.setPrevGM(translateGM(gm));
     		
