@@ -192,25 +192,25 @@ public class PlayerListener implements Listener{
 					}
 				}
 			}
-			// Parkour items here
-			if(e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK || 
-					e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+		}
+		// Parkour items here
+		if(e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK || 
+				e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 
-				if(e.getPlayer().getItemInHand().getType() == Material.SLIME_BALL && 
-						ChatColor.stripColor(e.getPlayer().getItemInHand().getItemMeta().getDisplayName()).equalsIgnoreCase("checkpoint")) {
+			if(e.getPlayer().getItemInHand().getType() == Material.SLIME_BALL && 
+					ChatColor.stripColor(e.getPlayer().getItemInHand().getItemMeta().getDisplayName()).equalsIgnoreCase("checkpoint")) {
 
-					plugin.getServer().dispatchCommand(e.getPlayer(), plugin.pkItems.slime_cmd);
-					plugin.pkItems.giveSlime(e.getPlayer());
-					e.setCancelled(true);
+				plugin.getServer().dispatchCommand(e.getPlayer(), plugin.pkItems.slime_cmd);
+				plugin.pkItems.giveSlime(e.getPlayer());
+				e.setCancelled(true);
 
-				} else if(e.getPlayer().getItemInHand().getType() == Material.RECORD_6 && 
-						ChatColor.stripColor(e.getPlayer().getItemInHand().getItemMeta().getDisplayName()).equalsIgnoreCase("current time")) {
+			} else if(e.getPlayer().getItemInHand().getType() == Material.RECORD_6 && 
+					ChatColor.stripColor(e.getPlayer().getItemInHand().getItemMeta().getDisplayName()).equalsIgnoreCase("current time")) {
 
-					plugin.getServer().dispatchCommand(e.getPlayer(), plugin.pkItems.musicdisk_cmd);
-					plugin.pkItems.giveMusicDisk(e.getPlayer());
-					e.setCancelled(true);
+				plugin.getServer().dispatchCommand(e.getPlayer(), plugin.pkItems.musicdisk_cmd);
+				plugin.pkItems.giveMusicDisk(e.getPlayer());
+				e.setCancelled(true);
 
-				}
 			}
 		}
 	}
