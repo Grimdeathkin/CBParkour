@@ -240,10 +240,10 @@ public class ParkourCommand implements CommandExecutor{
 										p.sendMessage(PREFIX + plugin.pkVars.RED + args[1] +" is not a valid map ID");
 									}
 								} else {
-									p.sendMessage(PREFIX + plugin.pkVars.RED + args[1] +" is not a valid ID");
+									p.sendMessage(PREFIX + plugin.pkVars.RED + args[1] +" is not a valid number");
 								}
 							} else {
-								p.sendMessage(PREFIX + plugin.pkVars.RED + "You didn't specify the map");
+								p.sendMessage(APREFIX + plugin.pkVars.RED + "Correct usage : /pk create <mapID>");
 							}
 						} else{
 							plugin.pkFuncs.sendError("noPermission", p, plugin);
@@ -364,7 +364,7 @@ public class ParkourCommand implements CommandExecutor{
 								p.sendMessage(APREFIX + plugin.pkVars.RED + args[1] + " is not a valid number");
 							}
 						} else {
-							p.sendMessage(APREFIX + plugin.pkVars.RED + "You must specify the map ID");
+							p.sendMessage(APREFIX + plugin.pkVars.RED + "Correct usage : /pk delete <map ID>");
 						}
 					}
 	/* ChangeMapName */				
