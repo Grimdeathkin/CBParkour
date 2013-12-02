@@ -31,7 +31,11 @@ public class PlayerInfo {
 	}
 	
 	public GameMode getPrevGM() {
-		return prevGM;
+		if(prevGM == null) {
+			return GameMode.ADVENTURE;
+		} else {
+			return prevGM;
+		}
 	}
 	
 	/*

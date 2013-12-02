@@ -153,7 +153,7 @@ public class ParkourCommand implements CommandExecutor{
 							} else {
 								if (plugin.pkVars.lobby != null) {
 									p.teleport(plugin.pkVars.lobby);
-									p.setGameMode(plugin.pkVars.loadedUsers.get(p.getPlayer().getName()).getPrevGM());
+									p.setGameMode(plugin.pkVars.loadedUsers.get(p.getName()).getPrevGM());
 									p.sendMessage(PREFIX + plugin.pkVars.AQUA + "You have returned to the lobby");
 								}
 							}
