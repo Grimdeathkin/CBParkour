@@ -610,8 +610,6 @@ public class ParkourCommand implements CommandExecutor{
 										String key = it.next();
 										String[] KeySplit = key.split(":");
 
-										System.out.println("Key: " + key);
-
 										if (KeySplit[1].equalsIgnoreCase(playerName)) {
 											if (DeleteOnAllMaps) {
 												Parkour.permission.playerRemove(targetPlayer, "parkour.completed.map" +KeySplit[0]);
