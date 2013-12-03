@@ -57,6 +57,7 @@ public class ParkourCommand implements CommandExecutor{
 					p.sendMessage(PREFIX + plugin.pkVars.GRAY + "/" + CommandLabel + " lobby" + plugin.pkVars.WHITE + " - Return to the lobby");
 					p.sendMessage(PREFIX + plugin.pkVars.GRAY + "/" + CommandLabel + " cp | checkpoint" + plugin.pkVars.WHITE + " - Teleport to your last checkpoint");
 					p.sendMessage(PREFIX + plugin.pkVars.GRAY + "/" + CommandLabel + " maplist" + plugin.pkVars.WHITE + " - Show all the maps");
+					p.sendMessage(PREFIX + plugin.pkVars.GRAY + "/" + CommandLabel + " mapinfo" + plugin.pkVars.WHITE + " - Show all the information about a map");
 					p.sendMessage(PREFIX + plugin.pkVars.GRAY + "/" + CommandLabel + " best <MapID>" + plugin.pkVars.WHITE + " - Show the best score of a map");
 					p.sendMessage(PREFIX + plugin.pkVars.GRAY + "/" + CommandLabel + " time" + plugin.pkVars.WHITE + " - Show your current time");
 				} 
