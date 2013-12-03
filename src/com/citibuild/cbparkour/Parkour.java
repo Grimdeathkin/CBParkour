@@ -1,6 +1,5 @@
 package com.citibuild.cbparkour;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +9,7 @@ import java.util.logging.Logger;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -37,6 +37,8 @@ public class Parkour extends JavaPlugin implements Listener {
 	public ParkourItems pkItems;
 	public ParkourFunctions pkFuncs;
 	public ParkourVars pkVars;
+	public ParkourStrings pkStrings;
+	public ParkourConfig pkConfig;
 	
 /*
  * 	Setup
@@ -48,8 +50,10 @@ public class Parkour extends JavaPlugin implements Listener {
         pkItems = new ParkourItems(this);
         pkFuncs = new ParkourFunctions(this);
         pkVars = new ParkourVars(this);
-        	
-		pkFuncs.LoadCfg();
+        pkStrings = new ParkourStrings(this);
+        pkConfig = new ParkourConfig(this);
+        
+        pkConfig.onEnable();
 		
 		if (!setupPermissions() ) {
             log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
@@ -62,29 +66,6 @@ public class Parkour extends JavaPlugin implements Listener {
 		getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
 		getServer().getPluginManager().registerEvents(new SignListener(this), this);
 		this.getCommand("pk").setExecutor(new ParkourCommand(this));
-		
-		if (!pkVars.scores.getAbsoluteFile().exists()) {
-			try {
-				pkVars.scores.createNewFile();
-				pkFuncs.saveScore();
-			} catch (IOException e) {
-				e.printStackTrace(System.out);
-			}
-		}
-		
-		if (!pkVars.playerInfoFile.getAbsoluteFile().exists()) {
-			pkFuncs.saveDefaultPlayerInfo();
-		}
-		pkFuncs.loadPlayerInfoFile();
-		pkFuncs.loadUsersPlayerInfo();
-
-		pkFuncs.intMaps();
-		pkFuncs.loadScore();
-		pkFuncs.loadToggleMap();
-		pkFuncs.loadLobby();
-		pkFuncs.intCheckpointsLoc();
-
-		pkItems.loadStartItems();
 	}
 
 	@Override
@@ -227,19 +208,19 @@ public class Parkour extends JavaPlugin implements Listener {
 	 */
 	public void displayHighscores(int mapID, Player player) {
 		Map<String, Long> records = getRecords(mapID);
-		player.sendMessage(pkVars.GOLD + "---------=[ " + pkVars.D_AQUA + "Best Times for " + getMapName(mapID) + pkVars.GOLD + " ]=---------");
+		player.sendMessage(ChatColor.GOLD + "---------=[ " + ChatColor.DARK_AQUA + "Best Times for " + getMapName(mapID) + ChatColor.GOLD + " ]=---------");
 		boolean inTopTen = false;
 		int counter = 1;
 		for (String p : records.keySet()) {
 			if (p.equals(player.getName())) inTopTen = true;
-			player.sendMessage(pkVars.WHITE + "#" + pkVars.AQUA + counter + " " + p + " - " + convertTime(records.get(p)));
+			player.sendMessage(ChatColor.WHITE + "#" + ChatColor.AQUA + counter + " " + p + " - " + convertTime(records.get(p)));
 			counter++;
 			if (counter == 11) break;
 		}
 		if (!inTopTen && records.containsKey(player.getName())) {
-			player.sendMessage(pkVars.GREEN + "-- Your time --");
+			player.sendMessage(ChatColor.GREEN + "-- Your time --");
 
-			player.sendMessage(pkVars.WHITE + "#" + pkVars.AQUA + "x " + player.getName() + " - "
+			player.sendMessage(ChatColor.WHITE + "#" + ChatColor.AQUA + "x " + player.getName() + " - "
 					+ convertTime(records.get(player.getName())));
 		}
 	}
@@ -315,7 +296,7 @@ public class Parkour extends JavaPlugin implements Listener {
 	 * @return the prefix string
 	 */
 	public String getPrefix(){
-		return pkVars.PREFIX;
+		return pkStrings.PREFIX;
 	}
 
 	/**
@@ -323,6 +304,6 @@ public class Parkour extends JavaPlugin implements Listener {
 	 * @return the prefix string
 	 */
 	public String getAPrefix(){
-		return pkVars.APREFIX;
+		return pkStrings.APREFIX;
 	}
 }

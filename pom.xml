@@ -37,6 +37,7 @@
                                 <includes>
                                         <include>plugin.yml</include>
                                         <include>PlayerInfo.yml</include>
+                                        <include>Strings.yml</include>
                                 </includes>
                         </resource>
                 </resources>

@@ -1,43 +1,45 @@
 # Just putting all the strings i can find in here that would be changable
 # Placeholders:
-# %ARGS | %MAPNAME | %USERNAME | %TIME | &CHECKPOINT | %TOTALCHECKPOINTS
+# %ARGS | %MAPNAME | %USERNAME | %TIME | %CHECKPOINT | %TOTALCHECKPOINTS
 
 Prefix: "&7[&aPK&7] "
-AdminPrefix:"&7[&cPK&7] "
+AdminPrefix: "&7[&cPK&7] "
 
 # This is the default colour for the unconfigurable strings/errors (maplist, usage etc)
 DefaultColor: "&a"
 DefaultError: "&c"
 
 # Configurable strings
-# Errors
-SpawnNotSet: "The spawn for map &a%MAPNAME is not set");
-NotUnlocked: "You have not unlocked this parkour, complete %MAPNAME to progress"
-Disabled: "This parkour is disabled"
-InvalidMap: "%ARGS is not a valid map ID"
-InvalidNumber: "%ARGS is not a valid number"
-NotInPK: "You are not in a parkour, use /pk lobby to return to the lobby"
-NoPermission: "You do not have permission to do that"
-NoPKPermission: "You don't have permission to do this parkour"
-NotExist: "This map no longer exists"
-StartAt1: "You must start at the checkpoint 1"
+# Errors - Useable placeholders: %ARGS, %MAPNAME
+Errors:
+    SpawnNotSet: "The spawn for map &a%MAPNAME is not set"
+    NotUnlocked: "You have not unlocked this parkour, complete %MAPNAME to progress"
+    Disabled: "This parkour is disabled"
+    InvalidMap: "%ARGS is not a valid map ID"
+    InvalidNumber: "%ARGS is not a valid number"
+    NotInPK: "You are not in a parkour, use /pk lobby to return to the lobby"
+    NoPermission: "You do not have permission to do that"
+    NoPKPermission: "You don't have permission to do this parkour"
+    NotExist: "This map no longer exists"
+    StartAtFirst: "You must start at checkpoint 1"
 
-# In-Parkour messages
-Welcome: "&aWelcome to %MAPNAME"
-Leave: "&aYou have left the parkour"
-Lobby: "&aYou have been returned to the lobby"
-TimerStart: "You have started your timer for %MAPNAME"
-RestartTimer: "You have restarted your time for %MAPNAME"
-NotInPK: "You are not in this parkour"
-FirstFinish: "You finished %MAPNAME for the first time in %TIME"
-GlobalRecord: "Global record: %USERNAME | %TIME"
-BeatTime: "You beat your old time of %TIME"
-NotBeatTime: "You didn't beat your old time %TIME"
-FinishCourse: "You finished %MAPNAME in %TIME"
-Checkpoint: "Checkpoint %CHECKPOINT/%TOTALCHECKPOINTS | %TIME"
-CPReached: "You already reached this checkpoint!"
-CPMissing: "You forgot to pass the last checkpoint!"
-
+# In-Parkour messages - Useable placeholders: %MAPNAME, %TIME, %USERNAME, %CHECKPOINT, %TOTALCHECKPOINT
+InPK:
+    Welcome: "&aWelcome to %MAPNAME"
+    Leave: "&aYou have left the parkour"
+    Lobby: "&aYou have been returned to the lobby"
+    TimerStart: "You have started your timer for %MAPNAME"
+    RestartTimer: "You have restarted your time for %MAPNAME"
+    NotInThisPK: "You are not in this parkour"
+    FirstFinish: "You finished %MAPNAME for the first time in %TIME"
+    GlobalRecord: "Global record: %USERNAME | %TIME"
+    BeatTime: "You beat your old time of %TIME"
+    NotBeatTime: "You didn't beat your old time %TIME"
+    FinishCourse: "You finished %MAPNAME in %TIME"
+    Checkpoint: "Checkpoint %CHECKPOINT/%TOTALCHECKPOINTS | %TIME"
+    CPReached: "You already reached this checkpoint!"
+    CPMissing: "You forgot to pass the last checkpoint!"
+    NewGlobalRecord: "&7&o%USERNAME &aset a new record of &7&o%TIME &aon &7&o%MAPNAME"
 
 
 

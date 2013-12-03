@@ -1,5 +1,6 @@
 package com.citibuild.cbparkour;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,7 +38,7 @@ public class SignListener implements Listener{
 
 							e.setLine(0, "[Parkour]");
 							e.setLine(1, "Join");
-							e.setLine(2, plugin.pkVars.AQUA + plugin.getMapName(mapID));
+							e.setLine(2, ChatColor.AQUA + plugin.getMapName(mapID));
 						} else {
 							e.setCancelled(true);
 							e.getBlock().setType(Material.AIR);
@@ -55,7 +56,7 @@ public class SignListener implements Listener{
 
 							e.setLine(0, "Parkour #" + mapID);
 							e.setLine(1, "---------------");
-							e.setLine(2, plugin.pkVars.AQUA + plugin.getMapName(mapID));
+							e.setLine(2, ChatColor.AQUA + plugin.getMapName(mapID));
 						} else {
 							e.setCancelled(true);
 							e.getBlock().setType(Material.AIR);
@@ -73,7 +74,7 @@ public class SignListener implements Listener{
 
 							e.setLine(0, "[Parkour]");
 							e.setLine(1, "Best Times");
-							e.setLine(2, plugin.pkVars.AQUA + plugin.getMapName(mapID));
+							e.setLine(2, ChatColor.AQUA + plugin.getMapName(mapID));
 							e.setLine(3, "Click Me!");
 
 						} else {

@@ -122,19 +122,19 @@ public class PlayerListener implements Listener{
 									}
 
 									p.teleport(loc);
-									p.sendMessage(plugin.pkVars.PREFIX+ plugin.pkVars.AQUA+"Welcome to "+ plugin.pkVars.GREEN +plugin.getMapName(mapID));
+									p.sendMessage(plugin.getPrefix() + ChatColor.AQUA + "Welcome to "+ ChatColor.GREEN + plugin.getMapName(mapID));
 								} else {
-									p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.RED + "Map spawn is not set");
+									p.sendMessage(plugin.getPrefix() + ChatColor.RED + "Map spawn is not set");
 								}
 							} else {
-								e.getPlayer().sendMessage(plugin.pkVars.RED + "This map no longer exists");
+								e.getPlayer().sendMessage(ChatColor.RED + "This map no longer exists");
 							}
 						}
 					}	
 
 					if (s.getLine(1).equalsIgnoreCase("leave")) {
 						if (plugin.pkFuncs.isPlayerInParkour(e.getPlayer())) {
-							e.getPlayer().sendMessage(plugin.pkVars.AQUA + "You have left the parkour");
+							e.getPlayer().sendMessage(ChatColor.AQUA + "You have left the parkour");
 							plugin.pkVars.ParkourContainer.remove(e.getPlayer().getName());
 
 						}
@@ -150,7 +150,7 @@ public class PlayerListener implements Listener{
 							if (plugin.pkVars.maps.contains(mapID)) {
 								plugin.displayHighscores(mapID, e.getPlayer());
 							} else {
-								e.getPlayer().sendMessage(plugin.pkVars.RED + "This map no longer exists");
+								e.getPlayer().sendMessage(ChatColor.RED + "This map no longer exists");
 							}
 						}
 					}
@@ -168,11 +168,11 @@ public class PlayerListener implements Listener{
 							Location bLoc = e.getClickedBlock().getLocation();
 
 							if (plugin.pkVars.newMapCheckpoints.contains(bLoc)) {
-								p.sendMessage(plugin.pkVars.APREFIX + plugin.pkVars.RED + "This checkpoint is alredy used for this map");
+								p.sendMessage(plugin.getAPrefix() + ChatColor.RED + "This checkpoint is alredy used for this map");
 							} else {
 								FileConfiguration cfg = plugin.getConfig();
 
-								p.sendMessage(plugin.pkVars.APREFIX + plugin.pkVars.AQUA + "Checkpoint " + plugin.pkVars.GREEN + plugin.pkVars.CheckpointNumber + plugin.pkVars.AQUA + " set on new map " + plugin.pkVars.GREEN + plugin.pkVars.NewMapNumber);
+								p.sendMessage(plugin.getAPrefix() + ChatColor.AQUA + "Checkpoint " + ChatColor.GREEN + plugin.pkVars.CheckpointNumber + ChatColor.AQUA + " set on new map " + ChatColor.GREEN + plugin.pkVars.NewMapNumber);
 
 								cfg.set("Parkour.map" + plugin.pkVars.NewMapNumber + ".cp." + plugin.pkVars.CheckpointNumber + ".posX", bLoc.getX());
 								cfg.set("Parkour.map" + plugin.pkVars.NewMapNumber + ".cp." + plugin.pkVars.CheckpointNumber + ".posY", bLoc.getY());
@@ -184,10 +184,10 @@ public class PlayerListener implements Listener{
 
 							}
 						} else {
-							p.sendMessage(plugin.pkVars.APREFIX + plugin.pkVars.RED + "This checkpoint is alredy used for another map");
+							p.sendMessage(plugin.getAPrefix() + ChatColor.RED + "This checkpoint is alredy used for another map");
 						}
 					} else {
-						p.sendMessage(plugin.pkVars.APREFIX + plugin.pkVars.RED + "Use a stick to place checkpoints (Right click on stone pressure plate)");
+						p.sendMessage(plugin.getAPrefix() + ChatColor.RED + "Use a stick to place checkpoints (Right click on stone pressure plate)");
 						p.getInventory().addItem(stick);
 					}
 				}
@@ -283,7 +283,7 @@ public class PlayerListener implements Listener{
 							p.teleport(plugin.pkVars.lobby);
 							p.setGameMode(plugin.pkVars.loadedUsers.get(e.getPlayer().getName()).getPrevGM());
 							plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
-							p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "You have been returned to the lobby");
+							p.sendMessage(plugin.getPrefix() + ChatColor.AQUA + "You have been returned to the lobby");
 						}
 						return;
 					}
@@ -294,7 +294,7 @@ public class PlayerListener implements Listener{
 							p.teleport(plugin.pkVars.lobby);
 							p.setGameMode(plugin.pkVars.loadedUsers.get(e.getPlayer().getName()).getPrevGM());
 							plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
-							p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "You have been returned to the lobby");
+							p.sendMessage(plugin.getPrefix() + ChatColor.AQUA + "You have been returned to the lobby");
 						}
 						return;
 					}
@@ -306,7 +306,7 @@ public class PlayerListener implements Listener{
 								p.teleport(plugin.pkVars.lobby);
 								p.setGameMode(plugin.pkVars.loadedUsers.get(e.getPlayer().getName()).getPrevGM());
 								plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
-								p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "You have been returned to the lobby");
+								p.sendMessage(plugin.getPrefix() + ChatColor.AQUA + "You have been returned to the lobby");
 							}
 							return;
 						}
@@ -327,7 +327,7 @@ public class PlayerListener implements Listener{
 									p.getName(),
 									(plugin.pkFuncs.getCpMapNumber(plugin.pkVars.cLoc.get(bLoc)) + "_"
 											+ System.currentTimeMillis() + "_1"));
-							p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "You have started your timer for " + plugin.pkVars.GREEN + plugin.getMapName(Map));
+							p.sendMessage(plugin.getPrefix() + ChatColor.AQUA + "You have started your timer for " + ChatColor.GREEN + plugin.getMapName(Map));
 
 							if (plugin.pkVars.CheckpointEffect) {
 								p.playEffect(bLoc, Effect.POTION_BREAK, 2);
@@ -341,7 +341,7 @@ public class PlayerListener implements Listener{
 								p.setFoodLevel(20);
 							}
 						} else {
-							p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.RED + "You must start at the checkpoint 1");
+							p.sendMessage(plugin.getPrefix() + ChatColor.RED + "You must start at the checkpoint 1");
 						}
 					} 
 					// Player is in a parkour and hits a checkpoint
@@ -355,7 +355,7 @@ public class PlayerListener implements Listener{
 						if (CpMap != Map) {
 							if (Checkpoint == 1) {
 								plugin.getServer().getPluginManager().callEvent(new ParkourStartEvent(plugin, p, Map, false));						
-								p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "You have started your timer for " + plugin.pkVars.GREEN + plugin.getMapName(CpMap));
+								p.sendMessage(plugin.getPrefix() + ChatColor.AQUA + "You have started your timer for " + ChatColor.GREEN + plugin.getMapName(CpMap));
 								plugin.pkVars.ParkourContainer.put(
 										p.getName(),
 										(plugin.pkFuncs.getCpMapNumber(plugin.pkVars.cLoc.get(bLoc)) + "_"
@@ -374,7 +374,7 @@ public class PlayerListener implements Listener{
 								}
 
 							} else {
-								p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.RED + "You are not in this parkour");
+								p.sendMessage(plugin.getPrefix() + ChatColor.RED + "You are not in this parkour");
 
 							}
 						} 
@@ -396,7 +396,7 @@ public class PlayerListener implements Listener{
 									p.setFoodLevel(20);
 								}
 								plugin.getServer().getPluginManager().callEvent(new ParkourStartEvent(plugin, p, Map, true));
-								p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "You have restarted your time for " + plugin.pkVars.GREEN+ plugin.getMapName(Map));
+								p.sendMessage(plugin.getPrefix() + ChatColor.AQUA + "You have restarted your time for " + ChatColor.GREEN+ plugin.getMapName(Map));
 								plugin.pkFuncs.setPlTime(p.getName(), System.currentTimeMillis());
 								plugin.pkFuncs.setPlCheckpoint(p.getName(), 1);
 
@@ -432,8 +432,8 @@ public class PlayerListener implements Listener{
 								if (!plugin.pkVars.Records.containsKey(Map + ":" + p.getName())) {
 
 									plugin.getServer().getPluginManager().callEvent(new ParkourFinishEvent(plugin, p, Map, totalTime, true));
-									p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "You finished "+plugin.pkVars.GREEN + plugin.getMapName(Map)+plugin.pkVars.AQUA+ " for the first time in " +
-											plugin.pkVars.GRAY + plugin.convertTime(totalTime));
+									p.sendMessage(plugin.getPrefix() + ChatColor.AQUA + "You finished "+ ChatColor.GREEN + plugin.getMapName(Map) + ChatColor.AQUA+ " for the first time in " +
+											ChatColor.GRAY + plugin.convertTime(totalTime));
 									plugin.pkVars.Records.put(Map + ":" + p.getName(), totalTime);
 									plugin.pkFuncs.saveScore();
 
@@ -442,12 +442,12 @@ public class PlayerListener implements Listener{
 									Long topTime = entry.getValue();
 									String topName = entry.getKey();
 									if(!topName.equalsIgnoreCase(p.getName())){
-										p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "Global record: "+plugin.pkVars.GRAY + topName + plugin.pkVars.AQUA + " | " + plugin.pkVars.GRAY + plugin.convertTime(topTime));
+										p.sendMessage(plugin.getPrefix() + ChatColor.AQUA + "Global record: "+ ChatColor.GRAY + topName + ChatColor.AQUA + " | " + ChatColor.GRAY + plugin.convertTime(topTime));
 									}
 									//if user time > first record
 									if (totalTime <= topTime){
 										if (plugin.pkVars.BroadcastMessage) {
-											plugin.getServer().broadcastMessage(plugin.pkVars.PREFIX+
+											plugin.getServer().broadcastMessage(plugin.getPrefix()+
 													ChatColor.translateAlternateColorCodes('&', plugin.pkVars.BroadcastMsg)
 													.replaceAll("PLAYER", p.getName())
 													.replaceAll("TIME", plugin.convertTime(totalTime))
@@ -464,19 +464,19 @@ public class PlayerListener implements Listener{
 
 									// Player beat old score
 									if (plugin.pkVars.Records.get(Map + ":" + p.getName()) >= totalTime) {
-										p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.GREEN + "You beat your old time of " + plugin.pkVars.GRAY + plugin.convertTime(plugin.pkVars.Records.get(Map + ":" + p.getName())));
-										p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "You finished "+plugin.pkVars.GREEN + plugin.getMapName(Map)+plugin.pkVars.AQUA+ " in " + plugin.pkVars.GRAY + plugin.convertTime(totalTime));
+										p.sendMessage(plugin.getPrefix() + ChatColor.GREEN + "You beat your old time of " + ChatColor.GRAY + plugin.convertTime(plugin.pkVars.Records.get(Map + ":" + p.getName())));
+										p.sendMessage(plugin.getPrefix() + ChatColor.AQUA + "You finished "+ ChatColor.GREEN + plugin.getMapName(Map) + ChatColor.AQUA+ " in " + ChatColor.GRAY + plugin.convertTime(totalTime));
 
 										plugin.pkVars.Records.put(Map + ":" + p.getName(), totalTime);
 										plugin.pkFuncs.saveScore();
 										if(!topName.equalsIgnoreCase(p.getName())){
-											p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "Global record: "+ plugin.pkVars.GRAY + topName + plugin.pkVars.AQUA + " | " + plugin.pkVars.GRAY + plugin.convertTime(topTime));
+											p.sendMessage(plugin.getPrefix() + ChatColor.AQUA + "Global record: "+ ChatColor.GRAY + topName + ChatColor.AQUA + " | " + ChatColor.GRAY + plugin.convertTime(topTime));
 										}
 
 										// Player beat best global time
 										if (totalTime <= topTime){
 											if (plugin.pkVars.BroadcastMessage) {
-												plugin.getServer().broadcastMessage(plugin.pkVars.PREFIX+
+												plugin.getServer().broadcastMessage(plugin.getPrefix()+
 														ChatColor.translateAlternateColorCodes('&', plugin.pkVars.BroadcastMsg)
 														.replaceAll("PLAYER", p.getName())
 														.replaceAll("TIME", plugin.convertTime(totalTime))
@@ -488,8 +488,8 @@ public class PlayerListener implements Listener{
 
 									} else {
 										String username;
-										p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.RED + "You didn't beat your old time "+ plugin.pkVars.GRAY + plugin.convertTime(plugin.pkVars.Records.get(Map + ":" + p.getName())));
-										p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "You finished "+plugin.pkVars.GREEN + plugin.getMapName(Map)+plugin.pkVars.AQUA+ " in " + plugin.pkVars.GRAY + plugin.convertTime(totalTime));
+										p.sendMessage(plugin.getPrefix() + ChatColor.RED + "You didn't beat your old time "+ ChatColor.GRAY + plugin.convertTime(plugin.pkVars.Records.get(Map + ":" + p.getName())));
+										p.sendMessage(plugin.getPrefix() + ChatColor.AQUA + "You finished "+ ChatColor.GREEN + plugin.getMapName(Map) + ChatColor.AQUA+ " in " + ChatColor.GRAY + plugin.convertTime(totalTime));
 
 										if(topName.equalsIgnoreCase(p.getName())){
 											username = "You";
@@ -497,7 +497,7 @@ public class PlayerListener implements Listener{
 										else{
 											username = topName;
 										}
-										p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "Global record: " +plugin.pkVars.GRAY+ username +plugin.pkVars.AQUA+ " | " +plugin.pkVars.GRAY+ plugin.convertTime(topTime));
+										p.sendMessage(plugin.getPrefix() + ChatColor.AQUA + "Global record: " + ChatColor.GRAY+ username + ChatColor.AQUA+ " | " + ChatColor.GRAY+ plugin.convertTime(topTime));
 										if (!plugin.pkVars.rewardIfBetterScore) {
 											plugin.pkFuncs.giveReward(p);
 										}
@@ -528,16 +528,16 @@ public class PlayerListener implements Listener{
 								}
 
 								plugin.pkFuncs.setPlCheckpoint(p.getName(), Checkpoint);
-								p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.AQUA + "Checkpoint " + (Checkpoint - 1) + "/" + (TotalCheckpoints - 2) +plugin.pkVars.GRAY+ " | "+ plugin.convertTime(totalTime));
+								p.sendMessage(plugin.getPrefix() + ChatColor.AQUA + "Checkpoint " + (Checkpoint - 1) + "/" + (TotalCheckpoints - 2) + ChatColor.GRAY+ " | "+ plugin.convertTime(totalTime));
 
 								plugin.getServer().getPluginManager().callEvent(
 										new ParkourCheckpointEvent(plugin, p, Map, (Checkpoint-1), totalTime));
 
 							} else if (Checkpoint <= PlCheckpoint) {
-								p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.RED + "You already reached this checkpoint!");
+								p.sendMessage(plugin.getPrefix() + ChatColor.RED + "You already reached this checkpoint!");
 
 							} else if (Checkpoint > PlCheckpoint) {
-								p.sendMessage(plugin.pkVars.PREFIX + plugin.pkVars.RED + "You forgot to pass the last checkpoint!");
+								p.sendMessage(plugin.getPrefix() + ChatColor.RED + "You forgot to pass the last checkpoint!");
 
 							}
 						}
