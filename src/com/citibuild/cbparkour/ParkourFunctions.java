@@ -29,13 +29,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class ParkourFunctions {
-	
+
 	Parkour pk;
-	
+
 	public ParkourFunctions(Parkour plugin) {
 		this.pk = plugin;
 	}
-	
+
 	public void teleportFirstCheckpoint(Player p){
 
 		FileConfiguration cfg = pk.getConfig();
@@ -58,15 +58,15 @@ public class ParkourFunctions {
 					pk.getServer().getWorld(cfg.getString("Parkour.map" + mapID + ".world")),
 					cfg.getDouble("Parkour.map" + mapID + ".cp.1.posX") + 0.5, cfg.getDouble("Parkour.map"
 							+ mapID + ".cp.1.posY"),
-					cfg.getDouble("Parkour.map" + mapID + ".cp.1.posZ") + 0.5);
+							cfg.getDouble("Parkour.map" + mapID + ".cp.1.posZ") + 0.5);
 
 
 			firstCheckpoint.setPitch(p.getLocation().getPitch());
 			firstCheckpoint.setYaw(p.getLocation().getYaw());
 			p.teleport(firstCheckpoint);
 		}
- 	}
-	
+	}
+
 	public void teleportLastCheckpoint(Player p) {
 		FileConfiguration cfg = pk.getConfig();
 		Location lastCheckpoint;
@@ -105,27 +105,27 @@ public class ParkourFunctions {
 
 	public Long getPlTime(String HashTable) {
 		String[] Splitter = HashTable.split("_");
-        return Long.valueOf(Splitter[1]);
+		return Long.valueOf(Splitter[1]);
 	}
 
 	public int getPlCheckpoint(String HashTable) {
 		String[] Splitter = HashTable.split("_");
-        return Integer.parseInt(Splitter[2]);
+		return Integer.parseInt(Splitter[2]);
 	}
 
 	public int getPlMapNumber(String HashTable) {
 		String[] Splitter = HashTable.split("_");
-        return Integer.parseInt(Splitter[0]);
+		return Integer.parseInt(Splitter[0]);
 	}
 
 	public int getCpMapNumber(String HashTable) {
 		String[] Splitter = HashTable.split("_");
-        return Integer.parseInt(Splitter[0]);
+		return Integer.parseInt(Splitter[0]);
 	}
 
 	public int getCheckpoint(String HashTable) {
 		String[] Splitter = HashTable.split("_");
-        return Integer.parseInt(Splitter[1]);
+		return Integer.parseInt(Splitter[1]);
 	}
 
 	public int getCfgTotalCheckpoints(int mapID) {
@@ -133,7 +133,7 @@ public class ParkourFunctions {
 	}
 
 	public boolean mapExist(String mapID) {
-            return pk.getConfig().getInt("Parkour.map" + mapID + ".numberCp") != 0;
+		return pk.getConfig().getInt("Parkour.map" + mapID + ".numberCp") != 0;
 	}
 
 	public boolean isNumber(String number) {
@@ -153,7 +153,7 @@ public class ParkourFunctions {
 				Location loc = new Location(pk.getServer().getWorld(cfg.getString("Parkour.map" + mapID + ".world")),
 						cfg.getInt("Parkour.map" + mapID + ".cp." + i + ".posX"), cfg.getInt("Parkour.map"
 								+ mapID + ".cp." + i + ".posY"), cfg.getInt("Parkour.map" + mapID + ".cp." + i
-								+ ".posZ"));
+										+ ".posZ"));
 				String HashTable = mapID + "_" + i;
 				pk.pkVars.cLoc.put(loc, HashTable);
 			}
@@ -194,7 +194,7 @@ public class ParkourFunctions {
 			pk.pkVars.lobby = loc;
 		}
 	}
-	
+
 	/*
 	 * 2notnumber = Second line is not a number
 	 * badmap = Map not recognized
@@ -210,35 +210,35 @@ public class ParkourFunctions {
 		String APREFIX = plugin.getAPrefix();
 		String PREFIX = plugin.getPrefix();
 		if(status.equalsIgnoreCase("2notnumber")) {
-			player.sendMessage(APREFIX + "The second line must be a number. Please try again.");
-			
+			player.sendMessage(APREFIX + pk.pkStrings.defaultError + "The second line must be a number. Please try again.");
+
 		} else if(status.equalsIgnoreCase("badmap")) {
-			player.sendMessage(APREFIX + "That map is not recognized. Please try again.");
-			
+			player.sendMessage(APREFIX + pk.pkStrings.defaultError + "That map is not recognized. Please try again.");
+
 		} else if(status.equalsIgnoreCase("noPermission")) {
-			player.sendMessage(PREFIX + "You do not have permission to do that.");
-			
+			player.sendMessage(PREFIX + pk.pkStrings.defaultError + "You do not have permission to do that.");
+
 		} else if (status.equalsIgnoreCase("noParkourPermission")){
-			player.sendMessage(PREFIX + ChatColor.RED + "You don't have permission to do this parkour");
-			
+			player.sendMessage(PREFIX + pk.pkStrings.defaultError + "You don't have permission to do this parkour");
+
 		} else if(status.equalsIgnoreCase("badsign")) {
-			player.sendMessage(APREFIX + "That sign is not recognized. Please try again.");
-			
+			player.sendMessage(APREFIX + pk.pkStrings.defaultError + "That sign is not recognized. Please try again.");
+
 		} else if(status.equalsIgnoreCase("parkourDisabled")){
-			player.sendMessage(PREFIX + "This parkour is" + ChatColor.RED + " disabled");
-			
+			player.sendMessage(PREFIX + pk.pkStrings.defaultError + "This parkour is" + ChatColor.RED + " disabled");
+
 		} else if(status.equalsIgnoreCase("gmChange")) {
-			player.sendMessage(APREFIX + ChatColor.RED + "You may not change your GameMode while in a Parkour. Please type /pk leave before trying again.");
-			
+			player.sendMessage(APREFIX + pk.pkStrings.defaultError + "You may not change your GameMode while in a Parkour. Please type /pk leave before trying again.");
+
 		} else if(status.equalsIgnoreCase("mapspawnnotset")) {
-			player.sendMessage(PREFIX + "You must specify the map ID");
-			
+			player.sendMessage(PREFIX + pk.pkStrings.defaultError + "You must specify the map ID");
+
 		} else if(status.equalsIgnoreCase("notinpk")) {
-			player.sendMessage(PREFIX + ChatColor.RED + "You are not in a parkour, use /pk lobby to return to the lobby");
-			
+			player.sendMessage(PREFIX + pk.pkStrings.defaultError + "You are not in a parkour, use /pk lobby to return to the lobby");
+
 		}
 	}
-	
+
 	/*
 	 * notUnlocked - User has not unlocked this map
 	 * mapUnlock - User has unlocked the next map
@@ -251,13 +251,13 @@ public class ParkourFunctions {
 			player.sendMessage(PREFIX + ChatColor.RED + "You have not unlocked this parkour, complete "+ ChatColor.GREEN + prevMapName + ChatColor.RED+" to progress");
 
 		} else if(info.equalsIgnoreCase("mapUnlock")) {
-		player.sendMessage(PREFIX + ChatColor.GOLD + "Map unlocked! - "+ ChatColor.GREEN + nextMapName);
-			
+			player.sendMessage(PREFIX + ChatColor.GOLD + "Map unlocked! - "+ ChatColor.GREEN + nextMapName);
+
 		}
 
 	}
-	
-/* Note Pitch | Note Pitch
+
+	/* Note Pitch | Note Pitch
 	 * f#	0.500 | F#	1.000
 	 * G	0.525 | G	1.050
 	 * G#	0.550 | G#	1.100
@@ -273,43 +273,43 @@ public class ParkourFunctions {
 	 */	
 	public void playJingle(final Player player){
 		new BukkitRunnable(){
-		    int count = 0;
-                    @Override
-		    public void run(){
-		        if(count < 4){
-		        	switch (count){
-		        	case 0:
-		        		player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,0.700f);
-		        		break;
-		        	case 1:
-		        		player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,0.900f);
+			int count = 0;
+			@Override
+			public void run(){
+				if(count < 4){
+					switch (count){
+					case 0:
+						player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,0.700f);
+						break;
+					case 1:
+						player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,0.900f);
 
-		        		break;
-		        	case 2:
-		        		player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,1.050f);
-		        		break;
-		        	case 3:
-		        		player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,0.700f);
-		        		player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,1.400f);
-		        		player.playSound(player.getLocation(), Sound.ORB_PICKUP,0.1f,0.700f);
-		        		break;
-		        	}
-		        }
-		        else{
-		            cancel();
-		        }
-		        count++;
-		    }
+						break;
+					case 2:
+						player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,1.050f);
+						break;
+					case 3:
+						player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,0.700f);
+						player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,1.400f);
+						player.playSound(player.getLocation(), Sound.ORB_PICKUP,0.1f,0.700f);
+						break;
+					}
+				}
+				else{
+					cancel();
+				}
+				count++;
+			}
 		}.runTaskTimer(pk, 0L, 2L);
 	}
 
 	public int maxMapNumber() {
 		return pk.getConfig().getInt("Parkour.mapsnumber");
 	}
-	
-/*
- *  Player Functions
- */
+
+	/*
+	 *  Player Functions
+	 */
 	public boolean isPlayerInParkour(Player player) {
 		if(pk.pkVars.ParkourContainer.containsKey(player.getName())) {
 			return true;
@@ -317,13 +317,13 @@ public class ParkourFunctions {
 			return false;
 		}
 	}
-	
+
 	public void saveScore() {
 		try {
-            try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream((pk.pkVars.scoresPath))))) {
-                oos.writeObject(pk.pkVars.Records);
-                oos.flush();
-            }
+			try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream((pk.pkVars.scoresPath))))) {
+				oos.writeObject(pk.pkVars.Records);
+				oos.flush();
+			}
 		} catch (IOException e) {
 			e.printStackTrace(System.out);
 		}
@@ -332,10 +332,10 @@ public class ParkourFunctions {
 	@SuppressWarnings("unchecked")
 	public void loadScore() {
 		try {
-            try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(pk.pkVars.scoresPath)))) {
-            	pk.pkVars.Records.clear();
-                pk.pkVars.Records = (HashMap<String, Long>) ois.readObject();
-            }
+			try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(pk.pkVars.scoresPath)))) {
+				pk.pkVars.Records.clear();
+				pk.pkVars.Records = (HashMap<String, Long>) ois.readObject();
+			}
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace(System.out);
 		}
@@ -432,7 +432,7 @@ public class ParkourFunctions {
 	public <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
 		List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
 		Collections.sort(list, new Comparator<Map.Entry<K, V>>() {
-                        @Override
+			@Override
 			public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
 				return (o1.getValue()).compareTo(o2.getValue());
 			}
@@ -444,11 +444,11 @@ public class ParkourFunctions {
 		}
 		return result;
 	}
-	
+
 	/*
 	 * PlayerInfo Functions
 	 */
-	
+
 	public void loadPlayerInfoFile() {
 		File playerInfoFile = pk.pkVars.playerInfoFile;
 		if (playerInfoFile == null) {
@@ -468,144 +468,144 @@ public class ParkourFunctions {
 		FileConfiguration playerInfoConfig = pk.pkVars.playerInfoConfig;
 		File playerInfoFile = pk.pkVars.playerInfoFile;
 		if (playerInfoConfig == null || playerInfoFile == null) {
-	        return;
-	    }
-	    try {
-	        getPlayerInfoConfig().save(playerInfoFile);
-	    } catch (IOException ex) {
-	        pk.getLogger().log(Level.SEVERE, "Could not save config to " + playerInfoFile, ex);
-	    }
-		
+			return;
+		}
+		try {
+			getPlayerInfoConfig().save(playerInfoFile);
+		} catch (IOException ex) {
+			pk.getLogger().log(Level.SEVERE, "Could not save config to " + playerInfoFile, ex);
+		}
+
 	}
-	
-    public FileConfiguration getPlayerInfoConfig() {
-    	FileConfiguration playerInfoConfig = pk.pkVars.playerInfoConfig;
-        if (playerInfoConfig == null) {
-            loadPlayerInfoFile();
-        }
-        return playerInfoConfig;
-    }
-    
-    public void saveDefaultPlayerInfo() {
-    	File playerInfoFile = pk.pkVars.playerInfoFile;
-        if (!playerInfoFile.exists()) {            
-             pk.saveResource(playerInfoFile.getName(), false);
-         }
-    }
-    
-    public void createNewPlayerInfo(Player player) {
-    	String username = player.getName();
-    	PlayerInfo newPlayer = new PlayerInfo();
-    	newPlayer.setUsername(username);
-    	newPlayer.setTime(0L);
-    	newPlayer.setMapID(0);
-    	pk.pkVars.loadedUsers.put(username, newPlayer);
-    	
-    }
-    
-    public void loadPlayerInfo(Player player) {
-    	String username = player.getName();
-    	FileConfiguration pIC = pk.pkVars.playerInfoConfig;
-    	
-    	if(pIC.get("username." + username) == null) {
-    		createNewPlayerInfo(player);
-    	}
-    	
-    	HashMap<String, PlayerInfo> loadedUsers = pk.pkVars.loadedUsers;
-    	
-    	if(!loadedUsers.containsKey(username)) {
-    		PlayerInfo loadedPInfo = new PlayerInfo();
-    		loadedPInfo.setUsername(username);
-    		String userPath = "username." + username + ".";
-    		loadedPInfo.setMapID(pIC.getInt(userPath + "mapID"));
-    		loadedPInfo.setCheckpoint(pIC.getInt(userPath + "checkpoint"));
-    		loadedPInfo.setTime(pIC.getLong(userPath + "time"));
-    		String gm = pIC.getString(userPath + "gamemode");
-    		if(gm == null) {
-    			gm = "ADVENTURE";
-    		}
-    		loadedPInfo.setPrevGM(translateGM(gm));
-    		
-    		//Add user to loaded users list
-    		loadedUsers.put(username, loadedPInfo);
-    		
-    		if(mapExist("" + loadedPInfo.getMapID())) {
+
+	public FileConfiguration getPlayerInfoConfig() {
+		FileConfiguration playerInfoConfig = pk.pkVars.playerInfoConfig;
+		if (playerInfoConfig == null) {
+			loadPlayerInfoFile();
+		}
+		return playerInfoConfig;
+	}
+
+	public void saveDefaultPlayerInfo() {
+		File playerInfoFile = pk.pkVars.playerInfoFile;
+		if (!playerInfoFile.exists()) {            
+			pk.saveResource(playerInfoFile.getName(), false);
+		}
+	}
+
+	public void createNewPlayerInfo(Player player) {
+		String username = player.getName();
+		PlayerInfo newPlayer = new PlayerInfo();
+		newPlayer.setUsername(username);
+		newPlayer.setTime(0L);
+		newPlayer.setMapID(0);
+		pk.pkVars.loadedUsers.put(username, newPlayer);
+
+	}
+
+	public void loadPlayerInfo(Player player) {
+		String username = player.getName();
+		FileConfiguration pIC = pk.pkVars.playerInfoConfig;
+
+		if(pIC.get("username." + username) == null) {
+			createNewPlayerInfo(player);
+		}
+
+		HashMap<String, PlayerInfo> loadedUsers = pk.pkVars.loadedUsers;
+
+		if(!loadedUsers.containsKey(username)) {
+			PlayerInfo loadedPInfo = new PlayerInfo();
+			loadedPInfo.setUsername(username);
+			String userPath = "username." + username + ".";
+			loadedPInfo.setMapID(pIC.getInt(userPath + "mapID"));
+			loadedPInfo.setCheckpoint(pIC.getInt(userPath + "checkpoint"));
+			loadedPInfo.setTime(pIC.getLong(userPath + "time"));
+			String gm = pIC.getString(userPath + "gamemode");
+			if(gm == null) {
+				gm = "ADVENTURE";
+			}
+			loadedPInfo.setPrevGM(translateGM(gm));
+
+			//Add user to loaded users list
+			loadedUsers.put(username, loadedPInfo);
+
+			if(mapExist("" + loadedPInfo.getMapID())) {
 				PlayerInfo userPInfo = pk.pkVars.loadedUsers.get(username);
 				pk.pkVars.ParkourContainer.put(username, loadedPInfo.getMapID() + "_" + (System.currentTimeMillis() - userPInfo.getTime()) + "_" + userPInfo.getCheckpoint());
 			}
-    		
-    	}
-    	
-    }
-    
-    public void savePlayerInfo(Player player) {
-    	String username = player.getName();
-    	
-    	if(!pk.pkVars.loadedUsers.containsKey(username)) {
-    		loadPlayerInfo(player);
-    	}
-    	
-    	PlayerInfo pInfo = pk.pkVars.loadedUsers.get(username);
 
-    	FileConfiguration pIC = pk.pkVars.playerInfoConfig;
+		}
 
-    	//Save username, mapID and time
-    	pIC.createSection("username." + username);
-    	String uNamePath = "username." + username + ".";
-    	pIC.set(uNamePath + "mapID", pInfo.getMapID());
-    	pIC.set(uNamePath + "checkpoint", pInfo.getCheckpoint());
-    	pIC.set(uNamePath + "time", pInfo.getTime());
-    	pIC.set(uNamePath + "gamemode", translateGM(pInfo.getPrevGM()));
-    	
-    	savePlayerInfoFile();
+	}
 
-    }
+	public void savePlayerInfo(Player player) {
+		String username = player.getName();
 
-    public void loadUsersPlayerInfo() {
-    	if(pk.getServer().getOnlinePlayers().length >= 1) {
-    		FileConfiguration pIC = pk.pkVars.playerInfoConfig;
-    		Set<String> keyUsers = pIC.getConfigurationSection("username").getKeys(false);
-    		for(Player player: pk.getServer().getOnlinePlayers()) {
-    			if(keyUsers.contains(player.getName())) {
-    				loadPlayerInfo(player);
-    			} else {
-    				continue;
-    			}
-    		}
-    	}
-    }
-    
-    public void saveAllPlayerInfo() {
-    	for(Player player: pk.getServer().getOnlinePlayers()) {
-    		savePlayerInfo(player);
-    	}
-    }
-    
-    //Translate GameMode depending on input
+		if(!pk.pkVars.loadedUsers.containsKey(username)) {
+			loadPlayerInfo(player);
+		}
 
-    public GameMode translateGM(String gm) {
-    	if(gm.equalsIgnoreCase("survival")) {
-    		return GameMode.SURVIVAL;
-    	} else if(gm.equalsIgnoreCase("creative")) {
-    		return GameMode.CREATIVE;
-    	} else {
-    		return GameMode.ADVENTURE;
-    	}
-    }
-    
-    public String translateGM(GameMode gm) {
-    	if(gm == GameMode.SURVIVAL) {
-    		return "SURVIVAL";
-    	} else if(gm == GameMode.CREATIVE) {
-    		return "CREATIVE";
-    	} else {
-    		return "ADVENTURE";
-    	}
-    }
-    
-    
-    //Misc. Functions
-    
-    
+		PlayerInfo pInfo = pk.pkVars.loadedUsers.get(username);
+
+		FileConfiguration pIC = pk.pkVars.playerInfoConfig;
+
+		//Save username, mapID and time
+		pIC.createSection("username." + username);
+		String uNamePath = "username." + username + ".";
+		pIC.set(uNamePath + "mapID", pInfo.getMapID());
+		pIC.set(uNamePath + "checkpoint", pInfo.getCheckpoint());
+		pIC.set(uNamePath + "time", pInfo.getTime());
+		pIC.set(uNamePath + "gamemode", translateGM(pInfo.getPrevGM()));
+
+		savePlayerInfoFile();
+
+	}
+
+	public void loadUsersPlayerInfo() {
+		if(pk.getServer().getOnlinePlayers().length >= 1) {
+			FileConfiguration pIC = pk.pkVars.playerInfoConfig;
+			Set<String> keyUsers = pIC.getConfigurationSection("username").getKeys(false);
+			for(Player player: pk.getServer().getOnlinePlayers()) {
+				if(keyUsers.contains(player.getName())) {
+					loadPlayerInfo(player);
+				} else {
+					continue;
+				}
+			}
+		}
+	}
+
+	public void saveAllPlayerInfo() {
+		for(Player player: pk.getServer().getOnlinePlayers()) {
+			savePlayerInfo(player);
+		}
+	}
+
+	//Translate GameMode depending on input
+
+	public GameMode translateGM(String gm) {
+		if(gm.equalsIgnoreCase("survival")) {
+			return GameMode.SURVIVAL;
+		} else if(gm.equalsIgnoreCase("creative")) {
+			return GameMode.CREATIVE;
+		} else {
+			return GameMode.ADVENTURE;
+		}
+	}
+
+	public String translateGM(GameMode gm) {
+		if(gm == GameMode.SURVIVAL) {
+			return "SURVIVAL";
+		} else if(gm == GameMode.CREATIVE) {
+			return "CREATIVE";
+		} else {
+			return "ADVENTURE";
+		}
+	}
+
+
+	//Misc. Functions
+
+
 
 }

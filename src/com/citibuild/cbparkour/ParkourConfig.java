@@ -146,34 +146,8 @@ public class ParkourConfig {
 		//Load Default Color
 		strings.defaultColor = colorParseString(stringsConfig.getString("DefaultColor"));
 		strings.defaultError = colorParseString(stringsConfig.getString("DefaultError"));
-		
-		//Load Error Messages
-		strings.spawnNotSet = colorParseString(stringsConfig.getString("Errors.SpawnNotSet"));
-		strings.notUnlocked = colorParseString(stringsConfig.getString("Errors.NotUnlocked"));
-		strings.disabled = colorParseString(stringsConfig.getString("Errors.Disabled"));
-		strings.invalidMap = colorParseString(stringsConfig.getString("Errors.InvalidMap"));
-		strings.notInPK = colorParseString(stringsConfig.getString("Errors.NotInPK"));
-		strings.noPermission = colorParseString(stringsConfig.getString("Errors.NoPermission"));
-		strings.noPKPermission = colorParseString(stringsConfig.getString("Errors.NoPKPermission"));
-		strings.notExist = colorParseString(stringsConfig.getString("Errors.NotExist"));
-		strings.startAtFirstCP = colorParseString(stringsConfig.getString("Errors.StartAtFirst"));
-		
-		//Load In-Parkour Messages
-		strings.welcome = colorParseString(stringsConfig.getString("InPK.Welcome"));
-		strings.leave = colorParseString(stringsConfig.getString("InPK.Leave"));
-		strings.tpToLobby = colorParseString(stringsConfig.getString("InPK.Lobby"));
-		strings.timerStart = colorParseString(stringsConfig.getString("InPK.TimerStart"));
-		strings.restartTimer = colorParseString(stringsConfig.getString("InPK.RestartTimer"));
-		strings.notInThisPK = colorParseString(stringsConfig.getString("InPK.NotInThisPK"));
-		strings.firstFinish = colorParseString(stringsConfig.getString("InPK.FirstFinish"));
-		strings.globalRecord = colorParseString(stringsConfig.getString("InPK.GlobalRecord"));
-		strings.beatTime = colorParseString(stringsConfig.getString("InPK.BeatTime"));
-		strings.notBeatTime = colorParseString(stringsConfig.getString("InPK.NotBeatTime"));
-		strings.finishCourse = colorParseString(stringsConfig.getString("InPK.FinishCourse"));
-		strings.newCP = colorParseString(stringsConfig.getString("InPK.Checkpoint"));
-		strings.cpPrevReached = colorParseString(stringsConfig.getString("InPK.CPReached"));
-		strings.cpMissing = colorParseString(stringsConfig.getString("InPK.CPMissing"));
-		strings.newGlobalRecord = colorParseString(stringsConfig.getString("InPK.NewGlobalRecord"));
+		strings.highlightOne = colorParseString(stringsConfig.getString("HightlightOne"));
+		strings.highlightTwo = colorParseString(stringsConfig.getString("HightlightTwo"));
 
 
 	}

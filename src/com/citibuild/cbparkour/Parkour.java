@@ -208,20 +208,20 @@ public class Parkour extends JavaPlugin implements Listener {
 	 */
 	public void displayHighscores(int mapID, Player player) {
 		Map<String, Long> records = getRecords(mapID);
-		player.sendMessage(ChatColor.GOLD + "---------=[ " + ChatColor.DARK_AQUA + "Best Times for " + getMapName(mapID) + ChatColor.GOLD + " ]=---------");
+		player.sendMessage(ChatColor.GOLD + "---------=[ " + pkStrings.defaultColor + "Best Times for " + pkStrings.highlightTwo + getMapName(mapID) + ChatColor.GOLD + " ]=---------");
 		boolean inTopTen = false;
 		int counter = 1;
 		for (String p : records.keySet()) {
 			if (p.equals(player.getName())) inTopTen = true;
-			player.sendMessage(ChatColor.WHITE + "#" + ChatColor.AQUA + counter + " " + p + " - " + convertTime(records.get(p)));
+			player.sendMessage(pkStrings.defaultColor + "#" + counter + " " + pkStrings.highlightOne + p + ChatColor.GRAY + " - " + pkStrings.highlightOne + convertTime(records.get(p)));
 			counter++;
 			if (counter == 11) break;
 		}
 		if (!inTopTen && records.containsKey(player.getName())) {
-			player.sendMessage(ChatColor.GREEN + "-- Your time --");
+			player.sendMessage(pkStrings.defaultColor + "-- Your time --");
 
-			player.sendMessage(ChatColor.WHITE + "#" + ChatColor.AQUA + "x " + player.getName() + " - "
-					+ convertTime(records.get(player.getName())));
+			player.sendMessage(pkStrings.defaultColor + "#" + "x " + pkStrings.highlightOne + player.getName() + ChatColor.GRAY + " - "
+					+ pkStrings.highlightOne + convertTime(records.get(player.getName())));
 		}
 	}
 
