@@ -30,7 +30,7 @@ public class ParkourCommand implements CommandExecutor{
 			if (sender instanceof Player) {
 				p = (Player) sender;
 			} else {
-				sender.sendMessage(plugin.pkVars.RED + "You need to be a player to use parkour commands");
+				sender.sendMessage(ChatColor.RED + "You need to be a player to use parkour commands");
 			}
 			
 			if (cmd.getName().equalsIgnoreCase("pk") && p != null) {
