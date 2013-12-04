@@ -19,8 +19,6 @@ import org.bukkit.plugin.java.JavaPlugin;
  * TODO
  * - Move playerdata to file system instead of permission based.
  * - Begin getUnlock function to return a list of map IDs a player has unlocked.
- * - Add configurable strings (or perhaps add a main colour choice for strings). NB: Josh wants all server plugin colour schemes to be GREEN / WHITE.
- * - Extension on previous point, separate config into separate class.
  * - Add userInfo command to get unlocks and if they hold map records.
  * - Add sign leaderboard system.
  * - Add ranking system and chat prefixing (like SkyWars).
