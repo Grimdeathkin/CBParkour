@@ -28,6 +28,8 @@ public class ParkourCommand implements CommandExecutor{
 		
 			if (sender instanceof Player) {
 				p = (Player) sender;
+			} else {
+				sender.sendMessage(plugin.pkVars.RED + "You need to be a player to use parkour commands");
 			}
 			
 			if (cmd.getName().equalsIgnoreCase("pk") && p != null) {
@@ -609,8 +611,6 @@ public class ParkourCommand implements CommandExecutor{
 									while (it.hasNext()) {
 										String key = it.next();
 										String[] KeySplit = key.split(":");
-
-										System.out.println("Key: " + key);
 
 										if (KeySplit[1].equalsIgnoreCase(playerName)) {
 											if (DeleteOnAllMaps) {
