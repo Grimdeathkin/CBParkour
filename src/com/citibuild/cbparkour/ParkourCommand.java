@@ -1,7 +1,6 @@
 package com.citibuild.cbparkour;
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
@@ -18,7 +17,6 @@ import org.bukkit.inventory.ItemStack;
 public class ParkourCommand implements CommandExecutor{
 	
 	private final Parkour plugin;
-	
 	public ParkourCommand(Parkour plugin) {
 		this.plugin = plugin;
 	}
@@ -269,23 +267,40 @@ public class ParkourCommand implements CommandExecutor{
 						if (Parkour.permission.has(p, "parkour.use")) {
 							if (args.length == 2) {
 								String playerName = args[1];
-								
+								boolean playerFound = false;
+								if (playerName.charAt(playerName.length()-1) == 's'){
+									p.sendMessage(ChatColor.GOLD + "---------=[ " + plugin.pkStrings.defaultColor + playerName+"' Scores" + ChatColor.GOLD + " ]=---------");
+								} else {
+									p.sendMessage(ChatColor.GOLD + "---------=[ " + plugin.pkStrings.defaultColor + playerName+"'s Scores" + ChatColor.GOLD + " ]=---------");
+								}
+
 								plugin.pkFuncs.loadScore();
-								for (Entry<String, Long> m : plugin.pkVars.Records.entrySet()){ // MapID:Player,Time
-									String Map_Player = m.getKey();
+								for (Entry<String, Long> recordEntry : plugin.pkVars.Records.entrySet()){ // MapID:Player,Time
+									String Map_Player = recordEntry.getKey();
 									String[] Map_PlayerSplit = Map_Player.split(":");
 									
 									String recordPlayer = Map_PlayerSplit[1];
 									
 									if (recordPlayer.equalsIgnoreCase(playerName)) {
+										playerFound = true;
 										int mapID = plugin.pkFuncs.toInt(Map_PlayerSplit[0]);
 										int playerRank = plugin.getRank(p, mapID);
+										String mapName = plugin.getMapName(mapID);
+										String playerTime = plugin.convertTime(recordEntry.getValue());
 										
-										Long Time = m.getValue();
-										Bukkit.broadcastMessage("ID: " + mapID + " TIME: " + Time + " NAME " + recordPlayer + " RANK #" + playerRank);
+										p.sendMessage(plugin.pkStrings.defaultColor + mapName + ChatColor.GRAY + " - " 
+														+ plugin.pkStrings.highlightOne + "#"+playerRank 
+														+ ChatColor.GRAY + " - " + plugin.pkStrings.highlightOne + playerTime);
 									}
 								}
+								if (!playerFound){
+									p.sendMessage(PREFIX + plugin.pkStrings.defaultError + "No scores found for " + playerName);
+								}
+							} else {
+								p.sendMessage(PREFIX + plugin.pkStrings.defaultError + "Correct usage : /pk scores <username>");
 							}
+						} else{
+							plugin.pkFuncs.sendError("noPermission", p, plugin);
 						}
 					}
 	/*
