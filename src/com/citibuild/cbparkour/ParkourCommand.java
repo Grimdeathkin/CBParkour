@@ -18,8 +18,6 @@ import org.bukkit.inventory.ItemStack;
 public class ParkourCommand implements CommandExecutor{
 	
 	private final Parkour plugin;
-	public ParkourFunctions pkFuncs;
-	public ParkourVars pkVars;
 	
 	public ParkourCommand(Parkour plugin) {
 		this.plugin = plugin;
@@ -272,17 +270,19 @@ public class ParkourCommand implements CommandExecutor{
 							if (args.length == 2) {
 								String playerName = args[1];
 								
-								Bukkit.broadcastMessage("1");
-								
-								for (Entry<String, Long> m : pkVars.Records.entrySet()){
+								plugin.pkFuncs.loadScore();
+								for (Entry<String, Long> m : plugin.pkVars.Records.entrySet()){ // MapID:Player,Time
 									String Map_Player = m.getKey();
 									String[] Map_PlayerSplit = Map_Player.split(":");
+									
 									String recordPlayer = Map_PlayerSplit[1];
 									
 									if (recordPlayer.equalsIgnoreCase(playerName)) {
-										int mapID = pkFuncs.toInt(Map_PlayerSplit[0]);
+										int mapID = plugin.pkFuncs.toInt(Map_PlayerSplit[0]);
+										int playerRank = plugin.getRank(p, mapID);
+										
 										Long Time = m.getValue();
-										Bukkit.broadcastMessage("ID: " + mapID + "TIME: " + Time);
+										Bukkit.broadcastMessage("ID: " + mapID + " TIME: " + Time + " NAME " + recordPlayer + " RANK #" + playerRank);
 									}
 								}
 							}
