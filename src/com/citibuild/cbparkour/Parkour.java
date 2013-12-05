@@ -150,11 +150,11 @@ public class Parkour extends JavaPlugin implements Listener {
 		return unlockedMaps;
 	}
 	
-	public int getRank(Player p, int mapID){
+	public int getRank(String playerName, int mapID){
 		Map<String, Long> records = getRecords(mapID); //Player, Time
 		int counter = 1;
 		for (String s : records.keySet()){
-			if (s.equals(p.getName())) break;
+			if (s.equalsIgnoreCase(playerName)) break;
 			counter++;
 		}
 		return counter;

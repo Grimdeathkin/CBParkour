@@ -62,7 +62,7 @@ public class ParkourCommand implements CommandExecutor{
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " cp | checkpoint" + ChatColor.WHITE + " - Teleport to your last checkpoint");
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " maplist" + ChatColor.WHITE + " - Show all the maps");
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " best <mapID>" + ChatColor.WHITE + " - Show the best score of a map");
-					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " scores <username>" + ChatColor.WHITE + " - Show all a users scores for completed maps");
+					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " scores <username>" + ChatColor.WHITE + " - Show all a users times");
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " time" + ChatColor.WHITE + " - Show your current time");
 				} 
 				
@@ -284,7 +284,7 @@ public class ParkourCommand implements CommandExecutor{
 									if (recordPlayer.equalsIgnoreCase(playerName)) {
 										playerFound = true;
 										int mapID = plugin.pkFuncs.toInt(Map_PlayerSplit[0]);
-										int playerRank = plugin.getRank(p, mapID);
+										int playerRank = plugin.getRank(playerName, mapID);
 										String mapName = plugin.getMapName(mapID);
 										String playerTime = plugin.convertTime(recordEntry.getValue());
 										
