@@ -61,7 +61,8 @@ public class ParkourCommand implements CommandExecutor{
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " lobby" + ChatColor.WHITE + " - Return to the lobby");
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " cp | checkpoint" + ChatColor.WHITE + " - Teleport to your last checkpoint");
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " maplist" + ChatColor.WHITE + " - Show all the maps");
-					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " best <MapID>" + ChatColor.WHITE + " - Show the best score of a map");
+					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " best <mapID>" + ChatColor.WHITE + " - Show the best score of a map");
+					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " scores <username>" + ChatColor.WHITE + " - Show all a users scores for completed maps");
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " time" + ChatColor.WHITE + " - Show your current time");
 				} 
 				
@@ -259,7 +260,16 @@ public class ParkourCommand implements CommandExecutor{
 						} else{
 							plugin.pkFuncs.sendError("noPermission", p, plugin);
 						}
-					}		
+					}
+					
+	/* Scores */
+					else if (args[0].equalsIgnoreCase("scores")) {
+						if (Parkour.permission.has(p, "parkour.use")) {
+							if (args.length == 2) {
+								// /pk scores Isklar
+							}
+						}
+					}
 	/*
 	 * Map Commands | parkour.mapeditor
 	 * Create, Done, Delete, changeMapName, changePrevious, changeNext, setSpawn, toggleWater, toggleLava
