@@ -1,6 +1,7 @@
 package com.citibuild.cbparkour;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
@@ -17,6 +18,9 @@ import org.bukkit.inventory.ItemStack;
 public class ParkourCommand implements CommandExecutor{
 	
 	private final Parkour plugin;
+	public ParkourFunctions pkFuncs;
+	public ParkourVars pkVars;
+	
 	public ParkourCommand(Parkour plugin) {
 		this.plugin = plugin;
 	}
@@ -50,6 +54,7 @@ public class ParkourCommand implements CommandExecutor{
 					}
 					if (Parkour.permission.has(p, "parkour.admin")) {
 						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " toggle <mapID>" + ChatColor.WHITE + " - toggle ON/OFF a parkour");
+						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " mapinfo" + ChatColor.WHITE + " - Show all the information about a map");
 						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " setLobby" + ChatColor.WHITE + " - Set the lobby spawn");
 						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " resetScores <mapID>" + ChatColor.WHITE + "- Reset All scores for a map");
 						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " pReset <Player> <mapID> | all" + ChatColor.WHITE + " - Reset scores for a player");
@@ -60,8 +65,8 @@ public class ParkourCommand implements CommandExecutor{
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " lobby" + ChatColor.WHITE + " - Return to the lobby");
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " cp | checkpoint" + ChatColor.WHITE + " - Teleport to your last checkpoint");
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " maplist" + ChatColor.WHITE + " - Show all the maps");
-					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " mapinfo" + ChatColor.WHITE + " - Show all the information about a map");
-					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " best <MapID>" + ChatColor.WHITE + " - Show the best score of a map");
+					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " best <mapID>" + ChatColor.WHITE + " - Show the best score of a map");
+					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " scores <username>" + ChatColor.WHITE + " - Show all a users scores for completed maps");
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " time" + ChatColor.WHITE + " - Show your current time");
 				} 
 				
@@ -259,7 +264,30 @@ public class ParkourCommand implements CommandExecutor{
 						} else{
 							plugin.pkFuncs.sendError("noPermission", p, plugin);
 						}
-					}		
+					}
+					
+	/* Scores */
+					else if (args[0].equalsIgnoreCase("scores")) {
+						if (Parkour.permission.has(p, "parkour.use")) {
+							if (args.length == 2) {
+								String playerName = args[1];
+								
+								Bukkit.broadcastMessage("1");
+								
+								for (Entry<String, Long> m : pkVars.Records.entrySet()){
+									String Map_Player = m.getKey();
+									String[] Map_PlayerSplit = Map_Player.split(":");
+									String recordPlayer = Map_PlayerSplit[1];
+									
+									if (recordPlayer.equalsIgnoreCase(playerName)) {
+										int mapID = pkFuncs.toInt(Map_PlayerSplit[0]);
+										Long Time = m.getValue();
+										Bukkit.broadcastMessage("ID: " + mapID + "TIME: " + Time);
+									}
+								}
+							}
+						}
+					}
 	/*
 	 * Map Commands | parkour.mapeditor
 	 * Create, Done, Delete, changeMapName, changePrevious, changeNext, setSpawn, toggleWater, toggleLava
@@ -651,7 +679,6 @@ public class ParkourCommand implements CommandExecutor{
 								}
 							} else {
 								p.sendMessage(APREFIX + ChatColor.RED + args[2] + " is not a valid number");
-								p.sendMessage(APREFIX + ChatColor.RED + "Correct usage /pk pReset <username> <map ID | all>");
 							}
 						} else {
 							p.sendMessage(APREFIX + ChatColor.RED + "Correct usage /pk pReset <username> <map ID | all>");

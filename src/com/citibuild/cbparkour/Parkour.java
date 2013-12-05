@@ -219,7 +219,12 @@ public class Parkour extends JavaPlugin implements Listener {
 		if (!inTopTen && records.containsKey(player.getName())) {
 			player.sendMessage(pkStrings.defaultColor + "-- Your time --");
 
-			player.sendMessage(pkStrings.defaultColor + "#" + "x " + pkStrings.highlightOne + player.getName() + ChatColor.GRAY + " - "
+			counter = 1;
+			for (String p : records.keySet()){
+				if (p.equals(player.getName())) break;
+				counter++;
+			}
+			player.sendMessage(pkStrings.defaultColor + "#" + counter + " " + pkStrings.highlightOne + player.getName() + ChatColor.GRAY + " - "
 					+ pkStrings.highlightOne + convertTime(records.get(player.getName())));
 		}
 	}
