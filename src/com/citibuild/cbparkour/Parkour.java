@@ -152,7 +152,7 @@ public class Parkour extends JavaPlugin implements Listener {
 	
 	public int getRank(Player p, int mapID){
 		Map<String, Long> records = getRecords(mapID); //Player, Time
-		int counter = 0;
+		int counter = 1;
 		for (String s : records.keySet()){
 			if (s.equals(p.getName())) break;
 			counter++;
@@ -219,7 +219,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		Map<String, Long> records = getRecords(mapID);
 		player.sendMessage(ChatColor.GOLD + "---------=[ " + pkStrings.defaultColor + "Best Times for " + pkStrings.highlightTwo + getMapName(mapID) + ChatColor.GOLD + " ]=---------");
 		boolean inTopTen = false;
-		int counter = 0;
+		int counter = 1;
 		for (String p : records.keySet()) {
 			if (p.equals(player.getName())) inTopTen = true;
 			player.sendMessage(pkStrings.defaultColor + "#" + counter + " " + pkStrings.highlightOne + p + ChatColor.GRAY + " - " + pkStrings.highlightOne + convertTime(records.get(p)));
@@ -229,7 +229,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		if (!inTopTen && records.containsKey(player.getName())) {
 			player.sendMessage(pkStrings.defaultColor + "-- Your time --");
 
-			counter = 0;
+			counter = 1;
 			for (String p : records.keySet()){
 				if (p.equals(player.getName())) break;
 				counter++;
