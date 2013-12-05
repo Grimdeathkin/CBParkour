@@ -50,6 +50,7 @@ public class ParkourCommand implements CommandExecutor{
 					}
 					if (Parkour.permission.has(p, "parkour.admin")) {
 						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " toggle <mapID>" + ChatColor.WHITE + " - toggle ON/OFF a parkour");
+						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " mapinfo" + ChatColor.WHITE + " - Show all the information about a map");
 						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " setLobby" + ChatColor.WHITE + " - Set the lobby spawn");
 						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " resetScores <mapID>" + ChatColor.WHITE + "- Reset All scores for a map");
 						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " pReset <Player> <mapID> | all" + ChatColor.WHITE + " - Reset scores for a player");
@@ -60,7 +61,6 @@ public class ParkourCommand implements CommandExecutor{
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " lobby" + ChatColor.WHITE + " - Return to the lobby");
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " cp | checkpoint" + ChatColor.WHITE + " - Teleport to your last checkpoint");
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " maplist" + ChatColor.WHITE + " - Show all the maps");
-					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " mapinfo" + ChatColor.WHITE + " - Show all the information about a map");
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " best <MapID>" + ChatColor.WHITE + " - Show the best score of a map");
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " time" + ChatColor.WHITE + " - Show your current time");
 				} 
