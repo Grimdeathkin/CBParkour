@@ -1,6 +1,7 @@
 package com.citibuild.cbparkour;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
@@ -17,6 +18,9 @@ import org.bukkit.inventory.ItemStack;
 public class ParkourCommand implements CommandExecutor{
 	
 	private final Parkour plugin;
+	public ParkourFunctions pkFuncs;
+	public ParkourVars pkVars;
+	
 	public ParkourCommand(Parkour plugin) {
 		this.plugin = plugin;
 	}
@@ -266,7 +270,21 @@ public class ParkourCommand implements CommandExecutor{
 					else if (args[0].equalsIgnoreCase("scores")) {
 						if (Parkour.permission.has(p, "parkour.use")) {
 							if (args.length == 2) {
-								// /pk scores Isklar
+								String playerName = args[1];
+								
+								Bukkit.broadcastMessage("1");
+								
+								for (Entry<String, Long> m : pkVars.Records.entrySet()){
+									String Map_Player = m.getKey();
+									String[] Map_PlayerSplit = Map_Player.split(":");
+									String recordPlayer = Map_PlayerSplit[1];
+									
+									if (recordPlayer.equalsIgnoreCase(playerName)) {
+										int mapID = pkFuncs.toInt(Map_PlayerSplit[0]);
+										Long Time = m.getValue();
+										Bukkit.broadcastMessage("ID: " + mapID + "TIME: " + Time);
+									}
+								}
 							}
 						}
 					}
@@ -661,7 +679,6 @@ public class ParkourCommand implements CommandExecutor{
 								}
 							} else {
 								p.sendMessage(APREFIX + ChatColor.RED + args[2] + " is not a valid number");
-								p.sendMessage(APREFIX + ChatColor.RED + "Correct usage /pk pReset <username> <map ID | all>");
 							}
 						} else {
 							p.sendMessage(APREFIX + ChatColor.RED + "Correct usage /pk pReset <username> <map ID | all>");
