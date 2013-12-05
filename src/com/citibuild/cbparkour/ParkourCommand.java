@@ -504,54 +504,7 @@ public class ParkourCommand implements CommandExecutor{
 							p.sendMessage(APREFIX + ChatColor.RED + "Correct usage /pk setspawn <map ID>");
 						}
 					} 
-	/* MapInfo */			
-					else if (args[0].equalsIgnoreCase("mapInfo") && (Parkour.permission.has(p, "parkour.admin"))) {
-						if (args.length == 2) {
-							if (plugin.pkFuncs.isNumber(args[1])) {
-								int mapID = Integer.parseInt(args[1]);
-								if (plugin.pkVars.maps.contains(plugin.pkFuncs.toInt(args[1]))) {
-									FileConfiguration cfg = plugin.getConfig();
-									
-									String mode = ChatColor.RED + "■";
-									@SuppressWarnings("unused")
-									boolean isToggled = false;
-									if (plugin.pkVars.toggleParkour.get(mapID)) {
-										mode = ChatColor.GREEN + "■";
-										isToggled = true;
-									}
-							
-									String waterActive = ChatColor.AQUA + " Water:" + ChatColor.GRAY + "■";
-									String lavaActive = ChatColor.AQUA + " Lava:" + ChatColor.GRAY + "■";
-									boolean isWaterActive = cfg.getBoolean("Parkour.map" + mapID + ".waterrespawn");
-									boolean isLavaActive = cfg.getBoolean("Parkour.map" + mapID + ".lavarespawn");
-									if (isWaterActive){
-										waterActive = ChatColor.AQUA + " Water:" + ChatColor.GREEN + "■";
-									}
-									if (isLavaActive){
-										lavaActive = ChatColor.AQUA + " Lava:" + ChatColor.GREEN + "■";
-									}
-									
-									p.sendMessage(ChatColor.GOLD + "---------=[ " + ChatColor.DARK_AQUA + " Map Info " + ChatColor.GOLD + " ]=---------");
-									p.sendMessage(PREFIX + ChatColor.AQUA + "Map ID: " + ChatColor.GRAY +args[1]);
-									p.sendMessage(PREFIX + ChatColor.AQUA + "Map Name: " + ChatColor.GRAY + plugin.getMapName(mapID));
-									p.sendMessage(PREFIX + ChatColor.AQUA + "Enabled: " + mode);
-									p.sendMessage(PREFIX + ChatColor.AQUA + "Previous Map: " + ChatColor.GRAY + plugin.getMapPrevious(mapID));
-									p.sendMessage(PREFIX + ChatColor.AQUA + "Next Map: " + ChatColor.GRAY + plugin.getMapNext(mapID));
-									p.sendMessage(PREFIX + ChatColor.AQUA + "Checkpoints: " + ChatColor.GRAY +(plugin.pkFuncs.getCfgTotalCheckpoints(mapID)-2) );
-									p.sendMessage(PREFIX + ChatColor.AQUA + "Respawns: " + waterActive + lavaActive);
-									Entry<String, Long> topScore = plugin.getHighscore(mapID);
-									p.sendMessage(PREFIX + ChatColor.AQUA + "Best Time: " + ChatColor.GRAY + topScore.getKey() + " | " + plugin.convertTime(topScore.getValue()));
-									
-								} else {
-									p.sendMessage(APREFIX + ChatColor.RED + args[1] + " is not a valid map ID");
-								}
-							} else {
-								p.sendMessage(APREFIX + ChatColor.RED + args[1] + " is not a valid number");
-							}
-						} else {
-							p.sendMessage(APREFIX + ChatColor.RED + "Correct usage /pk mapinfo <map ID>");
-						}
-					}
+
 	/* ToggleWater */				
 					else if (args[0].equalsIgnoreCase("toggleWater")
 							&& (Parkour.permission.has(p, "parkour.admin") || Parkour.permission.has(p, "parkour.mapeditor"))) {
@@ -603,7 +556,7 @@ public class ParkourCommand implements CommandExecutor{
 					
 	/*
 	 * Admin Commands | parkour.admin
-	 * Toggle, SetLobby, ResetScores, PReset
+	 * Toggle, SetLobby, ResetScores, PReset, Mapinfo
 	 */				
 					else if (args[0].equalsIgnoreCase("toggle") && Parkour.permission.has(p, "parkour.admin")) {
 						if (args.length == 2) {
@@ -731,6 +684,55 @@ public class ParkourCommand implements CommandExecutor{
 						plugin.pkConfig.reloadCfg();
 						p.sendMessage(APREFIX + " Configuration reloaded");
 						
+					}
+					
+	/* MapInfo */			
+					else if (args[0].equalsIgnoreCase("mapInfo") && (Parkour.permission.has(p, "parkour.admin"))) {
+						if (args.length == 2) {
+							if (plugin.pkFuncs.isNumber(args[1])) {
+								int mapID = Integer.parseInt(args[1]);
+								if (plugin.pkVars.maps.contains(plugin.pkFuncs.toInt(args[1]))) {
+									FileConfiguration cfg = plugin.getConfig();
+									
+									String mode = ChatColor.RED + "■";
+									@SuppressWarnings("unused")
+									boolean isToggled = false;
+									if (plugin.pkVars.toggleParkour.get(mapID)) {
+										mode = ChatColor.GREEN + "■";
+										isToggled = true;
+									}
+							
+									String waterActive = ChatColor.AQUA + " Water:" + ChatColor.GRAY + "■";
+									String lavaActive = ChatColor.AQUA + " Lava:" + ChatColor.GRAY + "■";
+									boolean isWaterActive = cfg.getBoolean("Parkour.map" + mapID + ".waterrespawn");
+									boolean isLavaActive = cfg.getBoolean("Parkour.map" + mapID + ".lavarespawn");
+									if (isWaterActive){
+										waterActive = ChatColor.AQUA + " Water:" + ChatColor.GREEN + "■";
+									}
+									if (isLavaActive){
+										lavaActive = ChatColor.AQUA + " Lava:" + ChatColor.GREEN + "■";
+									}
+									
+									p.sendMessage(ChatColor.GOLD + "---------=[ " + ChatColor.DARK_AQUA + " Map Info " + ChatColor.GOLD + " ]=---------");
+									p.sendMessage(PREFIX + ChatColor.AQUA + "Map ID: " + ChatColor.GRAY +args[1]);
+									p.sendMessage(PREFIX + ChatColor.AQUA + "Map Name: " + ChatColor.GRAY + plugin.getMapName(mapID));
+									p.sendMessage(PREFIX + ChatColor.AQUA + "Enabled: " + mode);
+									p.sendMessage(PREFIX + ChatColor.AQUA + "Previous Map: " + ChatColor.GRAY + plugin.getMapPrevious(mapID));
+									p.sendMessage(PREFIX + ChatColor.AQUA + "Next Map: " + ChatColor.GRAY + plugin.getMapNext(mapID));
+									p.sendMessage(PREFIX + ChatColor.AQUA + "Checkpoints: " + ChatColor.GRAY +(plugin.pkFuncs.getCfgTotalCheckpoints(mapID)-2) );
+									p.sendMessage(PREFIX + ChatColor.AQUA + "Respawns: " + waterActive + lavaActive);
+									Entry<String, Long> topScore = plugin.getHighscore(mapID);
+									p.sendMessage(PREFIX + ChatColor.AQUA + "Best Time: " + ChatColor.GRAY + topScore.getKey() + " | " + plugin.convertTime(topScore.getValue()));
+									
+								} else {
+									p.sendMessage(APREFIX + ChatColor.RED + args[1] + " is not a valid map ID");
+								}
+							} else {
+								p.sendMessage(APREFIX + ChatColor.RED + args[1] + " is not a valid number");
+							}
+						} else {
+							p.sendMessage(APREFIX + ChatColor.RED + "Correct usage /pk mapinfo <map ID>");
+						}
 					}
 
 					else {
