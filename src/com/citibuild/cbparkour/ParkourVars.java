@@ -38,11 +38,9 @@ public class ParkourVars {
 	public ArrayList<Integer> maps = new ArrayList<>();
 	public HashMap<Integer, Boolean> toggleParkour = new HashMap<>(); // Parkour active or not
 	HashMap<Location, String> cLoc = new HashMap<>(); // HashMap infos> Location : mapNumber_Checkpoint
-	public HashMap<String, String> ParkourContainer = new HashMap<>(); // HashMap infos> playerName :
-	// mapNumber_parkourStartTime_Chekcpoint
-	HashMap<String, Long> Records = new HashMap<>(); // Map:Player, Time
-	HashMap<String, Long> rewardPlayersCooldown = new HashMap<>(); // HashMap infos> playerName :
-	// LastRewardTime
+	public HashMap<String, String> ParkourContainer = new HashMap<>(); // HashMap infos> playerName : mapNumber_parkour,StartTime_Chekcpoint
+	HashMap<String, Long> Records = new HashMap<>(); // MapID:Player,Time
+	HashMap<String, Long> rewardPlayersCooldown = new HashMap<>(); // HashMap infos> playerName:LastRewardTime
 
 	public ArrayList<PlayerInfo> playerInfo = new ArrayList<PlayerInfo>();
 	public HashMap<String, PlayerInfo> loadedUsers = new HashMap<>(); //HashMap infos> username, playerInfo
