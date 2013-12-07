@@ -14,7 +14,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /*
  * TODO
- * - Move playerdata to file system instead of permission based.
  * - Begin getUnlock function to return a list of map IDs a player has unlocked.
  * - Add userInfo command to get unlocks and if they hold map records.
  * - Add sign leaderboard system.

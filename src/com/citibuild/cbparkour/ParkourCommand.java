@@ -53,7 +53,7 @@ public class ParkourCommand implements CommandExecutor{
 					//if (Parkour.permission.has(p, "parkour.admin")) {
 					if(p.hasPermission("parkour.admin")) {
 						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " toggle <mapID>" + ChatColor.WHITE + " - toggle ON/OFF a parkour");
-						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " mapinfo" + ChatColor.WHITE + " - Show all the information about a map");
+						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " mapinfo <mapID>" + ChatColor.WHITE + " - Show all the information about a map");
 						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " setLobby" + ChatColor.WHITE + " - Set the lobby spawn");
 						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " resetScores <mapID>" + ChatColor.WHITE + "- Reset All scores for a map");
 						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " pReset <Player> <mapID> | all" + ChatColor.WHITE + " - Reset scores for a player");
@@ -76,28 +76,6 @@ public class ParkourCommand implements CommandExecutor{
 	 */
 					if (args[0].equalsIgnoreCase("test")) {
 						if(p.getName().equalsIgnoreCase("Isklar") || p.getName().equalsIgnoreCase("bsquidwrd")){
-//							if(Bukkit.getOfflinePlayer(args[1]).hasPlayedBefore()){
-//								List<String> pUnlocks;
-//								if(Bukkit.getOfflinePlayer(args[1]).hasPlayedBefore()) {
-//									pUnlocks = plugin.pkUnlockFuncs.getPlayerUnlocks(Bukkit.getOfflinePlayer(args[1]));
-//								} else {
-//									pUnlocks = plugin.pkUnlockFuncs.getPlayerUnlocks(Bukkit.getPlayerExact(args[1])).getUnlocks();
-//								}
-//								
-//								if(pUnlocks == null) {
-//									pUnlocks = new ArrayList<String>();
-//									pUnlocks.add("1");
-//								}
-//								
-//								if(pUnlocks.contains("*")) {
-//									p.sendMessage(args[1] + " has unlocked all maps.");
-//								} else {
-//									p.sendMessage(args[1] + " has unlocked " + (pUnlocks.size() - 1) + " maps.");
-//								}
-//								//plugin.pkUnlockFuncs.resetPlayerUnlocks(args[1]);
-//							} else {
-//								p.sendMessage(plugin.pkStrings.APREFIX + "That player does not exist!");
-//							}
 							
 							
 						}
