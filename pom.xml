@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>CBParkour</groupId>
+  <groupId>com.citibuild</groupId>
   <artifactId>CBParkour</artifactId>
   <version>1.6.3</version>
   <name>CBParkour</name>
@@ -42,6 +42,7 @@
         </build>
         <organization>
                 <name>Isklar</name>
+                <url>http://bitbucket.org/Isklar</url>
         </organization>
   <dependencies>
          <dependency>
@@ -55,4 +56,8 @@
                 <version>LATEST</version>
         </dependency>
   </dependencies>
+  <issueManagement>
+  	<system>BitBucket</system>
+  	<url>https://bitbucket.org/Isklar/cbparkour/issues</url>
+  </issueManagement>
 </project>
