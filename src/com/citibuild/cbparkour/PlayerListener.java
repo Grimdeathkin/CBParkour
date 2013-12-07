@@ -87,8 +87,7 @@ public class PlayerListener implements Listener{
 						if (mapID != 0) {
 							if (plugin.pkVars.maps.contains(mapID)) {
 								Player p = e.getPlayer();
-								//if (!Parkour.permission.has(p, "parkour.use")) {
-								if(!p.hasPermission("parkour.use")) {
+								if (!Parkour.permission.has(p, "parkour.use")) {
 									plugin.pkFuncs.sendError("noParkourPermission", p, plugin);
 									return;
 								}
@@ -248,8 +247,7 @@ public class PlayerListener implements Listener{
 		
 		int mapID = plugin.pkVars.loadedUsers.get(username).getMapID();
 		if(mapID == 0) {
-			//if(!Parkour.permission.has(player, "parkour.admin")) {
-			if(!player.hasPermission("parkour.admin")) {
+			if(!Parkour.permission.has(player, "parkour.admin")) {
 				player.teleport(plugin.pkVars.getLobby());
 			}
 		} else {
@@ -257,8 +255,7 @@ public class PlayerListener implements Listener{
 				PlayerInfo userPInfo = plugin.pkVars.loadedUsers.get(username);
 				plugin.pkVars.ParkourContainer.put(username, mapID + "_" + (System.currentTimeMillis() - userPInfo.getTime()) + "_" + userPInfo.getCheckpoint());
 			} else {
-				//if(!Parkour.permission.has(player, "parkour.admin")) {
-				if(!player.hasPermission("parkour.admin")) {
+				if(!Parkour.permission.has(player, "parkour.admin")) {
 					player.teleport(plugin.pkVars.getLobby());
 				}
 			}
@@ -288,8 +285,7 @@ public class PlayerListener implements Listener{
 					int Checkpoint = plugin.pkFuncs.getCheckpoint(plugin.pkVars.getcLoc().get(bLoc));
 					int mapID = plugin.pkFuncs.getCpMapNumber(plugin.pkVars.getcLoc().get(bLoc));
 
-					//if (!Parkour.permission.has(p, "parkour.use")) {
-					if(!p.hasPermission("parkour.use")) {
+					if (!Parkour.permission.has(p, "parkour.use")) {
 						plugin.pkFuncs.sendError("noParkourPermission", p, plugin);
 						if (plugin.pkVars.getLobby() != null) {
 							p.teleport(plugin.pkVars.getLobby());

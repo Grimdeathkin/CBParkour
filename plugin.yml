@@ -1,6 +1,7 @@
 name: CBParkour
 version: "${project.version}"
 description: CB's parkour plugin
+depend: [Vault]
 authors: [Isklar, bsquidwrd]
 main: com.citibuild.cbparkour.Parkour
 commands:
