@@ -73,6 +73,7 @@ public class Parkour extends JavaPlugin implements Listener {
 		
 		pkFuncs.saveAllPlayerInfo();
 		pkFuncs.savePlayerInfoFile();
+		pkUnlockFuncs.saveAllPlayerUnlocks();
 		
 		// Reset everything
 		pkVars.setNewMap(false);
