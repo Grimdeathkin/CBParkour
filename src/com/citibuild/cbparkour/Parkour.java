@@ -4,15 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 
 import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /*
@@ -29,8 +26,8 @@ public class Parkour extends JavaPlugin implements Listener {
 
 	// Vault initiation
 	public static Economy economy = null;
-	public static Permission permission = null;
-	boolean vault;
+	//public static Permission permission = null;
+	private boolean vault;
 	
 	//Class definitions
 	public ParkourItems pkItems;
@@ -38,11 +35,12 @@ public class Parkour extends JavaPlugin implements Listener {
 	public ParkourVars pkVars;
 	public ParkourStrings pkStrings;
 	public ParkourConfig pkConfig;
+	public UnlockFuncs pkUnlockFuncs;
 	
 /*
  * 	Setup
  */
-	private static final Logger log = Logger.getLogger("Minecraft");
+	//private static final Logger log = Logger.getLogger("Minecraft");
 
         @Override
 	public void onEnable() {
@@ -51,15 +49,16 @@ public class Parkour extends JavaPlugin implements Listener {
         pkVars = new ParkourVars(this);
         pkStrings = new ParkourStrings(this);
         pkConfig = new ParkourConfig(this);
+        pkUnlockFuncs = new UnlockFuncs(this);
         
         pkConfig.onEnable();
 		
-		if (!setupPermissions() ) {
-            log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-		setupEconomy();
+//		if (!setupPermissions() ) {
+//            log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+//            getServer().getPluginManager().disablePlugin(this);
+//            return;
+//        }
+//		setupEconomy();
 
 		getServer().getPluginManager().registerEvents(this, this);
 		getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
@@ -74,20 +73,20 @@ public class Parkour extends JavaPlugin implements Listener {
 		pkFuncs.savePlayerInfoFile();
 		
 		// Reset everything
-		pkVars.newMap = false;
-		pkVars.newMapCheckpoints.clear();
+		pkVars.setNewMap(false);
+		pkVars.getNewMapCheckpoints().clear();
 		pkVars.newMapPrevious = 0;
-		pkVars.newMapNext = 0;
-		pkVars.newMapName = "";
+		pkVars.setNewMapNext(0);
+		pkVars.setNewMapName("");
 		pkVars.newMapPlayerEditor = "";
-		pkVars.NewMapNumber = 0;
-		pkVars.CheckpointNumber = 0;
+		pkVars.setNewMapNumber(0);
+		pkVars.setCheckpointNumber(0);
 
 		pkVars.maps.clear();
 		pkVars.toggleParkour.clear();
-		pkVars.cLoc.clear();
+		pkVars.getcLoc().clear();
 		pkVars.ParkourContainer.clear();
-		pkVars.Records.clear();
+		pkVars.getRecords().clear();
 		pkVars.rewardPlayersCooldown.clear();
 		
 		pkFuncs.intMaps();
@@ -97,34 +96,34 @@ public class Parkour extends JavaPlugin implements Listener {
 		pkFuncs.intCheckpointsLoc();
 	}
 
-	private boolean setupPermissions(){
-		 if (getServer().getPluginManager().getPlugin("Vault") == null) {
-	            return false;
-	        }
-        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
-        if (permissionProvider != null) {
-            permission = permissionProvider.getProvider();
-        }
-        return (permission != null);
-    }
+//	private boolean setupPermissions(){
+//		 if (getServer().getPluginManager().getPlugin("Vault") == null) {
+//	            return false;
+//	        }
+//        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+//        if (permissionProvider != null) {
+//            permission = permissionProvider.getProvider();
+//        }
+//        return (permission != null);
+//    }
 	
-	private boolean setupEconomy() {
-		try {
-			Class.forName("net.milkbowl.vault.economy.Economy");
-		} catch (ClassNotFoundException e) {
-			pkFuncs.debug("Vault not found. Disabling money reward.");
-			getConfig().set("rewards.money.enable", false);
-			saveConfig();
-			return false;
-		}
-		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(
-				net.milkbowl.vault.economy.Economy.class);
-		if (economyProvider != null) {
-			economy = economyProvider.getProvider();
-		}
-
-		return (economy != null);
-	}
+//	private boolean setupEconomy() {
+//		try {
+//			Class.forName("net.milkbowl.vault.economy.Economy");
+//		} catch (ClassNotFoundException e) {
+//			pkFuncs.debug("Vault not found. Disabling money reward.");
+//			getConfig().set("rewards.money.enable", false);
+//			saveConfig();
+//			return false;
+//		}
+//		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(
+//				net.milkbowl.vault.economy.Economy.class);
+//		if (economyProvider != null) {
+//			economy = economyProvider.getProvider();
+//		}
+//
+//		return (economy != null);
+//	}
 	
 /*
  * 	Functions
@@ -143,7 +142,8 @@ public class Parkour extends JavaPlugin implements Listener {
 	public ArrayList<Integer> getUnlocks(Player p){
 		ArrayList<Integer> unlockedMaps = new ArrayList<>();
 		for (int i : pkVars.maps) {
-			if(permission.has(p, "parkour.completed.map"+i)){
+			//if(permission.has(p, "parkour.completed.map"+i)){
+			if(pkUnlockFuncs.levelUnlocked(p, i)) {
 				unlockedMaps.add(i);
 			}
 		}
@@ -167,10 +167,10 @@ public class Parkour extends JavaPlugin implements Listener {
 	 */
 	public Map<String, Long> getRecords(int map) {
 		Map<String, Long> records = new HashMap<>();
-		for (String m : pkVars.Records.keySet()) {
+		for (String m : pkVars.getRecords().keySet()) {
 			String[] s = m.split(":");
 			if (pkFuncs.toInt(s[0]) == map) {
-				records.put(s[1], pkVars.Records.get(m));
+				records.put(s[1], pkVars.getRecords().get(m));
 			}
 		}
 		return pkFuncs.sortByValue(records);
@@ -319,5 +319,13 @@ public class Parkour extends JavaPlugin implements Listener {
 	 */
 	public String getAPrefix(){
 		return pkStrings.APREFIX;
+	}
+
+	public boolean isVault() {
+		return vault;
+	}
+
+	public void setVault(boolean vault) {
+		this.vault = vault;
 	}
 }
