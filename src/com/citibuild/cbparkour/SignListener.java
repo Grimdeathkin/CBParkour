@@ -18,13 +18,13 @@ public class SignListener implements Listener{
 	@EventHandler
 	public void onSignChange(SignChangeEvent e) {
 		Player player = e.getPlayer();
-		if (e.getLine(0).equalsIgnoreCase("[pk]") && !player.hasPermission("parkour.mapeditor")) {
+		if (e.getLine(0).equalsIgnoreCase("[pk]") && !Parkour.permission.has(player, "parkour.mapeditor")) {
 			e.setCancelled(true);
 			e.getBlock().setType(Material.AIR);
 			plugin.pkFuncs.sendError("noPermission", player, plugin);
 		}
 
-		if (e.getPlayer().hasPermission("parkour.mapeditor")) {
+		if (Parkour.permission.has(player, "parkour.mapeditor")) {
 			// 15 char max per lines (on sign)
 
 			if (e.getLine(0).equalsIgnoreCase("[pk]")) {

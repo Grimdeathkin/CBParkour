@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /*
@@ -25,7 +28,7 @@ public class Parkour extends JavaPlugin implements Listener {
 
 	// Vault initiation
 	public static Economy economy = null;
-	//public static Permission permission = null;
+	public static Permission permission = null;
 	private boolean vault;
 	
 	//Class definitions
@@ -39,7 +42,7 @@ public class Parkour extends JavaPlugin implements Listener {
 /*
  * 	Setup
  */
-	//private static final Logger log = Logger.getLogger("Minecraft");
+	private static final Logger log = Logger.getLogger("Minecraft");
 
         @Override
 	public void onEnable() {
@@ -52,12 +55,12 @@ public class Parkour extends JavaPlugin implements Listener {
         
         pkConfig.onEnable();
 		
-//		if (!setupPermissions() ) {
-//            log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
-//            getServer().getPluginManager().disablePlugin(this);
-//            return;
-//        }
-//		setupEconomy();
+		if (!setupPermissions() ) {
+            log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+		setupEconomy();
 
 		getServer().getPluginManager().registerEvents(this, this);
 		getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
@@ -95,34 +98,34 @@ public class Parkour extends JavaPlugin implements Listener {
 		pkFuncs.intCheckpointsLoc();
 	}
 
-//	private boolean setupPermissions(){
-//		 if (getServer().getPluginManager().getPlugin("Vault") == null) {
-//	            return false;
-//	        }
-//        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
-//        if (permissionProvider != null) {
-//            permission = permissionProvider.getProvider();
-//        }
-//        return (permission != null);
-//    }
+	private boolean setupPermissions(){
+		 if (getServer().getPluginManager().getPlugin("Vault") == null) {
+	            return false;
+	        }
+        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        if (permissionProvider != null) {
+            permission = permissionProvider.getProvider();
+        }
+        return (permission != null);
+    }
 	
-//	private boolean setupEconomy() {
-//		try {
-//			Class.forName("net.milkbowl.vault.economy.Economy");
-//		} catch (ClassNotFoundException e) {
-//			pkFuncs.debug("Vault not found. Disabling money reward.");
-//			getConfig().set("rewards.money.enable", false);
-//			saveConfig();
-//			return false;
-//		}
-//		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(
-//				net.milkbowl.vault.economy.Economy.class);
-//		if (economyProvider != null) {
-//			economy = economyProvider.getProvider();
-//		}
-//
-//		return (economy != null);
-//	}
+	private boolean setupEconomy() {
+		try {
+			Class.forName("net.milkbowl.vault.economy.Economy");
+		} catch (ClassNotFoundException e) {
+			pkFuncs.debug("Vault not found. Disabling money reward.");
+			getConfig().set("rewards.money.enable", false);
+			saveConfig();
+			return false;
+		}
+		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(
+				net.milkbowl.vault.economy.Economy.class);
+		if (economyProvider != null) {
+			economy = economyProvider.getProvider();
+		}
+
+		return (economy != null);
+	}
 	
 /*
  * 	Functions
