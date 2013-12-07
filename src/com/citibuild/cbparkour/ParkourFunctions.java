@@ -146,7 +146,7 @@ public class ParkourFunctions {
 	}
 
 	public void intCheckpointsLoc() {
-		pk.pkVars.cLoc.clear();
+		pk.pkVars.getcLoc().clear();
 		FileConfiguration cfg = pk.getConfig();
 		for (int mapID : pk.pkVars.maps) {
 			for (int i = cfg.getInt("Parkour.map" + mapID + ".numberCp"); i >= 1; i--) {
@@ -155,7 +155,7 @@ public class ParkourFunctions {
 								+ mapID + ".cp." + i + ".posY"), cfg.getInt("Parkour.map" + mapID + ".cp." + i
 										+ ".posZ"));
 				String HashTable = mapID + "_" + i;
-				pk.pkVars.cLoc.put(loc, HashTable);
+				pk.pkVars.getcLoc().put(loc, HashTable);
 			}
 		}
 	}
@@ -186,12 +186,12 @@ public class ParkourFunctions {
 		FileConfiguration cfg = pk.getConfig();
 
 		if (cfg.contains("Lobby")) {
-			pk.pkVars.lobby = null;
+			pk.pkVars.setLobby(null);
 			Location loc = new Location(pk.getServer().getWorld(cfg.getString("Lobby.world")),
 					cfg.getDouble("Lobby.posX"), cfg.getDouble("Lobby.posY"), cfg.getDouble("Lobby.posZ"));
 			loc.setPitch((float) cfg.getDouble("Lobby.posPitch"));
 			loc.setYaw((float) cfg.getDouble("Lobby.posYaw"));
-			pk.pkVars.lobby = loc;
+			pk.pkVars.setLobby(loc);
 		}
 	}
 
@@ -321,7 +321,7 @@ public class ParkourFunctions {
 	public void saveScore() {
 		try {
 			try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream((pk.pkVars.scoresPath))))) {
-				oos.writeObject(pk.pkVars.Records);
+				oos.writeObject(pk.pkVars.getRecords());
 				oos.flush();
 			}
 		} catch (IOException e) {
@@ -333,8 +333,8 @@ public class ParkourFunctions {
 	public void loadScore() {
 		try {
 			try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(pk.pkVars.scoresPath)))) {
-				pk.pkVars.Records.clear();
-				pk.pkVars.Records = (HashMap<String, Long>) ois.readObject();
+				pk.pkVars.getRecords().clear();
+				pk.pkVars.setRecords((HashMap<String, Long>) ois.readObject());
 			}
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace(System.out);
@@ -369,7 +369,7 @@ public class ParkourFunctions {
 				if (rewardMoneyEnable && rewardMoney > 0) {
 					pk.pkVars.rewardPlayersCooldown.put(p.getName(), System.currentTimeMillis());
 
-					if (pk.vault) Parkour.economy.depositPlayer(p.getName(), rewardMoney);
+					if (pk.isVault()) Parkour.economy.depositPlayer(p.getName(), rewardMoney);
 					p.sendMessage(pk.getPrefix() + ChatColor.translateAlternateColorCodes('&', rewardMoneyMsg).replaceAll("MONEYAMOUNT",
 							"" + rewardMoney));
 				}
@@ -385,7 +385,7 @@ public class ParkourFunctions {
 					if (rewardMoneyEnable && rewardMoney > 0) {
 						pk.pkVars.rewardPlayersCooldown.put(p.getName(), System.currentTimeMillis());
 
-						if (pk.vault) Parkour.economy.depositPlayer(p.getName(), rewardMoney);
+						if (pk.isVault()) Parkour.economy.depositPlayer(p.getName(), rewardMoney);
 						p.sendMessage(pk.getPrefix() + ChatColor.translateAlternateColorCodes('&', rewardMoneyMsg).replaceAll(
 								"MONEYAMOUNT", "" + rewardMoney));
 					}
