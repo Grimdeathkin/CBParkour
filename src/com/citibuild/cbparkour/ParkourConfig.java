@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -22,6 +23,13 @@ public class ParkourConfig {
 	public void onEnable() {
 
 		LoadCfg();
+		
+		pk.pkUnlockFuncs.saveDefaultUnlocksConfig();
+		pk.pkUnlockFuncs.reloadUnlocksConfig();
+		if(Bukkit.getServer().getOnlinePlayers().length != 0) {
+			pk.pkUnlockFuncs.loadAllPlayerUnlocks();
+		}
+		
 
 		if (!pk.pkVars.scores.getAbsoluteFile().exists()) {
 			try {
@@ -79,22 +87,23 @@ public class ParkourConfig {
 		cfg.addDefault("options.PrefixString", "PK");
 
 		cfg.addDefault("Parkour.mapsnumber", 0);
+
 		cfg.options().copyDefaults(true);
 		pk.saveDefaultConfig();
 		pk.saveConfig();
 
-		pk.pkVars.removePotionsEffectsOnParkour = cfg.getBoolean("options.removePotionsEffectsOnParkour");
-		pk.pkVars.InvincibleWhileParkour = cfg.getBoolean("options.InvincibleWhileParkour");
-		pk.pkVars.CheckpointEffect = cfg.getBoolean("options.CheckpointEffect");
-		pk.pkVars.BroadcastMessage = cfg.getBoolean("options.BroadcastOnRecord.enable");
-		pk.pkVars.FullHunger = cfg.getBoolean("options.BroadcastOnRecord.enable");
+		pk.pkVars.setRemovePotionsEffectsOnParkour(cfg.getBoolean("options.removePotionsEffectsOnParkour"));
+		pk.pkVars.setInvincibleWhileParkour(cfg.getBoolean("options.InvincibleWhileParkour"));
+		pk.pkVars.setCheckpointEffect(cfg.getBoolean("options.CheckpointEffect"));
+		pk.pkVars.setBroadcastMessage(cfg.getBoolean("options.BroadcastOnRecord.enable"));
+		pk.pkVars.setFullHunger(cfg.getBoolean("options.BroadcastOnRecord.enable"));
 		pk.pkVars.LastCheckpointTeleport = cfg.getBoolean("options.LastCheckpointTeleport");
 
-		pk.pkVars.rewardIfBetterScore = cfg.getBoolean("rewards.rewardIfBetterScore");
+		pk.pkVars.setRewardIfBetterScore(cfg.getBoolean("rewards.rewardIfBetterScore"));
 		pk.pkVars.rewardEnable = cfg.getBoolean("rewards.enable");
 
-		if (pk.pkVars.BroadcastMessage) {
-			pk.pkVars.BroadcastMsg = cfg.getString("options.BroadcastOnRecord.message");
+		if (pk.pkVars.isBroadcastMessage()) {
+			pk.pkVars.setBroadcastMsg(cfg.getString("options.BroadcastOnRecord.message"));
 		}
 
 		pk.pkVars.PrefixString = cfg.getString("options.PrefixString");
@@ -112,6 +121,7 @@ public class ParkourConfig {
 		pk.reloadConfig();
 		LoadCfg();
 		loadStrings();
+		pk.pkUnlockFuncs.reloadUnlocksConfig();
 	}
 
 	//Load in Strings.yml
@@ -119,7 +129,7 @@ public class ParkourConfig {
 		saveDefaultStrings();
 		File stringsFile = pk.pkVars.stringsFile;
 		if (stringsFile == null) {
-			stringsFile = pk.pkVars.playerInfoFile;
+			stringsFile = pk.pkVars.stringsFile;
 		}
 		pk.pkVars.stringsConfig = YamlConfiguration.loadConfiguration(stringsFile);
 
@@ -142,7 +152,7 @@ public class ParkourConfig {
 		//Load Prefixes
 		strings.PREFIX = colorParseString(stringsConfig.getString("Prefix"));		
 		strings.APREFIX = colorParseString(stringsConfig.getString("AdminPrefix"));
-		
+
 		//Load Default Color
 		strings.defaultColor = colorParseString(stringsConfig.getString("DefaultColor"));
 		strings.defaultError = colorParseString(stringsConfig.getString("DefaultError"));
@@ -173,8 +183,6 @@ public class ParkourConfig {
 	public String colorParseString(String message) {
 		return ChatColor.translateAlternateColorCodes('&', message);
 	}
-
-
 
 
 }

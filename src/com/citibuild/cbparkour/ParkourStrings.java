@@ -1,6 +1,7 @@
 package com.citibuild.cbparkour;
 
 
+
 public class ParkourStrings {
 	
 	Parkour pk;
