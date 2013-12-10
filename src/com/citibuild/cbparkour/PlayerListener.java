@@ -38,13 +38,6 @@ public class PlayerListener implements Listener{
 	@EventHandler
 	public void onDisconnect(PlayerQuitEvent e) {
 		Player player = e.getPlayer();
-		int mapID = plugin.pkFuncs.getPlMapNumber(plugin.pkVars.ParkourContainer.get(player.getName()));
-		long time = System.currentTimeMillis()                                        
-				- plugin.pkFuncs.getPlTime(plugin.pkVars.ParkourContainer.get(player.getName()));
-		
-		plugin.pkVars.loadedUsers.get(player.getName()).setMapID(mapID);
-		plugin.pkVars.loadedUsers.get(player.getName()).setTime(time);
-		
 		plugin.pkFuncs.savePlayerInfo(player);
 		plugin.pkUnlockFuncs.savePlayer(player);
 		

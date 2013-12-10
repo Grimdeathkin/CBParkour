@@ -540,6 +540,15 @@ public class ParkourFunctions {
 
 	public void savePlayerInfo(Player player) {
 		String username = player.getName();
+		
+		if(pk.pkVars.ParkourContainer.containsKey(username)) {
+			int mapID = pk.pkFuncs.getPlMapNumber(pk.pkVars.ParkourContainer.get(username));
+			long time = System.currentTimeMillis()                                        
+					- pk.pkFuncs.getPlTime(pk.pkVars.ParkourContainer.get(username));
+			
+			pk.pkVars.loadedUsers.get(player.getName()).setMapID(mapID);
+			pk.pkVars.loadedUsers.get(player.getName()).setTime(time);
+		}
 
 		if(!pk.pkVars.loadedUsers.containsKey(username)) {
 			loadPlayerInfo(player);
