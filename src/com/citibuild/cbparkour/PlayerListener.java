@@ -290,6 +290,7 @@ public class PlayerListener implements Listener{
 						if (plugin.pkVars.getLobby() != null) {
 							p.teleport(plugin.pkVars.getLobby());
 							p.setGameMode(plugin.pkVars.loadedUsers.get(e.getPlayer().getName()).getPrevGM());
+							plugin.pkVars.loadedUsers.get(p).setPrevGMSet(false);
 							plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
 							p.sendMessage(plugin.getPrefix() + plugin.pkStrings.defaultColor + "You have been returned to the lobby");
 						}
@@ -301,6 +302,7 @@ public class PlayerListener implements Listener{
 						if (plugin.pkVars.getLobby() != null) {
 							p.teleport(plugin.pkVars.getLobby());
 							p.setGameMode(plugin.pkVars.loadedUsers.get(e.getPlayer().getName()).getPrevGM());
+							plugin.pkVars.loadedUsers.get(p.getName()).setPrevGMSet(false);
 							plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
 							p.sendMessage(plugin.getPrefix() + plugin.pkStrings.defaultColor + "You have been returned to the lobby");
 						}
@@ -314,6 +316,7 @@ public class PlayerListener implements Listener{
 							if (plugin.pkVars.getLobby() != null) {
 								p.teleport(plugin.pkVars.getLobby());
 								p.setGameMode(plugin.pkVars.loadedUsers.get(e.getPlayer().getName()).getPrevGM());
+								plugin.pkVars.loadedUsers.get(p.getName()).setPrevGMSet(false);
 								plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
 								p.sendMessage(plugin.getPrefix() + plugin.pkStrings.defaultColor + "You have been returned to the lobby");
 							}
@@ -328,6 +331,7 @@ public class PlayerListener implements Listener{
 							int Map = plugin.pkFuncs.getCpMapNumber(plugin.pkVars.getcLoc().get(bLoc));
 							plugin.pkFuncs.loadPlayerInfo(p);
 							plugin.pkVars.loadedUsers.get(p.getName()).setPrevGM(p.getGameMode());
+							plugin.pkVars.loadedUsers.get(p.getName()).setPrevGMSet(true);
 							
 							p.setGameMode(GameMode.ADVENTURE);
 							plugin.getServer().getPluginManager().callEvent(new ParkourStartEvent(plugin, p, Map, false));
@@ -355,7 +359,7 @@ public class PlayerListener implements Listener{
 					} 
 					// Player is in a parkour and hits a checkpoint
 					else {
-						p.setGameMode(GameMode.ADVENTURE);
+//						p.setGameMode(GameMode.ADVENTURE);
 						int PlCheckpoint = plugin.pkFuncs.getPlCheckpoint(plugin.pkVars.ParkourContainer.get(p.getName()));
 						int CpMap = plugin.pkFuncs.getCpMapNumber(plugin.pkVars.getcLoc().get(bLoc));
 						int Map = plugin.pkFuncs.getPlMapNumber(plugin.pkVars.ParkourContainer.get(p.getName()));
@@ -572,9 +576,9 @@ public class PlayerListener implements Listener{
 	@EventHandler
 	public void onGamemodeChange(PlayerGameModeChangeEvent e) {
 		Player p = e.getPlayer();
-		if(plugin.pkFuncs.isPlayerInParkour(p)) {
+		PlayerInfo pInfo = plugin.pkVars.loadedUsers.get(p.getName());
+		if(plugin.pkFuncs.isPlayerInParkour(p) && !pInfo.isPrevGMSet()) {
 			plugin.pkFuncs.sendError("gmChange", p, plugin);
-			p.setGameMode(GameMode.ADVENTURE);
 			e.setCancelled(true);
 		}
 

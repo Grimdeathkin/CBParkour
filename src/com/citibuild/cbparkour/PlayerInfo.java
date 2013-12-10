@@ -9,6 +9,7 @@ public class PlayerInfo {
 	int mapID;
 	int checkpoint;
 	GameMode prevGM;
+	boolean setPrevGM;
 	
 	/*
 	 * Get methods
@@ -38,6 +39,10 @@ public class PlayerInfo {
 		}
 	}
 	
+	public boolean isPrevGMSet() {
+		return setPrevGM;
+	}
+	
 	/*
 	 * Set methods
 	 */
@@ -60,6 +65,10 @@ public class PlayerInfo {
 	
 	public void setPrevGM(GameMode gm) {
 		prevGM = gm;
+	}
+	
+	public void setPrevGMSet(boolean value) {
+		setPrevGM = value;
 	}
 
 }
