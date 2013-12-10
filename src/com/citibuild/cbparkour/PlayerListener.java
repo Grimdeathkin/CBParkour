@@ -36,9 +36,10 @@ public class PlayerListener implements Listener{
 
 
 	@EventHandler
-	public void onDisconnect(PlayerQuitEvent e) {		
-		plugin.pkFuncs.savePlayerInfo(e.getPlayer());
-		plugin.pkUnlockFuncs.savePlayer(e.getPlayer());
+	public void onDisconnect(PlayerQuitEvent e) {
+		Player player = e.getPlayer();
+		plugin.pkFuncs.savePlayerInfo(player);
+		plugin.pkUnlockFuncs.savePlayer(player);
 		
 		if (plugin.pkFuncs.isPlayerInParkour(e.getPlayer())) {
 			plugin.pkVars.ParkourContainer.remove(e.getPlayer().getName());
