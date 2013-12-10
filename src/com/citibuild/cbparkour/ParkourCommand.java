@@ -134,8 +134,8 @@ public class ParkourCommand implements CommandExecutor{
 							plugin.pkFuncs.sendError("noPermission", p, plugin);
 						}
 					} 
-	/* Leave */				
-					else if (args[0].equalsIgnoreCase("leave")) {
+	/* Leave && Lobby*/
+					else if (args[0].equalsIgnoreCase("leave") || args[0].equalsIgnoreCase("lobby")) {
 						if (Parkour.permission.has(p,"parkour.use")) {
 							if (plugin.pkFuncs.isPlayerInParkour(p)) {
 								p.sendMessage(PREFIX + plugin.pkStrings.defaultColor + "You have left the parkour");
@@ -145,19 +145,6 @@ public class ParkourCommand implements CommandExecutor{
 									p.setGameMode(plugin.pkVars.loadedUsers.get(p.getName()).getPrevGM());
 								}
 		
-							} else {
-								plugin.pkFuncs.sendError("notinpk", p, plugin);
-							}
-						} else{
-							plugin.pkFuncs.sendError("noPermission", p, plugin);
-						}
-					}
-					
-	/* Lobby */				
-					else if (args[0].equalsIgnoreCase("lobby")) {
-						if (Parkour.permission.has(p,"parkour.use")) {
-							if (plugin.pkFuncs.isPlayerInParkour(p)) {
-								p.sendMessage(PREFIX + plugin.pkStrings.defaultError + "You are in a parkour course, use /pk leave to leave");
 							} else {
 								if (plugin.pkVars.getLobby() != null) {
 									p.teleport(plugin.pkVars.getLobby());
