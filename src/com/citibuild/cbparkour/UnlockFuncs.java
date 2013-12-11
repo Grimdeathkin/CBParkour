@@ -70,9 +70,10 @@ public class UnlockFuncs {
 		PlayerUnlocks pUnlocks = new PlayerUnlocks(player);
 		String userPath = "username." + pUnlocks.getUsername();
 		ArrayList<String> unlocks = new ArrayList<String>();
-		if(getUnlocksConfig().contains(userPath)) {
+		if(getUnlocksConfig().contains(userPath + ".unlocks")) {
 			unlocks = (ArrayList<String>) getUnlocksConfig().getList(userPath + ".unlocks");
 		} else {
+			getUnlocksConfig().createSection((userPath + ".unlocks"));
 			unlocks.add("0");
 		}
 		
@@ -121,9 +122,10 @@ public class UnlockFuncs {
 		PlayerUnlocks pUnlocks = new PlayerUnlocks((Player) oPlayer);
 		String userPath = "username." + pUnlocks.getUsername();
 		ArrayList<String> unlocks = new ArrayList<String>();
-		if(getUnlocksConfig().contains(userPath)) {
+		if(getUnlocksConfig().contains(userPath + ".unlocks")) {
 			unlocks = (ArrayList<String>) getUnlocksConfig().getList(userPath + ".unlocks");
 		} else {
+			getUnlocksConfig().createSection((userPath + ".unlocks"));
 			unlocks.add("0");
 		}
 
