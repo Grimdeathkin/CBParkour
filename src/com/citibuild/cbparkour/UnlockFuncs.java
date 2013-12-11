@@ -69,7 +69,13 @@ public class UnlockFuncs {
 	public void loadPlayer(Player player) {
 		PlayerUnlocks pUnlocks = new PlayerUnlocks(player);
 		String userPath = "username." + pUnlocks.getUsername();
-		pUnlocks.setUnlocks((ArrayList<String>) getUnlocksConfig().getList(userPath + ".unlocks"));
+		ArrayList<String> unlocks = (ArrayList<String>) getUnlocksConfig().getList(userPath + ".unlocks");
+
+		if(unlocks.isEmpty()) {
+			unlocks.add("0");
+		}
+
+		pUnlocks.setUnlocks(unlocks);
 
 		pk.pkVars.loadedPUnlocks.put(pUnlocks.getUsername(), pUnlocks);
 
@@ -113,7 +119,13 @@ public class UnlockFuncs {
 	public PlayerUnlocks loadOfflinePlayer(OfflinePlayer oPlayer) {
 		PlayerUnlocks pUnlocks = new PlayerUnlocks((Player) oPlayer);
 		String userPath = "username." + pUnlocks.getUsername();
-		pUnlocks.setUnlocks((ArrayList<String>) getUnlocksConfig().getList(userPath + ".unlocks"));
+		ArrayList<String> unlocks = (ArrayList<String>) getUnlocksConfig().getList(userPath + ".unlocks");
+
+		if(unlocks.isEmpty()) {
+			unlocks.add("0");
+		}
+
+		pUnlocks.setUnlocks(unlocks);
 
 		return pUnlocks;
 	}
@@ -139,27 +151,32 @@ public class UnlockFuncs {
 			savePlayer(player);
 		}
 	}
-	
+
 	public boolean levelUnlocked(Player player, Integer level) {
 		PlayerUnlocks pUnlocks = pk.pkVars.loadedPUnlocks.get(player.getName().toLowerCase());
 		int prevMap = pk.getMapPrevious(level);
-		if(pUnlocks.getUnlocks().contains("*") || pk.getMapPrevious(level) == 0) {
+		if(pUnlocks.getUnlocks().contains("*")) {
 			return true;
-		} else {
-			if(pUnlocks.getUnlocks().contains(String.valueOf(prevMap))) {
-				return true;
-			}
 		}
+
+		if(pUnlocks.getUnlocks().contains(String.valueOf(prevMap))) {
+			return true;
+		}
+
+		if(prevMap == 0) {
+			return true;
+		}
+
 		return false;
 	}
-	
+
 	public void lockLevel(Player player, Integer level) {
 		PlayerUnlocks pUnlocks = pk.pkVars.loadedPUnlocks.get(player.getName().toLowerCase());
 		ArrayList<String> unlocks = pUnlocks.getUnlocks();
 		unlocks.remove(String.valueOf(level));
 		pUnlocks.setUnlocks(unlocks);
 		savePlayer(player);
-		
+
 	}
 
 }

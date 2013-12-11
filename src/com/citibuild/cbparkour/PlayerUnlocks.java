@@ -32,6 +32,9 @@ public class PlayerUnlocks {
 	}
 	
 	public ArrayList<String> getUnlocks() {
+		if(unlocks.isEmpty()) {
+			unlocks.add("0");
+		}
 		return unlocks;
 	}
 	
@@ -46,12 +49,15 @@ public class PlayerUnlocks {
 		
 	}
 
-	public void setPlayer(Player player) {
-		this.player = player;
+	public void setPlayer(Player p) {
+		this.player = p;
 	}
 
-	public void setUnlocks(ArrayList<String> unlocks) {
-		this.unlocks = unlocks;
+	public void setUnlocks(ArrayList<String> unlcks) {
+		if(unlcks.isEmpty()) {
+			unlcks.add("0");
+		}
+		this.unlocks = unlcks;
 	}
 
 }
