@@ -69,12 +69,13 @@ public class UnlockFuncs {
 	public void loadPlayer(Player player) {
 		PlayerUnlocks pUnlocks = new PlayerUnlocks(player);
 		String userPath = "username." + pUnlocks.getUsername();
-		ArrayList<String> unlocks = (ArrayList<String>) getUnlocksConfig().getList(userPath + ".unlocks");
-
-		if(unlocks.isEmpty()) {
+		ArrayList<String> unlocks = new ArrayList<String>();
+		if(getUnlocksConfig().contains(userPath)) {
+			unlocks = (ArrayList<String>) getUnlocksConfig().getList(userPath + ".unlocks");
+		} else {
 			unlocks.add("0");
 		}
-
+		
 		pUnlocks.setUnlocks(unlocks);
 
 		pk.pkVars.loadedPUnlocks.put(pUnlocks.getUsername(), pUnlocks);
@@ -119,9 +120,10 @@ public class UnlockFuncs {
 	public PlayerUnlocks loadOfflinePlayer(OfflinePlayer oPlayer) {
 		PlayerUnlocks pUnlocks = new PlayerUnlocks((Player) oPlayer);
 		String userPath = "username." + pUnlocks.getUsername();
-		ArrayList<String> unlocks = (ArrayList<String>) getUnlocksConfig().getList(userPath + ".unlocks");
-
-		if(unlocks.isEmpty()) {
+		ArrayList<String> unlocks = new ArrayList<String>();
+		if(getUnlocksConfig().contains(userPath)) {
+			unlocks = (ArrayList<String>) getUnlocksConfig().getList(userPath + ".unlocks");
+		} else {
 			unlocks.add("0");
 		}
 
