@@ -1,8 +1,10 @@
-package com.citibuild.cbparkour;
+package com.citibuild.cbparkour.Events;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import com.citibuild.cbparkour.Parkour;
 
 public class ParkourStartEvent extends Event
 {

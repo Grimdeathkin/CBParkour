@@ -15,6 +15,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.citibuild.cbparkour.Listeners.PlayerListener;
+import com.citibuild.cbparkour.Listeners.SignListener;
+
+
 /*
  * TODO
  * - Begin getUnlock function to return a list of map IDs a player has unlocked.
@@ -34,10 +38,10 @@ public class Parkour extends JavaPlugin implements Listener {
 	//Class definitions
 	public ParkourItems pkItems;
 	public ParkourFunctions pkFuncs;
-	public ParkourVars pkVars;
+	public ParkourVariables pkVars;
 	public ParkourStrings pkStrings;
 	public ParkourConfig pkConfig;
-	public UnlockFuncs pkUnlockFuncs;
+	public UnlockFunctions pkUnlockFuncs;
 	
 /*
  * 	Setup
@@ -48,10 +52,10 @@ public class Parkour extends JavaPlugin implements Listener {
 	public void onEnable() {
         pkItems = new ParkourItems(this);
         pkFuncs = new ParkourFunctions(this);
-        pkVars = new ParkourVars(this);
+        pkVars = new ParkourVariables(this);
         pkStrings = new ParkourStrings(this);
         pkConfig = new ParkourConfig(this);
-        pkUnlockFuncs = new UnlockFuncs(this);
+        pkUnlockFuncs = new UnlockFunctions(this);
         
         pkConfig.onEnable();
 		

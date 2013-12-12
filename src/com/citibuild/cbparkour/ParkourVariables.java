@@ -7,7 +7,7 @@ import java.util.HashMap;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 
-public class ParkourVars {
+public class ParkourVariables {
 
 	Parkour pk;
 
@@ -62,7 +62,7 @@ public class ParkourVars {
 	public FileConfiguration stringsConfig = null;
 
 
-	public ParkourVars(Parkour plugin) {
+	public ParkourVariables(Parkour plugin) {
 		this.pk = plugin;
 	}
 

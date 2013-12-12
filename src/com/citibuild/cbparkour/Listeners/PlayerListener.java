@@ -1,4 +1,4 @@
-package com.citibuild.cbparkour;
+package com.citibuild.cbparkour.Listeners;
 
 import java.util.Map;
 
@@ -24,10 +24,18 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 
+import com.citibuild.cbparkour.Parkour;
+import com.citibuild.cbparkour.PlayerInfo;
+import com.citibuild.cbparkour.UnlockFunctions;
+import com.citibuild.cbparkour.Events.ParkourCheckpointEvent;
+import com.citibuild.cbparkour.Events.ParkourFinishEvent;
+import com.citibuild.cbparkour.Events.ParkourStartEvent;
+
+
 public class PlayerListener implements Listener{
 
 	private final Parkour plugin;
-	private UnlockFuncs unlockFuncs;
+	private UnlockFunctions unlockFuncs;
 	
 	public PlayerListener(Parkour plugin) {
 		this.plugin = plugin;
