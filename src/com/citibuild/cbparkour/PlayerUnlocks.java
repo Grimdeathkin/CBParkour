@@ -54,7 +54,8 @@ public class PlayerUnlocks {
 	}
 
 	public void setUnlocks(ArrayList<String> unlcks) {
-		if(unlcks.isEmpty()) {
+		if(unlcks.isEmpty() || unlcks == null) {
+			unlcks = new ArrayList<String>();
 			unlcks.add("0");
 		}
 		this.unlocks = unlcks;
