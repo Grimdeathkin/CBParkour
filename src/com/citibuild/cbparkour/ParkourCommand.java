@@ -1,7 +1,5 @@
 package com.citibuild.cbparkour;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -258,8 +256,6 @@ public class ParkourCommand implements CommandExecutor{
 								} else {
 									p.sendMessage(ChatColor.GOLD + "---------=[ " + plugin.pkStrings.defaultColor + playerName+"'s Scores" + ChatColor.GOLD + " ]=---------");
 								}
-								
-								ArrayList<String> pRecs = new ArrayList<String>();
 
 								plugin.pkFuncs.loadScore();
 								for (Entry<String, Long> recordEntry : plugin.pkVars.getRecords().entrySet()){ // MapID:Player,Time
@@ -275,20 +271,11 @@ public class ParkourCommand implements CommandExecutor{
 										String mapName = plugin.getMapName(mapID);
 										String playerTime = plugin.convertTime(recordEntry.getValue());
 										
-										pRecs.add(plugin.pkStrings.defaultColor + mapName + ChatColor.GRAY + " - " 
+										p.sendMessage(plugin.pkStrings.defaultColor + mapName + ChatColor.GRAY + " - " 
 														+ plugin.pkStrings.highlightOne + "#"+playerRank 
 														+ ChatColor.GRAY + " - " + plugin.pkStrings.highlightOne + playerTime);
-										
 									}
 								}
-								
-								if(!pRecs.isEmpty() && pRecs != null) {
-									Collections.sort(pRecs);
-									for(String record: pRecs) {
-										p.sendMessage(record);
-									}
-								}
-								
 								if (!playerFound){
 									p.sendMessage(PREFIX + plugin.pkStrings.defaultError + "No scores found for " + playerName);
 								}
