@@ -17,7 +17,7 @@ public class ParkourItems {
 	ItemMeta imeta;
 	String command;
 	String[] items = {"checkpoint", "current time"};
-	ArrayList<String> itemsList = new ArrayList<String>();
+	public ArrayList<String> itemsList = new ArrayList<String>();
 	
 	public String slime_cmd;
 	public String musicdisk_cmd;

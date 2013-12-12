@@ -13,14 +13,14 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-public class UnlockFuncs {
+public class UnlockFunctions {
 
 	Parkour pk;
 
 	private FileConfiguration playerUnlocksConfig = null;
 	private File playerUnlocksFile = null;
 
-	public UnlockFuncs(Parkour plugin) {
+	public UnlockFunctions(Parkour plugin) {
 		this.pk = plugin;
 	}
 

@@ -26,7 +26,7 @@ public class ParkourCommand implements CommandExecutor{
 		String PREFIX = plugin.getPrefix();
 		String APREFIX = plugin.getAPrefix();
 		Player p = null;
-		UnlockFuncs unlockFuncs = plugin.pkUnlockFuncs;
+		UnlockFunctions unlockFuncs = plugin.pkUnlockFuncs;
 		
 			if (sender instanceof Player) {
 				p = (Player) sender;
