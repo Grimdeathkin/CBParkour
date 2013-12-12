@@ -69,13 +69,13 @@ public class UnlockFuncs {
 	public void loadPlayer(Player player) {
 		PlayerUnlocks pUnlocks = new PlayerUnlocks(player);
 		String userPath = "username." + pUnlocks.getUsername();
+		getUnlocksConfig().createSection((userPath + ".unlocks"));
 		ArrayList<String> unlocks = new ArrayList<String>();
-		if(getUnlocksConfig().contains(userPath + ".unlocks")) {
-			unlocks = (ArrayList<String>) getUnlocksConfig().getList(userPath + ".unlocks");
-		} else {
-			getUnlocksConfig().createSection((userPath + ".unlocks"));
+		if(unlocks.isEmpty() || unlocks == null) {
 			unlocks.add("0");
+			
 		}
+		unlocks = (ArrayList<String>) getUnlocksConfig().getList(userPath + ".unlocks");
 		
 		pUnlocks.setUnlocks(unlocks);
 
@@ -121,13 +121,13 @@ public class UnlockFuncs {
 	public PlayerUnlocks loadOfflinePlayer(OfflinePlayer oPlayer) {
 		PlayerUnlocks pUnlocks = new PlayerUnlocks((Player) oPlayer);
 		String userPath = "username." + pUnlocks.getUsername();
+		getUnlocksConfig().createSection((userPath + ".unlocks"));
 		ArrayList<String> unlocks = new ArrayList<String>();
-		if(getUnlocksConfig().contains(userPath + ".unlocks")) {
-			unlocks = (ArrayList<String>) getUnlocksConfig().getList(userPath + ".unlocks");
-		} else {
-			getUnlocksConfig().createSection((userPath + ".unlocks"));
+		if(unlocks.isEmpty() || unlocks == null) {
 			unlocks.add("0");
+			
 		}
+		unlocks = (ArrayList<String>) getUnlocksConfig().getList(userPath + ".unlocks");
 
 		pUnlocks.setUnlocks(unlocks);
 
