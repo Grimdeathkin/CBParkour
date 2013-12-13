@@ -73,10 +73,10 @@ public class UnlockFunctions {
 		ArrayList<String> unlocks = new ArrayList<String>();
 		if(unlocks.isEmpty() || unlocks == null) {
 			unlocks.add("0");
-			
+
 		}
 		unlocks = (ArrayList<String>) getUnlocksConfig().getList(userPath + ".unlocks");
-		
+
 		pUnlocks.setUnlocks(unlocks);
 
 		pk.pkVars.loadedPUnlocks.put(pUnlocks.getUsername(), pUnlocks);
@@ -125,7 +125,7 @@ public class UnlockFunctions {
 		ArrayList<String> unlocks = new ArrayList<String>();
 		if(unlocks.isEmpty() || unlocks == null) {
 			unlocks.add("0");
-			
+
 		}
 		unlocks = (ArrayList<String>) getUnlocksConfig().getList(userPath + ".unlocks");
 
@@ -159,7 +159,14 @@ public class UnlockFunctions {
 	public boolean levelUnlocked(Player player, Integer level) {
 		PlayerUnlocks pUnlocks = pk.pkVars.loadedPUnlocks.get(player.getName().toLowerCase());
 		int prevMap = pk.getMapPrevious(level);
-		if(pUnlocks.getUnlocks().contains("*")) {
+
+		if(pUnlocks.getUnlocks() == null || pUnlocks.getUnlocks().isEmpty()) {
+			ArrayList<String> unlcks = new ArrayList<String>();
+			unlcks.add("0");
+			pUnlocks.setUnlocks(unlcks);
+		}
+
+		if(prevMap == 0) {
 			return true;
 		}
 
@@ -167,7 +174,7 @@ public class UnlockFunctions {
 			return true;
 		}
 
-		if(prevMap == 0) {
+		if(pUnlocks.getUnlocks().contains("*")) {
 			return true;
 		}
 
