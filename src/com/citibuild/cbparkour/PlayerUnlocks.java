@@ -35,7 +35,14 @@ public class PlayerUnlocks {
 		if(unlocks.isEmpty()) {
 			unlocks.add("0");
 		}
-		return unlocks;
+		
+		if(unlocks != null) {
+			return unlocks;
+		} else {
+			unlocks = new ArrayList<String>();
+			unlocks.add("0");
+			return unlocks;
+		}
 	}
 	
 	
@@ -54,11 +61,15 @@ public class PlayerUnlocks {
 	}
 
 	public void setUnlocks(ArrayList<String> unlcks) {
-		if(unlcks.isEmpty() || unlcks == null) {
+		if(unlcks != null) {
+			this.unlocks = unlcks;
+			return;
+		} else {
 			unlcks = new ArrayList<String>();
 			unlcks.add("0");
+			this.unlocks = unlcks;
+			return;
 		}
-		this.unlocks = unlcks;
 	}
 
 }
