@@ -32,10 +32,6 @@ public class PlayerUnlocks {
 	}
 	
 	public ArrayList<String> getUnlocks() {
-		if(unlocks.isEmpty()) {
-			unlocks.add("0");
-		}
-		
 		if(unlocks != null) {
 			return unlocks;
 		} else {
