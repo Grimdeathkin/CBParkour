@@ -163,11 +163,9 @@ public class UnlockFunctions {
 		if(prevMap == 0) {
 			return true;
 		}
-		
 		if(pUnlocks.getUnlocks().contains(String.valueOf(prevMap))) {
 			return true;
 		}
-		
 		if(pUnlocks.getUnlocks().contains("*")) {
 			return true;
 		}
