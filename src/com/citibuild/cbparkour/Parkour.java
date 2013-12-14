@@ -21,7 +21,6 @@ import com.citibuild.cbparkour.Listeners.SignListener;
 
 /*
  * TODO
- * - Begin getUnlock function to return a list of map IDs a player has unlocked.
  * - Add userInfo command to get unlocks and if they hold map records.
  * - Add sign leaderboard system.
  * - Add ranking system and chat prefixing (like SkyWars).
