@@ -88,9 +88,11 @@ public class UnlockFunctions {
 			HashMap<String, PlayerUnlocks> loadedPUnlocks = pk.pkVars.loadedPUnlocks;
 			PlayerUnlocks pUnlocks = loadedPUnlocks.get(player.getName().toLowerCase());
 			FileConfiguration config = getUnlocksConfig();
-			String userPath = "username." + pUnlocks.getUsername();
-			config.createSection(userPath);
-			config.set(userPath + ".unlocks", pUnlocks.getUnlocks());
+			String unlocksPath = "username." + pUnlocks.getUsername() + ".unlocks";
+			if(!getUnlocksConfig().contains(unlocksPath)) {
+				getUnlocksConfig().createSection(unlocksPath);
+			}
+			config.set(unlocksPath, pUnlocks.getUnlocks());
 
 			saveUnlocksConfig();
 		}
@@ -119,15 +121,17 @@ public class UnlockFunctions {
 
 	@SuppressWarnings("unchecked")
 	public PlayerUnlocks loadOfflinePlayer(OfflinePlayer oPlayer) {
-		PlayerUnlocks pUnlocks = new PlayerUnlocks((Player) oPlayer);
-		String userPath = "username." + pUnlocks.getUsername();
-		getUnlocksConfig().createSection((userPath + ".unlocks"));
+		PlayerUnlocks pUnlocks = new PlayerUnlocks(oPlayer);
+		String unlocksPath = "username." + oPlayer.getName().toLowerCase() + ".unlocks";
+		if(!getUnlocksConfig().contains(unlocksPath)) {
+			getUnlocksConfig().createSection(unlocksPath);
+		}
 		ArrayList<String> unlocks = new ArrayList<String>();
 		if(unlocks.isEmpty() || unlocks == null) {
 			unlocks.add("0");
 
 		}
-		unlocks = (ArrayList<String>) getUnlocksConfig().getList(userPath + ".unlocks");
+		unlocks = (ArrayList<String>) getUnlocksConfig().getList(unlocksPath);
 
 		pUnlocks.setUnlocks(unlocks);
 
@@ -136,9 +140,11 @@ public class UnlockFunctions {
 	
 	public void saveOfflinePlayer(OfflinePlayer oPlayer, PlayerUnlocks pUnlocks) {
 		FileConfiguration config = getUnlocksConfig();
-		String userPath = "username." + pUnlocks.getUsername();
-		config.createSection(userPath);
-		config.set(userPath + ".unlocks", pUnlocks.getUnlocks());
+		String unlocksPath = "username." + oPlayer.getName().toLowerCase() + ".unlocks";
+		if(!getUnlocksConfig().contains(unlocksPath)) {
+			getUnlocksConfig().createSection(unlocksPath);
+		}
+		config.set(unlocksPath, pUnlocks.getUnlocks());
 
 		saveUnlocksConfig();
 	}

@@ -2,16 +2,23 @@ package com.citibuild.cbparkour;
 
 import java.util.ArrayList;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public class PlayerUnlocks {
 	
 	private Player player;
+	private OfflinePlayer oPlayer;
 	private String username;
 	private ArrayList<String> unlocks = new ArrayList<String>();
 	
 	
 	public PlayerUnlocks(Player p) {
+		setPlayer(p);
+		setUsername(p.getName().toLowerCase());
+	}
+	
+	public PlayerUnlocks(OfflinePlayer p) {
 		setPlayer(p);
 		setUsername(p.getName().toLowerCase());
 	}
@@ -29,6 +36,10 @@ public class PlayerUnlocks {
 	
 	public Player getPlayer() {
 		return player;
+	}
+	
+	public OfflinePlayer getOPlayer() {
+		return oPlayer;
 	}
 	
 	public ArrayList<String> getUnlocks() {
@@ -54,6 +65,10 @@ public class PlayerUnlocks {
 
 	public void setPlayer(Player p) {
 		this.player = p;
+	}
+	
+	public void setPlayer(OfflinePlayer p) {
+		this.oPlayer = p;
 	}
 
 	public void setUnlocks(ArrayList<String> unlcks) {

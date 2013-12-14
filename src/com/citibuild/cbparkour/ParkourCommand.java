@@ -3,6 +3,8 @@ package com.citibuild.cbparkour;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Random;
+import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -60,6 +62,7 @@ public class ParkourCommand implements CommandExecutor{
 						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " pReset <Player> <mapID> | all" + ChatColor.WHITE + " - Reset scores for a player");
 						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " reload " + ChatColor.WHITE + " - Reloads the config for " + plugin.getName());
 						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " unlock <username> <mapID>" + ChatColor.WHITE + " - Unlocks a level for a player");
+						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " transfer <user1> <user2>" + ChatColor.WHITE + " - Transfers user1's unlocks to user2");
 					}
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " join <mapID>" + ChatColor.WHITE + " - Join a map");
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " leave" + ChatColor.WHITE + " - Leave the map");
@@ -729,7 +732,7 @@ public class ParkourCommand implements CommandExecutor{
 						if (Parkour.permission.has(p,"parkour.admin")) {
 							if(args.length == 3) {
 								if(plugin.pkFuncs.isNumber(args[2]) || args[2].equals("*")) {
-									UnlockFunctions uFuncs = plugin.pkUnlockFuncs;
+									UnlockFunctions uFuncs = unlockFuncs;
 									PlayerUnlocks pUnlocks = new PlayerUnlocks(p);
 									
 									if(Bukkit.getPlayer(args[1]).isOnline()) {
@@ -792,6 +795,86 @@ public class ParkourCommand implements CommandExecutor{
 						} else{
 							plugin.pkFuncs.sendError("noPermission", p, plugin);
 						}
+					} else if(args[0].equalsIgnoreCase("transfer")) {
+						if(Parkour.permission.has(p, "parkour.admin")) {
+							if(args.length == 3) {
+								PlayerUnlocks pUnlocks = null;
+								PlayerUnlocks tUnlocks = null;
+								boolean tOnline = false;
+								//Try to perform the transfer
+								try {
+
+									//Check if user1 is online
+									for(Player player: Bukkit.getOnlinePlayers()) {
+										if(player.getName().equalsIgnoreCase(args[1])) {
+											pUnlocks = plugin.pkVars.loadedPUnlocks.get(args[1].toLowerCase());
+										}
+									}
+									
+									if(pUnlocks != null) {
+										//Stupid check only working one way :/
+									} else {
+										OfflinePlayer oPlayer = Bukkit.getOfflinePlayer(args[1]);
+										pUnlocks = plugin.pkUnlockFuncs.loadOfflinePlayer(oPlayer);
+									}
+
+									//Check if user2 is online
+									for(Player player: Bukkit.getOnlinePlayers()) {
+										if(player.getName().equalsIgnoreCase(args[2])) {
+											tUnlocks = plugin.pkVars.loadedPUnlocks.get(args[2].toLowerCase());
+											tOnline = true;
+										}
+									}
+									
+									if(tUnlocks != null) {
+										//Stupid check only working one way :/
+									} else {
+										OfflinePlayer oPlayer = Bukkit.getOfflinePlayer(args[2]);
+										tUnlocks = plugin.pkUnlockFuncs.loadOfflinePlayer(oPlayer);
+									}
+
+
+									tUnlocks.setUnlocks(pUnlocks.getUnlocks());
+
+									if(tOnline) {
+										unlockFuncs.savePlayer(Bukkit.getPlayer(args[2]));
+									} else {
+										OfflinePlayer oPlayer = Bukkit.getOfflinePlayer(args[2]);
+										unlockFuncs.saveOfflinePlayer(oPlayer, tUnlocks);
+									}
+
+									unlockFuncs.resetPlayerUnlocks(args[1].toLowerCase());
+
+									p.sendMessage(APREFIX + strings.defaultColor + "Transfer from " + strings.highlightOne + args[1].toLowerCase() + strings.defaultColor 
+											+ " to " + strings.highlightOne + args[2].toLowerCase() + strings.defaultColor + " was successful!");
+
+								} catch (NullPointerException e) {
+									//Custom error handling
+									Logger logger = plugin.getLogger();
+									String errorRef = plugin.pkFuncs.generateErrorString(new Random(), "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 5);
+									logger.severe("Begin Reference: " + errorRef);
+									logger.severe("Message: " + e.getMessage());
+									logger.severe("Class: " + e.getClass());
+									logger.severe("Caused by: " + e.getCause());
+									logger.severe("StackTrace: ");
+									for(StackTraceElement st: e.getStackTrace()) {
+										logger.severe("    at " + st.getClassName() + "(" + st.getFileName() + ":" + st.getLineNumber() + ")");
+									}
+									logger.severe("End Reference: " + errorRef);
+									p.sendMessage(APREFIX + strings.defaultError + "There was an error when trying to perform the transfer.");
+									p.sendMessage(APREFIX + strings.defaultError + "Please contact someone with Console access with the");
+									p.sendMessage(APREFIX + strings.defaultError + "Error Reference: " + errorRef);
+								}
+								
+								
+							} else {
+								p.sendMessage(APREFIX + ChatColor.RED + "Correct usage /pk transfer <user1> <user2>");
+							}
+							
+						} else {
+							plugin.pkFuncs.sendError("noPermission", p, plugin);
+						}
+						
 					}
 
 					else {
