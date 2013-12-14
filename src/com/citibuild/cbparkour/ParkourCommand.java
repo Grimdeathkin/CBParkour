@@ -849,6 +849,7 @@ public class ParkourCommand implements CommandExecutor{
 											+ " to " + strings.highlightOne + args[2].toLowerCase() + strings.defaultColor + " was successful!");
 
 								} catch (NullPointerException e) {
+									//Custom error handling
 									Logger logger = plugin.getLogger();
 									String errorRef = plugin.pkFuncs.generateErrorString(new Random(), "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 5);
 									logger.severe("Begin Reference: " + errorRef);
