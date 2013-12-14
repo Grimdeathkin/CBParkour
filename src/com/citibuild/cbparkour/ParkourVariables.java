@@ -32,6 +32,7 @@ public class ParkourVariables {
 	boolean LastCheckpointTeleport = false;
 	boolean rewardEnable = false;
 	private boolean rewardIfBetterScore = true;
+	public ArrayList<String> allowedCommands = new ArrayList<String>();
 
 	// Used for player parkour management
 	private Location lobby = null;

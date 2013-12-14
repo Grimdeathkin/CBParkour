@@ -1,5 +1,6 @@
 package com.citibuild.cbparkour.Listeners;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.bukkit.ChatColor;
@@ -15,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -615,5 +617,19 @@ public class PlayerListener implements Listener{
 			e.setCancelled(true);
 		}
 
+	}
+	
+	@EventHandler
+	public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+		Player player = event.getPlayer();
+		if(plugin.pkVars.ParkourContainer.containsKey(player.getName())) {
+			String[] args = event.getMessage().split(" ");
+			String command = args[0].replaceAll("/", "");
+			ArrayList<String> allowed = plugin.pkVars.allowedCommands;
+			if(!allowed.contains(command.toLowerCase())) {
+				event.setCancelled(true);
+				plugin.pkFuncs.sendError("commanddisabled", player, plugin);
+			}
+		}
 	}
 }
