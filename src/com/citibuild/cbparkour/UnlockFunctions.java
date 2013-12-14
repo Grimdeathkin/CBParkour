@@ -133,6 +133,15 @@ public class UnlockFunctions {
 
 		return pUnlocks;
 	}
+	
+	public void saveOfflinePlayer(OfflinePlayer oPlayer, PlayerUnlocks pUnlocks) {
+		FileConfiguration config = getUnlocksConfig();
+		String userPath = "username." + pUnlocks.getUsername();
+		config.createSection(userPath);
+		config.set(userPath + ".unlocks", pUnlocks.getUnlocks());
+
+		saveUnlocksConfig();
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<String> getPlayerUnlocks(OfflinePlayer oPlayer) {
