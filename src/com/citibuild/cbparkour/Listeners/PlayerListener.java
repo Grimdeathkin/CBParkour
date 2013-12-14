@@ -109,7 +109,6 @@ public class PlayerListener implements Listener{
 								}
 
 								if(plugin.getMapPrevious(mapID) != 0){
-									//if(!Parkour.permission.has(p, "parkour.completed.map"+plugin.getMapPrevious(mapID))){
 									if(!unlockFuncs.levelUnlocked(p, mapID)) {
 										plugin.pkFuncs.sendInfo("notUnlocked", p, mapID, plugin);
 										return;
@@ -343,7 +342,6 @@ public class PlayerListener implements Listener{
 					}
 
 					if(plugin.getMapPrevious(mapID) != 0){
-						//if(!Parkour.permission.has(p, "parkour.completed.map"+plugin.getMapPrevious(mapID))){
 						if(!unlockFuncs.levelUnlocked(p, mapID)) {
 							plugin.pkFuncs.sendInfo("notUnlocked", p, mapID, plugin);
 							if (plugin.pkVars.getLobby() != null) {
@@ -458,9 +456,7 @@ public class PlayerListener implements Listener{
 								}
 
 								// Unlock next course
-								//if(!Parkour.permission.has(p, "parkour.completed.map"+ Map)){
 								if(!unlockFuncs.getPlayerUnlocks(p).getUnlocks().contains(String.valueOf(mapID))) {
-									//Parkour.permission.playerAdd(p, "parkour.completed.map"+ Map);
 									unlockFuncs.addUnlockedLevel(p, String.valueOf(mapID));
 
 									FileConfiguration cfg = plugin.getConfig();
