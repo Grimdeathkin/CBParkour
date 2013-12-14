@@ -320,6 +320,9 @@ public class PlayerListener implements Listener{
 							plugin.pkVars.loadedUsers.get(p).setPrevGMSet(false);
 							plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
 							p.sendMessage(plugin.getPrefix() + plugin.pkStrings.defaultColor + "You have been returned to the lobby");
+							if(plugin.pkVars.ParkourContainer.containsKey(p.getName())) {
+								plugin.pkVars.ParkourContainer.remove(p.getName());
+							}
 						}
 						return;
 					}
@@ -332,6 +335,9 @@ public class PlayerListener implements Listener{
 							plugin.pkVars.loadedUsers.get(p.getName()).setPrevGMSet(false);
 							plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
 							p.sendMessage(plugin.getPrefix() + plugin.pkStrings.defaultColor + "You have been returned to the lobby");
+							if(plugin.pkVars.ParkourContainer.containsKey(p.getName())) {
+								plugin.pkVars.ParkourContainer.remove(p.getName());
+							}
 						}
 						return;
 					}
@@ -346,6 +352,9 @@ public class PlayerListener implements Listener{
 								plugin.pkVars.loadedUsers.get(p.getName()).setPrevGMSet(false);
 								plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
 								p.sendMessage(plugin.getPrefix() + plugin.pkStrings.defaultColor + "You have been returned to the lobby");
+								if(plugin.pkVars.ParkourContainer.containsKey(p.getName())) {
+									plugin.pkVars.ParkourContainer.remove(p.getName());
+								}
 							}
 							return;
 						}
@@ -386,7 +395,6 @@ public class PlayerListener implements Listener{
 					} 
 					// Player is in a parkour and hits a checkpoint
 					else {
-//						p.setGameMode(GameMode.ADVENTURE);
 						int PlCheckpoint = plugin.pkFuncs.getPlCheckpoint(plugin.pkVars.ParkourContainer.get(p.getName()));
 						int CpMap = plugin.pkFuncs.getCpMapNumber(plugin.pkVars.getcLoc().get(bLoc));
 						int Map = plugin.pkFuncs.getPlMapNumber(plugin.pkVars.ParkourContainer.get(p.getName()));
@@ -423,7 +431,9 @@ public class PlayerListener implements Listener{
 
 							if (Checkpoint == 1) {
 								
-								p.setGameMode(GameMode.ADVENTURE);
+								if(p.getGameMode() != GameMode.ADVENTURE) {
+									p.setGameMode(GameMode.ADVENTURE);
+								}
 								if (plugin.pkVars.isCheckpointEffect()) {
 									p.playEffect(bLoc, Effect.POTION_BREAK, 2);
 								}
@@ -555,8 +565,8 @@ public class PlayerListener implements Listener{
 									plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 										@Override
 										public void run() {
-											plugin.getServer().getPlayer(pl).teleport(plugin.pkVars.getLobby());
 											plugin.getServer().getPlayer(pl).setGameMode(plugin.pkVars.loadedUsers.get(pl).getPrevGM());
+											plugin.getServer().getPlayer(pl).teleport(plugin.pkVars.getLobby());
 										}
 									}, 5L);
 								}
