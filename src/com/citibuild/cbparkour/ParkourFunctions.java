@@ -37,88 +37,9 @@ public class ParkourFunctions {
 		this.pk = plugin;
 	}
 
-	public void teleportFirstCheckpoint(Player p){
-
-		FileConfiguration cfg = pk.getConfig();
-		Location firstCheckpoint;
-
-		int mapID = getPlMapNumber(pk.pkVars.ParkourContainer.get(p.getName()));
-
-		if (cfg.contains("Parkour.map" + mapID + ".spawn")) {
-			firstCheckpoint = new Location(
-					pk.getServer().getWorld(cfg.getString("Parkour.map" + mapID + ".world")),
-					cfg.getDouble("Parkour.map" + mapID + ".spawn.posX"), cfg.getDouble("Parkour.map"
-							+ mapID + ".spawn.posY"), cfg.getDouble("Parkour.map" + mapID + ".spawn.posZ"));
-
-			firstCheckpoint.setPitch((float) cfg.getDouble("Parkour.map" + mapID + ".spawn.posPitch"));
-			firstCheckpoint.setYaw((float) cfg.getDouble("Parkour.map" + mapID + ".spawn.posYaw"));
-
-			p.teleport(firstCheckpoint);
-		} else {
-			firstCheckpoint = new Location(
-					pk.getServer().getWorld(cfg.getString("Parkour.map" + mapID + ".world")),
-					cfg.getDouble("Parkour.map" + mapID + ".cp.1.posX") + 0.5, cfg.getDouble("Parkour.map"
-							+ mapID + ".cp.1.posY"),
-							cfg.getDouble("Parkour.map" + mapID + ".cp.1.posZ") + 0.5);
-
-
-			firstCheckpoint.setPitch(p.getLocation().getPitch());
-			firstCheckpoint.setYaw(p.getLocation().getYaw());
-			p.teleport(firstCheckpoint);
-		}
-	}
-
-	public void teleportLastCheckpoint(Player p) {
-		FileConfiguration cfg = pk.getConfig();
-		Location lastCheckpoint;
-
-		int mapID = getPlMapNumber(pk.pkVars.ParkourContainer.get(p.getName()));
-		int PlCheckpoint = getPlCheckpoint(pk.pkVars.ParkourContainer.get(p.getName()));
-
-		if (PlCheckpoint == 1 || !pk.pkVars.LastCheckpointTeleport) // Teleport to map spawn
-		{
-			teleportFirstCheckpoint(p);
-		} else {
-			lastCheckpoint = new Location(pk.getServer().getWorld(cfg.getString("Parkour.map" + mapID + ".world")),
-					cfg.getDouble("Parkour.map" + mapID + ".cp." + PlCheckpoint + ".posX") + 0.5,
-					cfg.getDouble("Parkour.map" + mapID + ".cp." + PlCheckpoint + ".posY"),
-					cfg.getDouble("Parkour.map" + mapID + ".cp." + PlCheckpoint + ".posZ") + 0.5);
-
-			lastCheckpoint.setPitch(p.getLocation().getPitch());
-			lastCheckpoint.setYaw(p.getLocation().getYaw());
-			p.teleport(lastCheckpoint);
-		}
-	}
-
-	public void setPlCheckpoint(String p, int Cp) {
-		String HashTableSrc = pk.pkVars.ParkourContainer.get(p);
-		String[] Splitter = HashTableSrc.split("_");
-		String CpFinal = Splitter[0] + "_" + Splitter[1] + "_" + Cp;
-		pk.pkVars.ParkourContainer.put(p, CpFinal);
-	}
-
-	public void setPlTime(String p, Long Time) {
-		String HashTableSrc = pk.pkVars.ParkourContainer.get(p);
-		String[] Splitter = HashTableSrc.split("_");
-		String TimeFinal = Splitter[0] + "_" + Time + "_" + Splitter[2];
-		pk.pkVars.ParkourContainer.put(p, TimeFinal);
-	}
-
-	public Long getPlTime(String HashTable) {
-		String[] Splitter = HashTable.split("_");
-		return Long.valueOf(Splitter[1]);
-	}
-
-	public int getPlCheckpoint(String HashTable) {
-		String[] Splitter = HashTable.split("_");
-		return Integer.parseInt(Splitter[2]);
-	}
-
-	public int getPlMapNumber(String HashTable) {
-		String[] Splitter = HashTable.split("_");
-		return Integer.parseInt(Splitter[0]);
-	}
-
+	/*
+	 * Map & Checkpoints functions
+	 */
 	public int getCpMapNumber(String HashTable) {
 		String[] Splitter = HashTable.split("_");
 		return Integer.parseInt(Splitter[0]);
@@ -135,15 +56,6 @@ public class ParkourFunctions {
 
 	public boolean mapExist(String mapID) {
 		return pk.getConfig().getInt("Parkour.map" + mapID + ".numberCp") != 0;
-	}
-
-	public boolean isNumber(String number) {
-		try {
-			Integer.parseInt(number);
-			return true;
-		} catch (NumberFormatException e) {
-			return false;
-		}
 	}
 
 	public void intCheckpointsLoc() {
@@ -196,121 +108,15 @@ public class ParkourFunctions {
 		}
 	}
 
-	/*
-	 * 2notnumber = Second line is not a number
-	 * badmap = Map not recognized
-	 * noPermission = No permission to perform the action
-	 * noParkourPermission = user does not have parkour.use
-	 * badsign = Sign is not recognized as valid
-	 * parkourDisabled = parkour is toggled to disabled
-	 * gmChange = When a player tries to change GameMode while in a Parkour
-	 * specifymapid = Map ID is not specified
-	 * notinpk = Not in a parkour map/session
-	 */
-	public void sendError(String status, Player player, Parkour plugin) {
-		String APREFIX = plugin.getAPrefix();
-		String PREFIX = plugin.getPrefix();
-		if(status.equalsIgnoreCase("2notnumber")) {
-			player.sendMessage(APREFIX + pk.pkStrings.defaultError + "The second line must be a number. Please try again.");
-
-		} else if(status.equalsIgnoreCase("badmap")) {
-			player.sendMessage(APREFIX + pk.pkStrings.defaultError + "That map is not recognized. Please try again.");
-
-		} else if(status.equalsIgnoreCase("noPermission")) {
-			player.sendMessage(PREFIX + pk.pkStrings.defaultError + "You do not have permission to do that.");
-
-		} else if (status.equalsIgnoreCase("noParkourPermission")){
-			player.sendMessage(PREFIX + pk.pkStrings.defaultError + "You don't have permission to do this parkour");
-
-		} else if(status.equalsIgnoreCase("badsign")) {
-			player.sendMessage(APREFIX + pk.pkStrings.defaultError + "That sign is not recognized. Please try again.");
-
-		} else if(status.equalsIgnoreCase("parkourDisabled")){
-			player.sendMessage(PREFIX + pk.pkStrings.defaultError + "This parkour is" + ChatColor.RED + " disabled");
-
-		} else if(status.equalsIgnoreCase("gmChange")) {
-			player.sendMessage(APREFIX + pk.pkStrings.defaultError + "You may not change your GameMode while in a Parkour. Please type /pk leave before trying again.");
-
-		} else if(status.equalsIgnoreCase("mapspawnnotset")) {
-			player.sendMessage(PREFIX + pk.pkStrings.defaultError + "You must specify the map ID");
-
-		} else if(status.equalsIgnoreCase("notinpk")) {
-			player.sendMessage(PREFIX + pk.pkStrings.defaultError + "You are not in a parkour, use /pk lobby to return to the lobby");
-
-		}
-	}
-
-	/*
-	 * notUnlocked - User has not unlocked this map
-	 * mapUnlock - User has unlocked the next map
-	 */
-	public void sendInfo(String info, Player player, int mapID, Parkour plugin){
-		String PREFIX = plugin.getPrefix();
-		String nextMapName = plugin.getMapName((plugin.getMapNext(mapID)));
-		String prevMapName = plugin.getMapName(((Parkour) plugin).getMapPrevious(mapID));
-		if(info.equalsIgnoreCase("notUnlocked")) {
-			player.sendMessage(PREFIX + ChatColor.RED + "You have not unlocked this parkour, complete "+ ChatColor.GREEN + prevMapName + ChatColor.RED+" to progress");
-
-		} else if(info.equalsIgnoreCase("mapUnlock")) {
-			player.sendMessage(PREFIX + ChatColor.GOLD + "Map unlocked! - "+ ChatColor.GREEN + nextMapName);
-
-		}
-
-	}
-
-	/* Note Pitch | Note Pitch
-	 * f#	0.500 | F#	1.000
-	 * G	0.525 | G	1.050
-	 * G#	0.550 | G#	1.100
-	 * A	0.600 | A	1.200
-	 * A#	0.650 | A#	1.250
-	 * B	0.675 | B	1.350
-	 * C	0.700 | C	1.400
-	 * C#	0.750 | C#	1.350
-	 * D	0.800 | D	1.600
-	 * D#	0.850 | D#	1.700
-	 * E	0.900 | E	1.750
-	 * F	0.950 | F	1.900
-	 */	
-	public void playJingle(final Player player){
-		new BukkitRunnable(){
-			int count = 0;
-			@Override
-			public void run(){
-				if(count < 4){
-					switch (count){
-					case 0:
-						player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,0.700f);
-						break;
-					case 1:
-						player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,0.900f);
-
-						break;
-					case 2:
-						player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,1.050f);
-						break;
-					case 3:
-						player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,0.700f);
-						player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,1.400f);
-						player.playSound(player.getLocation(), Sound.ORB_PICKUP,0.1f,0.700f);
-						break;
-					}
-				}
-				else{
-					cancel();
-				}
-				count++;
-			}
-		}.runTaskTimer(pk, 0L, 2L);
-	}
-
 	public int maxMapNumber() {
 		return pk.getConfig().getInt("Parkour.mapsnumber");
 	}
 
+	
 	/*
 	 *  Player Functions
 	 */
+	
 	public boolean isPlayerInParkour(Player player) {
 		if(pk.pkVars.ParkourContainer.containsKey(player.getName())) {
 			return true;
@@ -340,14 +146,6 @@ public class ParkourFunctions {
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace(System.out);
 		}
-	}
-
-	public int toInt(String msg) {
-		return Integer.parseInt(msg);
-	}
-
-	public void debug(String msg) {
-		System.out.println("[ CBParkourDebug ] " + msg);
 	}
 
 	public void giveReward(Player p) {
@@ -430,22 +228,151 @@ public class ParkourFunctions {
 		}
 	}
 
-	public <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
-		List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
-		Collections.sort(list, new Comparator<Map.Entry<K, V>>() {
-			@Override
-			public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
-				return (o1.getValue()).compareTo(o2.getValue());
-			}
-		});
+	public void teleportFirstCheckpoint(Player p){
 
-		Map<K, V> result = new LinkedHashMap<>();
-		for (Map.Entry<K, V> entry : list) {
-			result.put(entry.getKey(), entry.getValue());
+		FileConfiguration cfg = pk.getConfig();
+		Location firstCheckpoint;
+
+		int mapID = getPlMapNumber(pk.pkVars.ParkourContainer.get(p.getName()));
+
+		if (cfg.contains("Parkour.map" + mapID + ".spawn")) {
+			firstCheckpoint = new Location(
+					pk.getServer().getWorld(cfg.getString("Parkour.map" + mapID + ".world")),
+					cfg.getDouble("Parkour.map" + mapID + ".spawn.posX"), cfg.getDouble("Parkour.map"
+							+ mapID + ".spawn.posY"), cfg.getDouble("Parkour.map" + mapID + ".spawn.posZ"));
+
+			firstCheckpoint.setPitch((float) cfg.getDouble("Parkour.map" + mapID + ".spawn.posPitch"));
+			firstCheckpoint.setYaw((float) cfg.getDouble("Parkour.map" + mapID + ".spawn.posYaw"));
+
+			p.teleport(firstCheckpoint);
+		} else {
+			firstCheckpoint = new Location(
+					pk.getServer().getWorld(cfg.getString("Parkour.map" + mapID + ".world")),
+					cfg.getDouble("Parkour.map" + mapID + ".cp.1.posX") + 0.5, cfg.getDouble("Parkour.map"
+							+ mapID + ".cp.1.posY"),
+							cfg.getDouble("Parkour.map" + mapID + ".cp.1.posZ") + 0.5);
+
+
+			firstCheckpoint.setPitch(p.getLocation().getPitch());
+			firstCheckpoint.setYaw(p.getLocation().getYaw());
+			p.teleport(firstCheckpoint);
 		}
-		return result;
+	}
+	
+	public void teleportLastCheckpoint(Player p) {
+		FileConfiguration cfg = pk.getConfig();
+		Location lastCheckpoint;
+
+		int mapID = getPlMapNumber(pk.pkVars.ParkourContainer.get(p.getName()));
+		int PlCheckpoint = getPlCheckpoint(pk.pkVars.ParkourContainer.get(p.getName()));
+
+		if (PlCheckpoint == 1 || !pk.pkVars.LastCheckpointTeleport) // Teleport to map spawn
+		{
+			teleportFirstCheckpoint(p);
+		} else {
+			lastCheckpoint = new Location(pk.getServer().getWorld(cfg.getString("Parkour.map" + mapID + ".world")),
+					cfg.getDouble("Parkour.map" + mapID + ".cp." + PlCheckpoint + ".posX") + 0.5,
+					cfg.getDouble("Parkour.map" + mapID + ".cp." + PlCheckpoint + ".posY"),
+					cfg.getDouble("Parkour.map" + mapID + ".cp." + PlCheckpoint + ".posZ") + 0.5);
+
+			lastCheckpoint.setPitch(p.getLocation().getPitch());
+			lastCheckpoint.setYaw(p.getLocation().getYaw());
+			p.teleport(lastCheckpoint);
+		}
+	}
+	
+	public void setPlCheckpoint(String p, int Cp) {
+		String HashTableSrc = pk.pkVars.ParkourContainer.get(p);
+		String[] Splitter = HashTableSrc.split("_");
+		String CpFinal = Splitter[0] + "_" + Splitter[1] + "_" + Cp;
+		pk.pkVars.ParkourContainer.put(p, CpFinal);
+	}
+	
+	public void setPlTime(String p, Long Time) {
+		String HashTableSrc = pk.pkVars.ParkourContainer.get(p);
+		String[] Splitter = HashTableSrc.split("_");
+		String TimeFinal = Splitter[0] + "_" + Time + "_" + Splitter[2];
+		pk.pkVars.ParkourContainer.put(p, TimeFinal);
+	}
+	
+	public Long getPlTime(String HashTable) {
+		String[] Splitter = HashTable.split("_");
+		return Long.valueOf(Splitter[1]);
 	}
 
+	public int getPlCheckpoint(String HashTable) {
+		String[] Splitter = HashTable.split("_");
+		return Integer.parseInt(Splitter[2]);
+	}
+
+	public int getPlMapNumber(String HashTable) {
+		String[] Splitter = HashTable.split("_");
+		return Integer.parseInt(Splitter[0]);
+	}
+	
+	/*
+	 * 2notnumber = Second line is not a number
+	 * badmap = Map not recognized
+	 * noPermission = No permission to perform the action
+	 * noParkourPermission = user does not have parkour.use
+	 * badsign = Sign is not recognized as valid
+	 * parkourDisabled = parkour is toggled to disabled
+	 * gmChange = When a player tries to change GameMode while in a Parkour
+	 * specifymapid = Map ID is not specified
+	 * notinpk = Not in a parkour map/session
+	 */
+	public void sendError(String status, Player player, Parkour plugin) {
+		String APREFIX = plugin.getAPrefix();
+		String PREFIX = plugin.getPrefix();
+		if(status.equalsIgnoreCase("2notnumber")) {
+			player.sendMessage(APREFIX + pk.pkStrings.defaultError + "The second line must be a number. Please try again.");
+
+		} else if(status.equalsIgnoreCase("badmap")) {
+			player.sendMessage(APREFIX + pk.pkStrings.defaultError + "That map is not recognized. Please try again.");
+
+		} else if(status.equalsIgnoreCase("noPermission")) {
+			player.sendMessage(PREFIX + pk.pkStrings.defaultError + "You do not have permission to do that.");
+
+		} else if (status.equalsIgnoreCase("noParkourPermission")){
+			player.sendMessage(PREFIX + pk.pkStrings.defaultError + "You don't have permission to do this parkour");
+
+		} else if(status.equalsIgnoreCase("badsign")) {
+			player.sendMessage(APREFIX + pk.pkStrings.defaultError + "That sign is not recognized. Please try again.");
+
+		} else if(status.equalsIgnoreCase("parkourDisabled")){
+			player.sendMessage(PREFIX + pk.pkStrings.defaultError + "This parkour is" + ChatColor.RED + " disabled");
+
+		} else if(status.equalsIgnoreCase("gmChange")) {
+			player.sendMessage(APREFIX + pk.pkStrings.defaultError + "You may not change your GameMode while in a Parkour. Please type /pk leave before trying again.");
+
+		} else if(status.equalsIgnoreCase("mapspawnnotset")) {
+			player.sendMessage(PREFIX + pk.pkStrings.defaultError + "You must specify the map ID");
+
+		} else if(status.equalsIgnoreCase("notinpk")) {
+			player.sendMessage(PREFIX + pk.pkStrings.defaultError + "You are not in a parkour, use /pk lobby to return to the lobby");
+
+		}
+	}
+
+	/*
+	 * notUnlocked - User has not unlocked this map
+	 * mapUnlock - User has unlocked the next map
+	 */
+	public void sendInfo(String info, Player player, int mapID, Parkour plugin){
+		String PREFIX = plugin.getPrefix();
+		String nextMapName = plugin.getMapName((plugin.getMapNext(mapID)));
+		String prevMapName = plugin.getMapName(((Parkour) plugin).getMapPrevious(mapID));
+		if(info.equalsIgnoreCase("notUnlocked")) {
+			player.sendMessage(PREFIX + ChatColor.RED + "You have not unlocked this parkour, complete "+ ChatColor.GREEN + prevMapName + ChatColor.RED+" to progress");
+
+		} else if(info.equalsIgnoreCase("mapUnlock")) {
+			player.sendMessage(PREFIX + ChatColor.GOLD + "Map unlocked! - "+ ChatColor.GREEN + nextMapName);
+
+		}
+
+	}
+	
+	
 	/*
 	 * PlayerInfo Functions
 	 */
@@ -614,7 +541,92 @@ public class ParkourFunctions {
 	}
 
 
-	//Misc. Functions
+	/*
+	 * Misc Functions
+	 */
+
+	public int toInt(String msg) {
+		return Integer.parseInt(msg);
+	}
+	
+	public boolean isNumber(String number) {
+		try {
+			Integer.parseInt(number);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
+	public void debug(String msg) {
+		System.out.println("[ CBParkourDebug ] " + msg);
+	}
+	
+	/* Note Pitch | Note Pitch
+	 * f#	0.500 | F#	1.000
+	 * G	0.525 | G	1.050
+	 * G#	0.550 | G#	1.100
+	 * A	0.600 | A	1.200
+	 * A#	0.650 | A#	1.250
+	 * B	0.675 | B	1.350
+	 * C	0.700 | C	1.400
+	 * C#	0.750 | C#	1.350
+	 * D	0.800 | D	1.600
+	 * D#	0.850 | D#	1.700
+	 * E	0.900 | E	1.750
+	 * F	0.950 | F	1.900
+	 */	
+	public void playJingle(final Player player){
+		new BukkitRunnable(){
+			int count = 0;
+			@Override
+			public void run(){
+				if(count < 4){
+					switch (count){
+					case 0:
+						player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,0.700f);
+						break;
+					case 1:
+						player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,0.900f);
+
+						break;
+					case 2:
+						player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,1.050f);
+						break;
+					case 3:
+						player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,0.700f);
+						player.playSound(player.getLocation(), Sound.NOTE_PIANO,1,1.400f);
+						player.playSound(player.getLocation(), Sound.ORB_PICKUP,0.1f,0.700f);
+						break;
+					}
+				}
+				else{
+					cancel();
+				}
+				count++;
+			}
+		}.runTaskTimer(pk, 0L, 2L);
+	}
+
+	public <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
+		List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
+		Collections.sort(list, new Comparator<Map.Entry<K, V>>() {
+			@Override
+			public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
+				return (o1.getValue()).compareTo(o2.getValue());
+			}
+		});
+
+		Map<K, V> result = new LinkedHashMap<>();
+		for (Map.Entry<K, V> entry : list) {
+			result.put(entry.getKey(), entry.getValue());
+		}
+		return result;
+	}
+
+
+
+
 
 	//Generates a random string of characters
 	public String generateErrorString(Random rng, String characters, int length) {
