@@ -1,5 +1,6 @@
 package com.citibuild.cbparkour;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -7,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -27,6 +29,7 @@ public class ParkourCommand implements CommandExecutor{
 		String APREFIX = plugin.getAPrefix();
 		Player p = null;
 		UnlockFunctions unlockFuncs = plugin.pkUnlockFuncs;
+		ParkourStrings strings = plugin.pkStrings;
 		
 			if (sender instanceof Player) {
 				p = (Player) sender;
@@ -56,6 +59,7 @@ public class ParkourCommand implements CommandExecutor{
 						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " resetScores <mapID>" + ChatColor.WHITE + "- Reset All scores for a map");
 						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " pReset <Player> <mapID> | all" + ChatColor.WHITE + " - Reset scores for a player");
 						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " reload " + ChatColor.WHITE + " - Reloads the config for " + plugin.getName());
+						p.sendMessage(APREFIX + ChatColor.DARK_GREEN + "/" + CommandLabel + " unlock <username> <mapID>" + ChatColor.WHITE + " - Unlocks a level for a player");
 					}
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " join <mapID>" + ChatColor.WHITE + " - Join a map");
 					p.sendMessage(PREFIX + ChatColor.GRAY + "/" + CommandLabel + " leave" + ChatColor.WHITE + " - Leave the map");
@@ -718,6 +722,75 @@ public class ParkourCommand implements CommandExecutor{
 							}
 						} else {
 							p.sendMessage(APREFIX + ChatColor.RED + "Correct usage /pk mapinfo <map ID>");
+						}
+					} 
+	/* Unlock */
+					else if (args[0].equalsIgnoreCase("unlock")) {
+						if (Parkour.permission.has(p,"parkour.admin")) {
+							if(args.length == 3) {
+								if(plugin.pkFuncs.isNumber(args[2]) || args[2].equals("*")) {
+									UnlockFunctions uFuncs = plugin.pkUnlockFuncs;
+									PlayerUnlocks pUnlocks = new PlayerUnlocks(p);
+									
+									if(Bukkit.getPlayer(args[1]).isOnline()) {
+										Player tPlayer = Bukkit.getPlayer(args[1]);
+										uFuncs.loadPlayer(tPlayer);
+										pUnlocks = plugin.pkVars.loadedPUnlocks.get(tPlayer.getName().toLowerCase());
+									} else {
+										OfflinePlayer oPlayer = Bukkit.getOfflinePlayer(args[1]);
+										pUnlocks = uFuncs.loadOfflinePlayer(oPlayer);
+
+									}
+
+									if(pUnlocks.getUnlocks().contains(args[2])) {
+										p.sendMessage(APREFIX + strings.defaultError + "User " + strings.highlightOne + pUnlocks.getUsername() 
+												+ strings.defaultError + " already has " + strings.highlightTwo + ((args[2].equals("*") ? "*" : plugin.getMapName(plugin.pkFuncs.toInt(args[2])))) 
+												+ strings.defaultError + " unlocked");
+
+									} else {
+
+										ArrayList<String> unlocks = pUnlocks.getUnlocks();
+										if(!unlocks.contains(args[2]) && !unlocks.contains("*")) {
+											unlocks.add(args[2]);
+											pUnlocks.setUnlocks(unlocks);
+										}
+										
+										if(pUnlocks.getUnlocks().contains(args[2])) {
+
+											if(Bukkit.getPlayerExact(args[1]).isOnline()) {
+												Player player = Bukkit.getPlayerExact(args[1]);
+												uFuncs.savePlayer(player);
+											} else {
+												OfflinePlayer oPlayer = Bukkit.getOfflinePlayer(args[1]);
+												uFuncs.saveOfflinePlayer(oPlayer, pUnlocks);
+											}
+
+											p.sendMessage(APREFIX + strings.defaultColor + "Map " + strings.highlightTwo + 
+													//Yup, one liner IF statement right there. I finally found a use for them
+													((args[2].equals("*") ? "*" : plugin.getMapName(plugin.pkFuncs.toInt(args[2])))) + strings.defaultColor 
+													+ " unlocked for " + strings.highlightOne + pUnlocks.getUsername());
+
+										} else if(pUnlocks.getUnlocks().contains(("*"))) {
+											p.sendMessage(APREFIX + strings.defaultError + "User " + strings.highlightOne + pUnlocks.getUsername() 
+													+ strings.defaultError + " already has all levels unlocked");
+
+										} else {
+											p.sendMessage(APREFIX + strings.defaultError + "Could not unlock " + strings.highlightTwo + 
+													((args[2].equals("*") ? "*" : plugin.getMapName(plugin.pkFuncs.toInt(args[2])))) + strings.defaultError
+													+ " for " + strings.highlightOne + pUnlocks.getUsername());
+										}
+									}
+
+								} else {
+									p.sendMessage(APREFIX + ChatColor.RED + "Correct usage /pk unlock <username> <map ID>");
+								}
+
+							} else {
+								p.sendMessage(APREFIX + ChatColor.RED + "Correct usage /pk unlock <username> <map ID>");
+							}
+
+						} else{
+							plugin.pkFuncs.sendError("noPermission", p, plugin);
 						}
 					}
 

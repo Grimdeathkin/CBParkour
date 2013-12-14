@@ -246,11 +246,17 @@ public class PlayerListener implements Listener{
 		}
 	}
 	
+	/*
+	 * Clear drops on player death, incase they die for some reason
+	 */
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		event.getDrops().clear();
 	}
 	
+	/*
+	 * Give Parkour items to player on respawn
+	 */
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		plugin.pkItems.giveItems(event.getPlayer());
