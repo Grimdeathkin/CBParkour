@@ -68,17 +68,17 @@ public class UnlockFunctions {
 	@SuppressWarnings("unchecked")
 	public void loadPlayer(Player player) {
 		PlayerUnlocks pUnlocks = new PlayerUnlocks(player);
-		String userPath = "username." + pUnlocks.getUsername();
-		getUnlocksConfig().createSection((userPath + ".unlocks"));
+		String unlocksPath = "username." + player.getName().toLowerCase() + ".unlocks";
 		ArrayList<String> unlocks = new ArrayList<String>();
-		if(unlocks.isEmpty() || unlocks == null) {
+		
+		if(!getUnlocksConfig().contains(unlocksPath)) {
+			getUnlocksConfig().createSection(unlocksPath);
 			unlocks.add("0");
-
+		} else {
+			unlocks = (ArrayList<String>) getUnlocksConfig().getList(unlocksPath);
 		}
-		unlocks = (ArrayList<String>) getUnlocksConfig().getList(userPath + ".unlocks");
-
+		
 		pUnlocks.setUnlocks(unlocks);
-
 		pk.pkVars.loadedPUnlocks.put(pUnlocks.getUsername(), pUnlocks);
 
 	}
@@ -110,7 +110,7 @@ public class UnlockFunctions {
 	}
 
 	public PlayerUnlocks getPlayerUnlocks(Player player) {
-		if(pk.pkVars.loadedPUnlocks.containsKey(player.getName().toLowerCase())) {
+		if(!pk.pkVars.loadedPUnlocks.containsKey(player.getName().toLowerCase())) {
 			loadPlayer(player);
 		}
 
@@ -160,20 +160,14 @@ public class UnlockFunctions {
 		PlayerUnlocks pUnlocks = pk.pkVars.loadedPUnlocks.get(player.getName().toLowerCase());
 		int prevMap = pk.getMapPrevious(level);
 
-		if(pUnlocks.getUnlocks() == null || pUnlocks.getUnlocks().isEmpty()) {
-			ArrayList<String> unlcks = new ArrayList<String>();
-			unlcks.add("0");
-			pUnlocks.setUnlocks(unlcks);
-		}
-
 		if(prevMap == 0) {
 			return true;
 		}
-
+		
 		if(pUnlocks.getUnlocks().contains(String.valueOf(prevMap))) {
 			return true;
 		}
-
+		
 		if(pUnlocks.getUnlocks().contains("*")) {
 			return true;
 		}
