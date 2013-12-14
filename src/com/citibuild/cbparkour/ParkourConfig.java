@@ -3,6 +3,7 @@ package com.citibuild.cbparkour;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -85,6 +86,10 @@ public class ParkourConfig {
 		cfg.addDefault("options.BroadcastOnRecord.enable", true);
 		cfg.addDefault("options.BroadcastOnRecord.message", "&7&oPLAYER &aset a new record of &7&oTIME &aon &7&oMAPNAME");
 		cfg.addDefault("options.PrefixString", "PK");
+		
+		ArrayList<String> newAllow = new ArrayList<String>();
+		newAllow.add("pk");
+		cfg.addDefault("options.AllowedCommands", newAllow);
 
 		cfg.addDefault("Parkour.mapsnumber", 0);
 
@@ -107,6 +112,11 @@ public class ParkourConfig {
 		}
 
 		pk.pkVars.PrefixString = cfg.getString("options.PrefixString");
+		
+		pk.pkVars.allowedCommands = new ArrayList<String>();
+		for(Object item: cfg.getList("options.AllowedCommands")) {
+			pk.pkVars.allowedCommands.add(item.toString().toLowerCase());
+		}
 
 		//ParkourItems Options
 		pk.pkItems.slime_cmd = cfg.getString("options.slime_cmd");

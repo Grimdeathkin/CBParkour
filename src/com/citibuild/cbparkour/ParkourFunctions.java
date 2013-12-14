@@ -320,6 +320,7 @@ public class ParkourFunctions {
 	 * gmChange = When a player tries to change GameMode while in a Parkour
 	 * specifymapid = Map ID is not specified
 	 * notinpk = Not in a parkour map/session
+	 * commanddisabled = Command disabled because player is in a Parkour
 	 */
 	public void sendError(String status, Player player, Parkour plugin) {
 		String APREFIX = plugin.getAPrefix();
@@ -351,6 +352,9 @@ public class ParkourFunctions {
 		} else if(status.equalsIgnoreCase("notinpk")) {
 			player.sendMessage(PREFIX + pk.pkStrings.defaultError + "You are not in a parkour, use /pk lobby to return to the lobby");
 
+		} else if(status.equalsIgnoreCase("commanddisabled")) {
+			player.sendMessage(PREFIX + pk.pkStrings.defaultError + "You are in a parkour and cannot use that command");
+			
 		}
 	}
 
