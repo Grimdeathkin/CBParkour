@@ -101,7 +101,7 @@ public class ParkourConfig {
 		pk.pkVars.setInvincibleWhileParkour(cfg.getBoolean("options.InvincibleWhileParkour"));
 		pk.pkVars.setCheckpointEffect(cfg.getBoolean("options.CheckpointEffect"));
 		pk.pkVars.setBroadcastMessage(cfg.getBoolean("options.BroadcastOnRecord.enable"));
-		pk.pkVars.setFullHunger(cfg.getBoolean("options.BroadcastOnRecord.enable"));
+		pk.pkVars.setFullHunger(cfg.getBoolean("options.setFullHungerOnParkour"));
 		pk.pkVars.LastCheckpointTeleport = cfg.getBoolean("options.LastCheckpointTeleport");
 
 		pk.pkVars.setRewardIfBetterScore(cfg.getBoolean("rewards.rewardIfBetterScore"));

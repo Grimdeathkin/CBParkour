@@ -651,6 +651,11 @@ public class ParkourFunctions {
 		}
 		return new String(text);
 	}
+	
+	public void playEatSound(Player player) {
+		player.playSound(player.getLocation(), Sound.EAT, 50, 1);
+		player.playSound(player.getLocation(), Sound.EAT, 50, 5);
+	}
 
 
 }

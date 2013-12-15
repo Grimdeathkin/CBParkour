@@ -420,7 +420,8 @@ public class PlayerListener implements Listener{
 								}
 							}
 							if (plugin.pkVars.isFullHunger()) {
-								p.setFoodLevel(20);
+								plugin.pkFuncs.healPlayer(p);
+								plugin.pkFuncs.playEatSound(p);
 							}
 						} else {
 							p.sendMessage(plugin.getPrefix() + plugin.pkStrings.defaultError + "You must start at the checkpoint 1");
@@ -451,7 +452,8 @@ public class PlayerListener implements Listener{
 									}
 								}
 								if (plugin.pkVars.isFullHunger()) {
-									p.setFoodLevel(20);
+									plugin.pkFuncs.healPlayer(p);
+									plugin.pkFuncs.playEatSound(p);
 								}
 
 							} else {
@@ -477,7 +479,8 @@ public class PlayerListener implements Listener{
 									}
 								}
 								if (plugin.pkVars.isFullHunger()) {
-									p.setFoodLevel(20);
+									plugin.pkFuncs.healPlayer(p);
+									plugin.pkFuncs.playEatSound(p);
 								}
 								plugin.getServer().getPluginManager().callEvent(new ParkourStartEvent(plugin, p, Map, true));
 								p.sendMessage(plugin.getPrefix() + plugin.pkStrings.defaultColor + "You have restarted your time for " + plugin.pkStrings.highlightTwo + plugin.getMapName(Map));
@@ -487,6 +490,10 @@ public class PlayerListener implements Listener{
 							} 
 							/* Player completes course */
 							else if ((Checkpoint == TotalCheckpoints) && (PlCheckpoint == (Checkpoint - 1))) {
+								if (plugin.pkVars.isFullHunger()) {
+									plugin.pkFuncs.healPlayer(p);
+									plugin.pkFuncs.playEatSound(p);
+								}
 								if (plugin.pkVars.isCheckpointEffect()) {
 									p.playEffect(bLoc, Effect.POTION_BREAK, 2);
 								}
@@ -603,6 +610,10 @@ public class PlayerListener implements Listener{
 									}, 5L);
 								}
 							} else if (PlCheckpoint == (Checkpoint - 1)) {
+								if (plugin.pkVars.isFullHunger()) {
+									plugin.pkFuncs.healPlayer(p);
+									plugin.pkFuncs.playEatSound(p);
+								}
 
 								long totalTime = System.currentTimeMillis()                                        
 										- plugin.pkFuncs.getPlTime(plugin.pkVars.ParkourContainer.get(p.getName()));
