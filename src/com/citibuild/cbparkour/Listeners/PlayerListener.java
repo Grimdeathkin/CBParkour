@@ -53,6 +53,14 @@ public class PlayerListener implements Listener{
 		plugin.pkFuncs.savePlayerInfo(player);
 		plugin.pkUnlockFuncs.savePlayer(player);
 		
+		if(plugin.pkVars.loadedPUnlocks.containsKey(player.getName().toLowerCase())) {
+			plugin.pkVars.loadedPUnlocks.remove(player.getName().toLowerCase());
+		}
+		
+		if(plugin.pkVars.loadedUsers.containsKey(player.getName())) {
+			plugin.pkVars.loadedUsers.remove(player.getName());
+		}
+		
 		if (plugin.pkFuncs.isPlayerInParkour(e.getPlayer())) {
 			plugin.pkVars.ParkourContainer.remove(e.getPlayer().getName());
 		}
