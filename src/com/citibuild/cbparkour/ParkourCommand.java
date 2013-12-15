@@ -164,6 +164,19 @@ public class ParkourCommand implements CommandExecutor{
 							plugin.pkFuncs.sendError("noPermission", p, plugin);
 						}
 					}
+	/* Restart */
+					else if (args[0].equalsIgnoreCase("restart")) {
+						if (Parkour.permission.has(p,"parkour.use")) {
+							if (plugin.pkFuncs.isPlayerInParkour(p)) {
+								plugin.pkFuncs.teleportFirstCheckpoint(p);
+								
+							} else {
+								plugin.pkFuncs.sendError("notinpk", p, plugin);
+							}
+						} else{
+							plugin.pkFuncs.sendError("noPermission", p, plugin);
+						}
+					}
 	/* Checkpoint */
 					else if ((args[0].equalsIgnoreCase("cp")) || (args[0].equalsIgnoreCase("checkpoint"))) {
 						if (Parkour.permission.has(p, "parkour.use")) {
