@@ -53,6 +53,14 @@ public class PlayerListener implements Listener{
 		plugin.pkFuncs.savePlayerInfo(player);
 		plugin.pkUnlockFuncs.savePlayer(player);
 		
+		if(plugin.pkVars.loadedPUnlocks.containsKey(player.getName().toLowerCase())) {
+			plugin.pkVars.loadedPUnlocks.remove(player.getName().toLowerCase());
+		}
+		
+		if(plugin.pkVars.loadedUsers.containsKey(player.getName())) {
+			plugin.pkVars.loadedUsers.remove(player.getName());
+		}
+		
 		if (plugin.pkFuncs.isPlayerInParkour(e.getPlayer())) {
 			plugin.pkVars.ParkourContainer.remove(e.getPlayer().getName());
 		}
@@ -255,6 +263,31 @@ public class PlayerListener implements Listener{
 		event.getDrops().clear();
 	}
 	
+	@EventHandler
+	public void onPlayerHealthChange(EntityDamageEvent event) {
+		if(event.getEntity() instanceof Player) {
+			Player player = (Player) event.getEntity();
+			if((player.getHealth() - event.getDamage()) <= 0) {
+				event.setCancelled(true);
+				final Player p = player;
+				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+					@Override
+					public void run() {
+						plugin.pkFuncs.healPlayer(p);
+					}
+				}, 5L);
+				if(plugin.pkFuncs.isPlayerInParkour(player)) {
+					plugin.pkFuncs.teleportLastCheckpoint(player);
+				} else {
+					if(plugin.pkVars.getLobby() != null) {
+						player.teleport(plugin.pkVars.getLobby());
+					}
+				}
+			}
+		}
+		
+	}
+	
 	/*
 	 * Give Parkour items to player on respawn
 	 */
@@ -321,7 +354,7 @@ public class PlayerListener implements Listener{
 							plugin.pkVars.loadedUsers.get(p).setPrevGMSet(false);
 							plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
 							p.sendMessage(plugin.getPrefix() + plugin.pkStrings.defaultColor + "You have been returned to the lobby");
-							if(plugin.pkVars.ParkourContainer.containsKey(p.getName())) {
+							if(plugin.pkFuncs.isPlayerInParkour(p)) {
 								plugin.pkVars.ParkourContainer.remove(p.getName());
 							}
 						}
@@ -336,7 +369,7 @@ public class PlayerListener implements Listener{
 							plugin.pkVars.loadedUsers.get(p.getName()).setPrevGMSet(false);
 							plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
 							p.sendMessage(plugin.getPrefix() + plugin.pkStrings.defaultColor + "You have been returned to the lobby");
-							if(plugin.pkVars.ParkourContainer.containsKey(p.getName())) {
+							if(plugin.pkFuncs.isPlayerInParkour(p)) {
 								plugin.pkVars.ParkourContainer.remove(p.getName());
 							}
 						}
@@ -352,7 +385,7 @@ public class PlayerListener implements Listener{
 								plugin.pkVars.loadedUsers.get(p.getName()).setPrevGMSet(false);
 								plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
 								p.sendMessage(plugin.getPrefix() + plugin.pkStrings.defaultColor + "You have been returned to the lobby");
-								if(plugin.pkVars.ParkourContainer.containsKey(p.getName())) {
+								if(plugin.pkFuncs.isPlayerInParkour(p)) {
 									plugin.pkVars.ParkourContainer.remove(p.getName());
 								}
 							}
@@ -368,7 +401,7 @@ public class PlayerListener implements Listener{
 							plugin.pkFuncs.loadPlayerInfo(p);
 							plugin.pkVars.loadedUsers.get(p.getName()).setPrevGM(p.getGameMode());
 							plugin.pkVars.loadedUsers.get(p.getName()).setPrevGMSet(true);
-							
+							plugin.pkFuncs.healPlayer(p);
 							p.setGameMode(GameMode.ADVENTURE);
 							plugin.getServer().getPluginManager().callEvent(new ParkourStartEvent(plugin, p, Map, false));
 
@@ -387,7 +420,8 @@ public class PlayerListener implements Listener{
 								}
 							}
 							if (plugin.pkVars.isFullHunger()) {
-								p.setFoodLevel(20);
+								plugin.pkFuncs.healPlayer(p);
+								plugin.pkFuncs.playEatSound(p);
 							}
 						} else {
 							p.sendMessage(plugin.getPrefix() + plugin.pkStrings.defaultError + "You must start at the checkpoint 1");
@@ -418,7 +452,8 @@ public class PlayerListener implements Listener{
 									}
 								}
 								if (plugin.pkVars.isFullHunger()) {
-									p.setFoodLevel(20);
+									plugin.pkFuncs.healPlayer(p);
+									plugin.pkFuncs.playEatSound(p);
 								}
 
 							} else {
@@ -434,6 +469,7 @@ public class PlayerListener implements Listener{
 								if(p.getGameMode() != GameMode.ADVENTURE) {
 									p.setGameMode(GameMode.ADVENTURE);
 								}
+								plugin.pkFuncs.healPlayer(p);
 								if (plugin.pkVars.isCheckpointEffect()) {
 									p.playEffect(bLoc, Effect.POTION_BREAK, 2);
 								}
@@ -443,7 +479,8 @@ public class PlayerListener implements Listener{
 									}
 								}
 								if (plugin.pkVars.isFullHunger()) {
-									p.setFoodLevel(20);
+									plugin.pkFuncs.healPlayer(p);
+									plugin.pkFuncs.playEatSound(p);
 								}
 								plugin.getServer().getPluginManager().callEvent(new ParkourStartEvent(plugin, p, Map, true));
 								p.sendMessage(plugin.getPrefix() + plugin.pkStrings.defaultColor + "You have restarted your time for " + plugin.pkStrings.highlightTwo + plugin.getMapName(Map));
@@ -453,6 +490,10 @@ public class PlayerListener implements Listener{
 							} 
 							/* Player completes course */
 							else if ((Checkpoint == TotalCheckpoints) && (PlCheckpoint == (Checkpoint - 1))) {
+								if (plugin.pkVars.isFullHunger()) {
+									plugin.pkFuncs.healPlayer(p);
+									plugin.pkFuncs.playEatSound(p);
+								}
 								if (plugin.pkVars.isCheckpointEffect()) {
 									p.playEffect(bLoc, Effect.POTION_BREAK, 2);
 								}
@@ -569,6 +610,10 @@ public class PlayerListener implements Listener{
 									}, 5L);
 								}
 							} else if (PlCheckpoint == (Checkpoint - 1)) {
+								if (plugin.pkVars.isFullHunger()) {
+									plugin.pkFuncs.healPlayer(p);
+									plugin.pkFuncs.playEatSound(p);
+								}
 
 								long totalTime = System.currentTimeMillis()                                        
 										- plugin.pkFuncs.getPlTime(plugin.pkVars.ParkourContainer.get(p.getName()));
@@ -622,7 +667,7 @@ public class PlayerListener implements Listener{
 	@EventHandler
 	public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
-		if(plugin.pkVars.ParkourContainer.containsKey(player.getName())) {
+		if(plugin.pkFuncs.isPlayerInParkour(player)) {
 			String[] args = event.getMessage().split(" ");
 			String command = args[0].replaceAll("/", "");
 			ArrayList<String> allowed = plugin.pkVars.allowedCommands;

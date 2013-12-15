@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -157,6 +158,11 @@ public class UnlockFunctions {
 	public void resetPlayerUnlocks(String username) {
 		ArrayList<String> newUnlocks = new ArrayList<String>();
 		newUnlocks.add("0");
+		for(Player p: Bukkit.getOnlinePlayers()) {
+			if(p.getName().equalsIgnoreCase(username)) {
+				pk.pkVars.loadedPUnlocks.get(username.toLowerCase()).setUnlocks(newUnlocks);
+			}
+		}
 		getUnlocksConfig().set("username." + username.toLowerCase() + ".unlocks", newUnlocks);
 		saveUnlocksConfig();
 	}

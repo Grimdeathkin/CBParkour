@@ -27,6 +27,8 @@ import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class ParkourFunctions {
@@ -629,7 +631,15 @@ public class ParkourFunctions {
 	}
 
 
-
+	public void healPlayer(Player player) {
+		double amount = player.getMaxHealth() - player.getHealth();
+        EntityRegainHealthEvent healEvent = new EntityRegainHealthEvent(player, amount, RegainReason.CUSTOM);
+        pk.getServer().getPluginManager().callEvent(healEvent);
+        
+        player.setHealth(player.getMaxHealth());
+		player.setFoodLevel(20);
+		player.setFireTicks(0);
+	}
 
 
 	//Generates a random string of characters
@@ -640,6 +650,13 @@ public class ParkourFunctions {
 			text[i] = characters.charAt(rng.nextInt(characters.length()));
 		}
 		return new String(text);
+	}
+	
+	public void playEatSound(Player player) {
+		if(player.getHealth() != player.getMaxHealth() && player.getFoodLevel() != 20) {
+			player.playSound(player.getLocation(), Sound.EAT, 50, 1);
+			player.playSound(player.getLocation(), Sound.EAT, 50, 5);
+		}
 	}
 
 
