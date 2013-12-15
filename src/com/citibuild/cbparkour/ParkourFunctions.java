@@ -653,8 +653,10 @@ public class ParkourFunctions {
 	}
 	
 	public void playEatSound(Player player) {
-		player.playSound(player.getLocation(), Sound.EAT, 50, 1);
-		player.playSound(player.getLocation(), Sound.EAT, 50, 5);
+		if(player.getHealth() != player.getMaxHealth() && player.getFoodLevel() != 20) {
+			player.playSound(player.getLocation(), Sound.EAT, 50, 1);
+			player.playSound(player.getLocation(), Sound.EAT, 50, 5);
+		}
 	}
 
 
