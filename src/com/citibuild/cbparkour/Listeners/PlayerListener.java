@@ -255,6 +255,31 @@ public class PlayerListener implements Listener{
 		event.getDrops().clear();
 	}
 	
+	@EventHandler
+	public void onPlayerHealthChange(EntityDamageEvent event) {
+		if(event.getEntity() instanceof Player) {
+			Player player = (Player) event.getEntity();
+			if((player.getHealth() - event.getDamage()) <= 0) {
+				event.setCancelled(true);
+				final Player p = player;
+				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+					@Override
+					public void run() {
+						plugin.pkFuncs.healPlayer(p);
+					}
+				}, 5L);
+				if(plugin.pkFuncs.isPlayerInParkour(player)) {
+					plugin.pkFuncs.teleportLastCheckpoint(player);
+				} else {
+					if(plugin.pkVars.getLobby() != null) {
+						player.teleport(plugin.pkVars.getLobby());
+					}
+				}
+			}
+		}
+		
+	}
+	
 	/*
 	 * Give Parkour items to player on respawn
 	 */
@@ -321,7 +346,7 @@ public class PlayerListener implements Listener{
 							plugin.pkVars.loadedUsers.get(p).setPrevGMSet(false);
 							plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
 							p.sendMessage(plugin.getPrefix() + plugin.pkStrings.defaultColor + "You have been returned to the lobby");
-							if(plugin.pkVars.ParkourContainer.containsKey(p.getName())) {
+							if(plugin.pkFuncs.isPlayerInParkour(p)) {
 								plugin.pkVars.ParkourContainer.remove(p.getName());
 							}
 						}
@@ -336,7 +361,7 @@ public class PlayerListener implements Listener{
 							plugin.pkVars.loadedUsers.get(p.getName()).setPrevGMSet(false);
 							plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
 							p.sendMessage(plugin.getPrefix() + plugin.pkStrings.defaultColor + "You have been returned to the lobby");
-							if(plugin.pkVars.ParkourContainer.containsKey(p.getName())) {
+							if(plugin.pkFuncs.isPlayerInParkour(p)) {
 								plugin.pkVars.ParkourContainer.remove(p.getName());
 							}
 						}
@@ -352,7 +377,7 @@ public class PlayerListener implements Listener{
 								plugin.pkVars.loadedUsers.get(p.getName()).setPrevGMSet(false);
 								plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
 								p.sendMessage(plugin.getPrefix() + plugin.pkStrings.defaultColor + "You have been returned to the lobby");
-								if(plugin.pkVars.ParkourContainer.containsKey(p.getName())) {
+								if(plugin.pkFuncs.isPlayerInParkour(p)) {
 									plugin.pkVars.ParkourContainer.remove(p.getName());
 								}
 							}
@@ -368,7 +393,7 @@ public class PlayerListener implements Listener{
 							plugin.pkFuncs.loadPlayerInfo(p);
 							plugin.pkVars.loadedUsers.get(p.getName()).setPrevGM(p.getGameMode());
 							plugin.pkVars.loadedUsers.get(p.getName()).setPrevGMSet(true);
-							
+							plugin.pkFuncs.healPlayer(p);
 							p.setGameMode(GameMode.ADVENTURE);
 							plugin.getServer().getPluginManager().callEvent(new ParkourStartEvent(plugin, p, Map, false));
 
@@ -434,6 +459,7 @@ public class PlayerListener implements Listener{
 								if(p.getGameMode() != GameMode.ADVENTURE) {
 									p.setGameMode(GameMode.ADVENTURE);
 								}
+								plugin.pkFuncs.healPlayer(p);
 								if (plugin.pkVars.isCheckpointEffect()) {
 									p.playEffect(bLoc, Effect.POTION_BREAK, 2);
 								}
@@ -622,7 +648,7 @@ public class PlayerListener implements Listener{
 	@EventHandler
 	public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
-		if(plugin.pkVars.ParkourContainer.containsKey(player.getName())) {
+		if(plugin.pkFuncs.isPlayerInParkour(player)) {
 			String[] args = event.getMessage().split(" ");
 			String command = args[0].replaceAll("/", "");
 			ArrayList<String> allowed = plugin.pkVars.allowedCommands;

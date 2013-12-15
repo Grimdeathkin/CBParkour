@@ -147,6 +147,7 @@ public class ParkourCommand implements CommandExecutor{
 							if (plugin.pkFuncs.isPlayerInParkour(p)) {
 								p.sendMessage(PREFIX + plugin.pkStrings.defaultColor + "You have left the parkour");
 								plugin.pkVars.ParkourContainer.remove(p.getName());
+								plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
 								if (plugin.pkVars.getLobby() != null) {
 									p.teleport(plugin.pkVars.getLobby());
 									p.setGameMode(plugin.pkVars.loadedUsers.get(p.getName()).getPrevGM());
