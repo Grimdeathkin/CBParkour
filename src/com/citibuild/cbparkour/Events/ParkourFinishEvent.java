@@ -25,7 +25,7 @@ public class ParkourFinishEvent extends Event
 		plugin.pkVars.loadedUsers.get(player.getName()).setTime(time);
 		plugin.pkVars.loadedUsers.get(player.getName()).setCheckpoint(0);
 		plugin.pkFuncs.savePlayerInfo(player);
-		
+		plugin.pkFuncs.healPlayer(player);
 		plugin.pkUnlockFuncs.addUnlockedLevel(player, String.valueOf(mapID));
 	}
 	
