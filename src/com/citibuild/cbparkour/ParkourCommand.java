@@ -95,7 +95,6 @@ public class ParkourCommand implements CommandExecutor{
 
 										if (plugin.pkVars.toggleParkour.get(mapID)) {
 											
-											//if(Parkour.permission.has(p, "parkour.completed.map" + plugin.getMapPrevious(mapID)) || plugin.getMapPrevious(mapID) == 0){
 											if(unlockFuncs.levelUnlocked(p, mapID)) {
 													
 													if (plugin.pkFuncs.isPlayerInParkour(p)) {
@@ -609,7 +608,6 @@ public class ParkourCommand implements CommandExecutor{
 
 										if (KeySplit[1].equalsIgnoreCase(playerName)) {
 											if (DeleteOnAllMaps) {
-												//Parkour.permission.playerRemove(targetPlayer, "parkour.completed.map" +KeySplit[0]);
 												unlockFuncs.resetPlayerUnlocks(playerName);
 												it.remove();
 												PlayerFound = true;
@@ -617,7 +615,6 @@ public class ParkourCommand implements CommandExecutor{
 												PlayerFound = true;
 												it.remove();
 												unlockFuncs.lockLevel(targetPlayer, Integer.getInteger(mapID));
-												//Parkour.permission.playerRemove(targetPlayer, "parkour.completed.map" +mapID);
 											}
 										}
 									}
