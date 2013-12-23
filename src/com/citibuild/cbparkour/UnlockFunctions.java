@@ -39,7 +39,7 @@ public class UnlockFunctions {
 		}
 	}
 
-	private FileConfiguration getUnlocksConfig() {
+	public FileConfiguration getUnlocksConfig() {
 		if (playerUnlocksConfig == null) {
 			reloadUnlocksConfig();
 		}
