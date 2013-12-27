@@ -147,6 +147,7 @@ public class ParkourCommand implements CommandExecutor{
 								p.sendMessage(PREFIX + plugin.pkStrings.defaultColor + "You have left the parkour");
 								plugin.pkVars.ParkourContainer.remove(p.getName());
 								plugin.pkVars.loadedUsers.get(p.getName()).setMapID(0);
+								plugin.pkFuncs.savePlayerInfo(p);
 								if (plugin.pkVars.getLobby() != null) {
 									p.teleport(plugin.pkVars.getLobby());
 									p.setGameMode(plugin.pkVars.loadedUsers.get(p.getName()).getPrevGM());
@@ -806,7 +807,9 @@ public class ParkourCommand implements CommandExecutor{
 						} else{
 							plugin.pkFuncs.sendError("noPermission", p, plugin);
 						}
-					} else if(args[0].equalsIgnoreCase("transfer")) {
+					}  
+	/* Transfer Unlocks */
+					else if(args[0].equalsIgnoreCase("transfer")) {
 						if(Parkour.permission.has(p, "parkour.admin")) {
 							if(args.length == 3) {
 								PlayerUnlocks pUnlocks = null;
