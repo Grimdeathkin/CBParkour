@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -54,6 +55,25 @@ public class ParkourConfig {
 		pk.pkFuncs.intCheckpointsLoc();
 
 		pk.pkItems.loadStartItems();
+		
+		Logger log = pk.getLogger();
+		String space = "* ";
+		String dashes = "-------------------------------------";
+		
+		log.info(dashes);
+		int totalUnlocks = pk.pkUnlockFuncs.getUnlocksConfig().getConfigurationSection("username").getKeys(false).size();
+		int totalPInfo = pk.pkFuncs.getPlayerInfoConfig().getConfigurationSection("username").getKeys(false).size();
+		if(Bukkit.getServer().getOnlinePlayers().length > 0) {
+			log.info("There are " + Bukkit.getOnlinePlayers().length + " players online.");
+			log.info(space + "Player Info's Loaded: " + pk.pkVars.loadedUsers.size() + "/" + totalPInfo);
+			log.info(space + "Player Unlock's Loaded: " + pk.pkVars.loadedPUnlocks.size() + "/" + totalUnlocks);
+		} else {
+			log.info("There are no players online.");
+			log.info(space + "Total Player Info's: " + totalPInfo);
+			log.info(space + "Total Player Unlocks's: " + totalUnlocks);
+		}
+		log.info(dashes);
+		
 	}
 
 	public void LoadCfg() {
