@@ -1,31 +1,27 @@
-package com.citibuild.cbparkour.Events;
+package com.pistonmc.grim.spnparkour.Events;
 
+import com.pistonmc.grim.spnparkour.Parkour;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import com.citibuild.cbparkour.Parkour;
-
-public class ParkourCheckpointEvent extends Event
+public class ParkourStartEvent extends Event
 {
 	private static final HandlerList handlers = new HandlerList();
 	
 	private final Player player;
 	private final int mapID;
-	private final int CheckpointNumber;
-	private final long time;
+	private final boolean restart;
 	
-	public ParkourCheckpointEvent(Parkour plugin, Player player, int mapID, int CheckpointNumber, long time) {
+	public ParkourStartEvent(Parkour plugin, Player player, int mapID, boolean restart) {
 		this.player = player;
 		this.mapID = mapID;
-		this.CheckpointNumber = CheckpointNumber;
-		this.time = time;
+		this.restart = restart;
 		
 		plugin.pkVars.loadedUsers.get(player.getName()).setMapID(mapID);
-		plugin.pkVars.loadedUsers.get(player.getName()).setTime(time);
-		plugin.pkVars.loadedUsers.get(player.getName()).setCheckpoint(CheckpointNumber + 1);
+		plugin.pkVars.loadedUsers.get(player.getName()).setTime(0L);
+		plugin.pkVars.loadedUsers.get(player.getName()).setCheckpoint(1);
 		plugin.pkFuncs.savePlayerInfo(player);
-		
 	}
 	
 	public Player getPlayer() {
@@ -36,12 +32,8 @@ public class ParkourCheckpointEvent extends Event
 		return mapID;
 	}
 	
-	public int getCheckpointNumber() {
-		return CheckpointNumber;
-	}
-	
-	public long getTime() {
-		return time;
+	public boolean isRestarting() {
+		return restart;
 	}
 	
     @Override

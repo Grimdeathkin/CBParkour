@@ -1,8 +1,9 @@
-package com.citibuild.cbparkour.Listeners;
+package com.pistonmc.grim.spnparkour.Listeners;
 
 import java.util.ArrayList;
 import java.util.Map;
 
+import com.pistonmc.grim.spnparkour.Events.ParkourCheckpointEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
@@ -28,12 +29,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 
-import com.citibuild.cbparkour.Parkour;
-import com.citibuild.cbparkour.PlayerInfo;
-import com.citibuild.cbparkour.UnlockFunctions;
-import com.citibuild.cbparkour.Events.ParkourCheckpointEvent;
-import com.citibuild.cbparkour.Events.ParkourFinishEvent;
-import com.citibuild.cbparkour.Events.ParkourStartEvent;
+import com.pistonmc.grim.spnparkour.Parkour;
+import com.pistonmc.grim.spnparkour.PlayerInfo;
+import com.pistonmc.grim.spnparkour.UnlockFunctions;
+import com.pistonmc.grim.spnparkour.Events.ParkourFinishEvent;
+import com.pistonmc.grim.spnparkour.Events.ParkourStartEvent;
 
 
 public class PlayerListener implements Listener{

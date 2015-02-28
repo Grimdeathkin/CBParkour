@@ -1,4 +1,4 @@
-package com.citibuild.cbparkour;
+package com.pistonmc.grim.spnparkour;
 
 import org.bukkit.GameMode;
 

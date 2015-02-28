@@ -1,10 +1,9 @@
-package com.citibuild.cbparkour.Events;
+package com.pistonmc.grim.spnparkour.Events;
 
+import com.pistonmc.grim.spnparkour.Parkour;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import com.citibuild.cbparkour.Parkour;
 
 public class ParkourFinishEvent extends Event
 {

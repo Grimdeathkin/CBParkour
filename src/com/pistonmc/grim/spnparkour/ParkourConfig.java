@@ -1,4 +1,4 @@
-package com.citibuild.cbparkour;
+package com.pistonmc.grim.spnparkour;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class ParkourConfig {
 		
 		pk.pkUnlockFuncs.saveDefaultUnlocksConfig();
 		pk.pkUnlockFuncs.reloadUnlocksConfig();
-		if(Bukkit.getServer().getOnlinePlayers().length != 0) {
+		if(Bukkit.getServer().getOnlinePlayers().size() != 0) {
 			pk.pkUnlockFuncs.loadAllPlayerUnlocks();
 		}
 		
@@ -63,8 +63,8 @@ public class ParkourConfig {
 		log.info(dashes);
 		int totalUnlocks = pk.pkUnlockFuncs.getUnlocksConfig().getConfigurationSection("username").getKeys(false).size();
 		int totalPInfo = pk.pkFuncs.getPlayerInfoConfig().getConfigurationSection("username").getKeys(false).size();
-		if(Bukkit.getServer().getOnlinePlayers().length > 0) {
-			log.info("There are " + Bukkit.getOnlinePlayers().length + " players online.");
+		if(Bukkit.getServer().getOnlinePlayers().size() > 0) {
+			log.info("There are " + Bukkit.getOnlinePlayers().size() + " players online.");
 			log.info(space + "Player Info's Loaded: " + pk.pkVars.loadedUsers.size() + "/" + totalPInfo);
 			log.info(space + "Player Unlock's Loaded: " + pk.pkVars.loadedPUnlocks.size() + "/" + totalUnlocks);
 		} else {

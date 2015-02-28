@@ -1,4 +1,4 @@
-package com.citibuild.cbparkour;
+package com.pistonmc.grim.spnparkour;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

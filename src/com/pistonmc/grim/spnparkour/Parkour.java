@@ -1,4 +1,4 @@
-package com.citibuild.cbparkour;
+package com.pistonmc.grim.spnparkour;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,17 +6,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
+import com.pistonmc.grim.spnparkour.Listeners.PlayerListener;
+import com.pistonmc.grim.spnparkour.Listeners.SignListener;
+import lib.PatPeter.SQLibrary.Database;
+import lib.PatPeter.SQLibrary.MySQL;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import com.citibuild.cbparkour.Listeners.PlayerListener;
-import com.citibuild.cbparkour.Listeners.SignListener;
 
 
 /*
@@ -46,7 +49,8 @@ public class Parkour extends JavaPlugin implements Listener {
  * 	Setup
  */
 	private static final Logger log = Logger.getLogger("Minecraft");
-
+    private Database sql;
+    
         @Override
 	public void onEnable() {
         pkItems = new ParkourItems(this);
@@ -334,4 +338,5 @@ public class Parkour extends JavaPlugin implements Listener {
 	public void setVault(boolean vault) {
 		this.vault = vault;
 	}
+    
 }

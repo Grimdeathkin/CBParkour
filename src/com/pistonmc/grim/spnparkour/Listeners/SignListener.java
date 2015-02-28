@@ -1,4 +1,4 @@
-package com.citibuild.cbparkour.Listeners;
+package com.pistonmc.grim.spnparkour.Listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -7,7 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 
-import com.citibuild.cbparkour.Parkour;
+import com.pistonmc.grim.spnparkour.Parkour;
 
 public class SignListener implements Listener{
 	
