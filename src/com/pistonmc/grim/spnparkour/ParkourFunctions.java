@@ -505,7 +505,7 @@ public class ParkourFunctions {
 	}
 
 	public void loadUsersPlayerInfo() {
-		if(pk.getServer().getOnlinePlayers().length >= 1) {
+		if(pk.getServer().getOnlinePlayers().size() >= 1) {
 			FileConfiguration pIC = pk.pkVars.playerInfoConfig;
 			Set<String> keyUsers = pIC.getConfigurationSection("username").getKeys(false);
 			for(Player player: pk.getServer().getOnlinePlayers()) {

@@ -338,5 +338,5 @@ public class Parkour extends JavaPlugin implements Listener {
 	public void setVault(boolean vault) {
 		this.vault = vault;
 	}
-    
+
 }
